@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+
+import hr.parkulator.parkulator_backend.dto.LiveParkingDataDTO;
 import hr.parkulator.parkulator_backend.dto.StaticParkingDataDTO;
 import hr.parkulator.parkulator_backend.services.LiveParkingDataService;
 import hr.parkulator.parkulator_backend.services.StaticParkingDataService;
@@ -20,12 +22,13 @@ public class TestController {
     }
 
     @GetMapping("/test-live-data")
-    public String testLiveData() {
-        return liveParkingDataService.test();
+    public List<LiveParkingDataDTO> testLiveData() {
+        return liveParkingDataService.getInitialRijekaPlusData();
     }
-
+    /*
     @GetMapping("/test-static-data")
     public List<StaticParkingDataDTO> testStaticData() {
         return staticParkingDataService.RijekaPlusScraper();
     }
+    */
 }

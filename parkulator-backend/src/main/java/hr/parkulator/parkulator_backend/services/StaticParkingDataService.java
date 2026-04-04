@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StaticParkingDataService {
+    //Reader of manual file for manual static data
+    /*
+    //Removed 
      public List<StaticParkingDataDTO> RijekaPlusScraper() {
         
         List<StaticParkingDataDTO> StaticParkingList = new ArrayList<>();
@@ -58,30 +61,12 @@ public class StaticParkingDataService {
                 }
             }
         }
-
-        //List<String> AllAddresses = new ArrayList<>();
-
-            
-            /* 
-            String address_list = address.text(); //address_list is a string with html element contents(without tags)
-
-           // address_list.split("\\s*,\\s*"); //split on each ,
-            String[] splitted = address_list.split("\\s*,\\s*");
-            
-            Collections.addAll(AllAddresses, splitted);
-            
-            //System.out.print(address.text() + "\n\n");
-        }
-        for(String s : AllAddresses){
-            System.out.print(s+"\n");
-            }*/
-
-        //System.out.print(adress.toString());
         return StaticParkingList;
         }
         catch(IOException e){
             return null;
         }
     }
+        */
 }
 
