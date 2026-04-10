@@ -6,14 +6,13 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class LiveParkingDataDTO {
+public class ParkingDataDTO {
     private Long externalId;
     private String name;
-    private Double price;
     private String address;
     private String link;
     private boolean isLive;
     private Long spots;
     private Long availableSpots;
-    List<WorkHoursDTO> workHours;
+    List<ParkingPriceDTO> parkingPrice;
 }

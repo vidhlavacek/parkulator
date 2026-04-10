@@ -1,5 +1,5 @@
 package hr.parkulator.parkulator_backend.services;
-
+/*
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
 import hr.parkulator.parkulator_backend.dto.StaticParkingDataDTO;
-
+*/
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,7 +45,7 @@ public class StaticParkingDataService {
                 }
 
                 if(s.contains(" i ")){
-                    String[] iSplitt = s.split("\"\\\\s+i\\\\s+\"");
+                    String[] iSplit = s.split("\"\\\\s+i\\\\s+\"");
                     
                     for(String iSplitted : iSplitt){
                         if(iSplitted.isBlank()) continue;

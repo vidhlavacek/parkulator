@@ -7,9 +7,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkHoursDTO {
+public class ParkingPriceDTO {
     private WorkDayEnum day;
     private String special;
     private int openingHour;
     private int closingHour;
+    private double price;
 }
