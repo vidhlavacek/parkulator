@@ -2,7 +2,7 @@ package hr.parkulator.parkulator_backend.shared;
 
 public enum WorkDayEnum {
     WORKDAY,
-    SATHURDAY,
+    SATURDAY,
     SUNDAY,
     SPECIAL,
     ALLDAYS

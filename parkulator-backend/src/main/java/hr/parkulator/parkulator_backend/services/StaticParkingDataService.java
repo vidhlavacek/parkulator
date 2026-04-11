@@ -1,20 +1,40 @@
 package hr.parkulator.parkulator_backend.services;
-/*
-import java.io.IOException;
-import java.util.ArrayList;
+
+import java.io.InputStream;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.*;
-import org.jsoup.select.*;
+import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
+import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
 
-import hr.parkulator.parkulator_backend.dto.StaticParkingDataDTO;
-*/
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.ClassPathResource;
+
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class StaticParkingDataService {
-    //Reader of manual file for manual static data
+    
+    public List<ParkingDataDTO> getInitialStaticParkingData(){
+        try{
+            InputStream inputStream = new ClassPathResource("data/parkings.json").getInputStream();
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(inputStream, new TypeReference<List<ParkingDataDTO>>() {});
+        } catch(Exception e){
+            throw new RuntimeException("Can't open parking.json", e);
+        }
+        
+    }
+
+    public List<ParkingRefreshDTO> getRefreshStaticParkingData(){
+        try{
+            InputStream inputStream = new ClassPathResource("data/parkingsUpdate.json").getInputStream();
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(inputStream, new TypeReference<List<ParkingRefreshDTO>>() {});
+        } catch(Exception e){
+            throw new RuntimeException("Can't open parkingsUpdate.json", e);
+        }
+    }
     /*
     //Removed 
      public List<StaticParkingDataDTO> RijekaPlusScraper() {

@@ -7,6 +7,7 @@ import java.util.*;
 
 import hr.parkulator.parkulator_backend.services.LiveParkingDataService;
 import hr.parkulator.parkulator_backend.services.StaticParkingDataService;
+import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
 //import hr.parkulator.parkulator_backend.dto.LiveParkingRefreshDTO;
 
@@ -14,21 +15,19 @@ import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
 public class TestController {
 
     private final LiveParkingDataService liveParkingDataService;
-    //private final StaticParkingDataService staticParkingDataService;
+    private final StaticParkingDataService staticParkingDataService;
 
     public TestController(LiveParkingDataService liveParkingDataService, StaticParkingDataService staticParkingDataService) {
         this.liveParkingDataService = liveParkingDataService;
-        //this.staticParkingDataService = staticParkingDataService;
+        this.staticParkingDataService = staticParkingDataService;
     }
 
     @GetMapping("/test-live-data")
-    public List<ParkingDataDTO> testLiveData() {
-        return liveParkingDataService.getInitialRijekaPlusData();
+    public List<ParkingRefreshDTO> testLiveData() {
+        return liveParkingDataService.refreshRijekaPlusData();
     }
-    /*
     @GetMapping("/test-static-data")
-    public List<StaticParkingDataDTO> testStaticData() {
-        return staticParkingDataService.RijekaPlusScraper();
+    public List<ParkingDataDTO> testStaticData() {
+        return staticParkingDataService.getInitialStaticParkingData();
     }
-    */
 }

@@ -1,0 +1,48 @@
+[
+  {
+    "externalId": 0,
+    "isLive": false,
+    "availableSpots": 0,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 22,
+        "price": 1.2
+      },
+      {
+        "day": "SATURDAY",
+        "special": "Holiday tariff",
+        "openingHour": 8,
+        "closingHour": 20,
+        "price": 1.5
+      }
+    ]
+  },
+  {
+    "externalId": 0,
+    "name": "Test 2",
+    "address": "Ulica Zagrad 5, Rijeka",
+    "link": "https://example.com/parking-zagrad",
+    "isLive": false,
+    "spots": 180,
+    "availableSpots": 0,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 6,
+        "closingHour": 23,
+        "price": 1.0
+      },
+      {
+        "day": "SUNDAY",
+        "special": "Free parking",
+        "openingHour": 0,
+        "closingHour": 24,
+        "price": 0.0
+      }
+    ]
+  }
+]

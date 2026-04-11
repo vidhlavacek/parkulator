@@ -13,11 +13,12 @@ import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 public class ParkingDataService {
     private ParkingRepository parkingRepository;
     private LiveParkingDataService liveParkingDataService;
+    private StaticParkingDataService staticParkingDataService;
 
     @Transactional
-    public void toDatabase(){
+    public void SaveInitialData(){
         List<ParkingDataDTO> dtos = liveParkingDataService.getInitialRijekaPlusData();
-        //Add list of static objects
+        dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
         for(ParkingDataDTO dto : dtos){
             Parking parking = new Parking();
@@ -32,5 +33,10 @@ public class ParkingDataService {
             }
             parkingRepository.save(parking);
         }
+    }
+    
+    @Transactional
+    public void SaveRefreshData(){
+        
     }
 }
