@@ -100,6 +100,7 @@ public class LiveParkingDataService {
             //External parking id
             Long externalId = parking.get("parking_data").get("parking_id").longValue();
 
+            String type = parking.get("category").stringValue();
             //Rijeka plus data is problematic so this part is deciding which JSON field to look at for price and workhours
             /*boolean defaultPriceFlag = false;
             boolean specialPriceFlag = false;
@@ -201,12 +202,13 @@ public class LiveParkingDataService {
             Long spots = null;
             Long availableSpots = null;
 
-            if(parking.get("category").stringValue().equals("Garaže i zatvorena parkirališta")){
+            if(type.equals("Garaže i zatvorena parkirališta")){
                 isLive = true;
                 spots = parking.get("parking_data").get("kapacitet").asLong(0);
                 availableSpots = parking.get("parking_data").get("slobodno").asLong(0);
-            
-                ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, address, link, isLive, spots, availableSpots, parkingPrices);
+                
+                ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, address, link, type, isLive, spots, availableSpots, parkingPrices);
+                System.out.print(lpd.toString());
                 lpd_list.add(lpd);
             }
             else{
@@ -231,12 +233,12 @@ public class LiveParkingDataService {
                         
                         for(String iSplitted : iSplit){
                             if(iSplitted.isBlank()) continue;
-                            ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, iSplitted, link, isLive, spots, availableSpots, parkingPrices);
+                            ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, iSplitted, link, type, isLive, spots, availableSpots, parkingPrices);
                             lpd_list.add(lpd);
                         }
                     }
                     else{
-                        ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, adr, link, isLive, spots, availableSpots, parkingPrices);
+                        ParkingDataDTO lpd = new ParkingDataDTO(externalId, name, adr, link, type, isLive, spots, availableSpots, parkingPrices);
                         lpd_list.add(lpd);
                     }
                 }
@@ -279,8 +281,11 @@ public class LiveParkingDataService {
                 if(workhours.get("dani_i_sati").stringValue().equals("Radnim danom")){
                     workdays = WorkDayEnum.WORKDAY;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().equals("Subotom")){
+                else if(workhours.get("dani_i_sati").stringValue().equals("Subotom") || workhours.get("dani_i_sati").stringValue().equals("Subotom:")){
                     workdays = WorkDayEnum.SATURDAY;
+                }
+                else if(workhours.get("dani_i_sati").stringValue().equals("Nedjeljom") || workhours.get("dani_i_sati").stringValue().equals("Nedjeljom:")){
+                    workdays = WorkDayEnum.SUNDAY;
                 }
                 else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom")){
                     workdays = WorkDayEnum.ALLDAYS;

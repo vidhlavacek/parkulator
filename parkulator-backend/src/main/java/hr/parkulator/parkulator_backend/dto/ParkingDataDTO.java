@@ -11,6 +11,7 @@ public class ParkingDataDTO {
     private String name;
     private String address;
     private String link;
+    private String type;
     private boolean isLive;
     private Long spots;
     private Long availableSpots;
