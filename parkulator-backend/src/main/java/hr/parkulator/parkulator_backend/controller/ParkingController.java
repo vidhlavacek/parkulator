@@ -1,35 +1,35 @@
 package hr.parkulator.parkulator_backend.controller;
 
-
-import hr.parkulator.parkulator_backend.model.Parking;
-import hr.parkulator.parkulator_backend.repository.ParkingRepository;
+import hr.parkulator.parkulator_backend.entities.Parking;
+import hr.parkulator.parkulator_backend.services.ParkingService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController //vraca JSON odgovor + klasa je kontroler/API 
-@RequestMapping("/parkings") //svi endpointi u ovom kontroleru pocinju sa /parkings
-public class ParkingController { //kontroler za upravljanje parkiralistima
+@RestController
+@RequestMapping("/parkings")
+public class ParkingController {
 
-    private final ParkingRepository parkingRepository;//veza na repository=veza na bazu
+    private final ParkingService parkingService;
 
-//
-    public ParkingController(ParkingRepository parkingRepository) {//
-        this.parkingRepository = parkingRepository;
+    public ParkingController(ParkingService parkingService) {
+        this.parkingService = parkingService;
     }
 
-    @GetMapping("/test")
-public String test() {
-    return "RADI";
-}
-
-    @GetMapping //endpoint za dohvacanje svih parkiralista - GET /parkings vraca listu parkiralista
-    public List<Parking> getAllParkings() {
-        return parkingRepository.findAll();//metoda findAll() vraca sve parkiralista iz baze kao JSON odg (vraca listu)
+    @GetMapping("/{id}")
+    public Parking getById(@PathVariable Long id) {
+        return parkingService.getParkingById(id);
     }
-    @PostMapping
-    //POST /parkings ,kreira novi parking
-public Parking createParking(@RequestBody Parking parking) {
-    return parkingRepository.save(parking);//sprema novi parking u bazu
-}
+
+    @GetMapping
+    public List<Parking> getParkings(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double maxDistance,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng
+    ) {
+        return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
+    }
+    
 }

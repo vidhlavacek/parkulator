@@ -15,8 +15,9 @@ public class Parking {
     private String name;
     private String address;
     private String type;
-    private Double lowestPrice;
-    private Double highestPrice;
+    private Double price;
+    private Double latitude;
+    private Double longitude;
     private String openingHour;
     private String closingHour;
     private Long availableSpots;
