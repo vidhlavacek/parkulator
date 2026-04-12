@@ -1,98 +1,171 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>
+          Find <Text style={styles.titleBold}>Parking</Text> Quickly{'\n'}& Easily
+        </Text>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Text style={styles.subtitle}>Discover available parking near you.</Text>
+
+        <View style={styles.illustration}>
+          <Text style={styles.illustrationText}>Parking illustration placeholder</Text>
+        </View>
+
+        <TouchableOpacity style={styles.primaryButton}>
+          <Text style={styles.primaryButtonText}>Find Parking</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.secondaryButton}>
+          <Text style={styles.secondaryButtonText}>Go to Map</Text>
+        </TouchableOpacity>
+
+        <View style={styles.featuresRow}>
+          <View style={styles.featureCard}>
+            <Text style={styles.featureTitle}>Pay in Seconds</Text>
+          </View>
+
+          <View style={styles.featureCard}>
+            <Text style={styles.featureTitle}>Parking Alerts</Text>
+          </View>
+
+          <View style={styles.featureCard}>
+            <Text style={styles.featureTitle}>Parking History</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Log In</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signUpContainer}>
+          <Text style={styles.signUpText}>Sign Up</Text>
+          <Text style={styles.signUpSubtext}>Create an Account</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F4F6F8',
+  },
+  container: {
+    padding: 20,
+    paddingBottom: 32,
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 32,
+    lineHeight: 40,
+    color: '#1F3B5B',
+    fontWeight: '400',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  titleBold: {
+    fontWeight: '700',
+  },
+  subtitle: {
+    marginTop: 14,
+    marginBottom: 24,
+    textAlign: 'center',
+    fontSize: 17,
+    color: '#6B7280',
+  },
+  illustration: {
+    width: '100%',
+    height: 190,
+    borderRadius: 20,
+    backgroundColor: '#DCEBFA',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  illustrationText: {
+    color: '#4B5563',
+    fontSize: 16,
+  },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#37B24D',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  secondaryButton: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  secondaryButtonText: {
+    color: '#6B7280',
+    fontSize: 20,
+    fontWeight: '500',
+  },
+  featuresRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginBottom: 28,
+  },
+  featureCard: {
+    flex: 1,
+    minHeight: 90,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  featureTitle: {
+    textAlign: 'center',
+    color: '#374151',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  loginButton: {
+    width: '100%',
+    backgroundColor: '#1677F2',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  signUpContainer: {
+    alignItems: 'center',
+  },
+  signUpText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#6B7280',
+  },
+  signUpSubtext: {
+    marginTop: 6,
+    fontSize: 15,
+    color: '#9CA3AF',
   },
 });
