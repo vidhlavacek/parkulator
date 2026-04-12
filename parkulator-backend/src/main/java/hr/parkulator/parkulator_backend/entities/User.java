@@ -33,5 +33,5 @@ public class User {
     public void removeFavorite(Favorite favorite) {
         favorites.remove(favorite);
         favorite.setUser(null);
-    }
-}
+    }//
+} 
