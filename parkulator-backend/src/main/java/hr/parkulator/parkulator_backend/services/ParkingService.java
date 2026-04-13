@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import hr.parkulator.parkulator_backend.entities.Parking;
 
@@ -18,17 +19,17 @@ public class ParkingService {
 
     public Parking getParkingById(Long id) {
         return parkingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Parking not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Parking with id " + id + " not found"));
     }
 
     public Parking getParkingByName(String name) {
         return parkingRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Parking not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Parking with name " + name + " not found"));
     }
 
     public Parking getParkingByAddress(String address) {
         return parkingRepository.findByAddress(address)
-                .orElseThrow(() -> new RuntimeException("Parking not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Parking with address " + address + " not found"));
     }
 
     public List<Parking> getParkingByType(String type) {
