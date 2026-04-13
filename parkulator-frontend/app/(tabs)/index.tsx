@@ -1,48 +1,108 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+  Entypo,
+} from '@expo/vector-icons';
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>
-          Find <Text style={styles.titleBold}>Parking</Text> Quickly{'\n'}& Easily
-        </Text>
+      <StatusBar style="dark" />
 
-        <Text style={styles.subtitle}>Discover available parking near you.</Text>
+      <ScrollView
+        contentContainerStyle={styles.screen}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.wrapper}>
+          <View style={styles.topCard}>
+            <Text style={styles.title}>
+              Find <Text style={styles.titleBold}>Parking</Text> Quickly{'\n'}& Easily
+            </Text>
 
-        <View style={styles.illustration}>
-          <Text style={styles.illustrationText}>Parking illustration placeholder</Text>
-        </View>
+            <Text style={styles.subtitle}>
+              Discover available parking near you.
+            </Text>
 
-        <TouchableOpacity style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText}>Find Parking</Text>
-        </TouchableOpacity>
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{
+                  uri: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?q=80&w=1200&auto=format&fit=crop',
+                }}
+                style={styles.heroImage}
+                resizeMode="cover"
+              />
+            </View>
 
-        <TouchableOpacity style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>Go to Map</Text>
-        </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.9} style={styles.shadowButton}>
+              <LinearGradient
+                colors={['#58cc3a', '#2fa51f']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.primaryButton}
+              >
+                <MaterialCommunityIcons name="car" size={24} color="#fff" />
+                <Text style={styles.primaryButtonText}>Find Parking</Text>
+              </LinearGradient>
+            </TouchableOpacity>
 
-        <View style={styles.featuresRow}>
-          <View style={styles.featureCard}>
-            <Text style={styles.featureTitle}>Pay in Seconds</Text>
+            <TouchableOpacity activeOpacity={0.9} style={[styles.secondaryButton, styles.shadowSoft]}>
+              <Entypo name="location-pin" size={22} color="#7e8aa0" />
+              <Text style={styles.secondaryButtonText}>Go to Map</Text>
+            </TouchableOpacity>
+
+            <View style={styles.dashedLine} />
+
+            <View style={styles.featuresRow}>
+              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
+                <FontAwesome5 name="coins" size={21} color="#f4c247" />
+                <Text style={styles.featureText}>Pay in Seconds</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
+                <Ionicons name="notifications" size={22} color="#394b65" />
+                <Text style={styles.featureText}>Parking Alerts</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
+                <Ionicons name="time" size={22} color="#394b65" />
+                <Text style={styles.featureText}>Parking History</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <View style={styles.featureCard}>
-            <Text style={styles.featureTitle}>Parking Alerts</Text>
+          <TouchableOpacity activeOpacity={0.9} style={styles.shadowButton}>
+            <LinearGradient
+              colors={['#2c8cff', '#0066e8']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.loginButton}
+            >
+              <Text style={styles.loginButtonText}>Log In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.signUpRow}>
+            <View style={styles.line} />
+            <Text style={styles.signUpText}>Sign Up</Text>
+            <View style={styles.line} />
           </View>
 
-          <View style={styles.featureCard}>
-            <Text style={styles.featureTitle}>Parking History</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Log In</Text>
-        </TouchableOpacity>
-
-        <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Sign Up</Text>
           <Text style={styles.signUpSubtext}>Create an Account</Text>
+
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -52,120 +112,205 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F4F6F8',
+    backgroundColor: '#dfe3ea',
   },
-  container: {
-    padding: 20,
-    paddingBottom: 32,
+  screen: {
+    flexGrow: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 20,
   },
+  wrapper: {
+    width: '100%',
+    maxWidth: 360,
+  },
+
+  topCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    paddingHorizontal: 18,
+    paddingTop: 28,
+    paddingBottom: 20,
+    marginBottom: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+  },
+
   title: {
-    marginTop: 20,
+    marginTop: 8,
     textAlign: 'center',
-    fontSize: 32,
-    lineHeight: 40,
-    color: '#1F3B5B',
+    fontSize: 24,
+    lineHeight: 31,
+    color: '#324765',
     fontWeight: '400',
   },
   titleBold: {
-    fontWeight: '700',
+    fontWeight: '800',
   },
   subtitle: {
-    marginTop: 14,
-    marginBottom: 24,
+    marginTop: 12,
+    marginBottom: 18,
     textAlign: 'center',
-    fontSize: 17,
-    color: '#6B7280',
-  },
-  illustration: {
-    width: '100%',
-    height: 190,
-    borderRadius: 20,
-    backgroundColor: '#DCEBFA',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  illustrationText: {
-    color: '#4B5563',
     fontSize: 16,
+    color: '#7a879b',
   },
-  primaryButton: {
+
+  imageWrapper: {
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 18,
+    backgroundColor: '#edf4ff',
+  },
+  heroImage: {
     width: '100%',
-    backgroundColor: '#37B24D',
-    paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: 'center',
+    height: 170,
+  },
+
+  shadowButton: {
+    shadowColor: '#000',
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
     marginBottom: 14,
+    borderRadius: 14,
+  },
+  shadowSoft: {
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+
+  primaryButton: {
+    height: 72,
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   primaryButtonText: {
-    color: '#FFFFFF',
-    fontSize: 20,
+    color: '#fff',
+    fontSize: 21,
     fontWeight: '700',
+    marginLeft: 10,
   },
+
   secondaryButton: {
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: 'center',
-    marginBottom: 24,
+    height: 58,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: '#d9dee7',
+    backgroundColor: '#fbfcfe',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 18,
   },
   secondaryButtonText: {
-    color: '#6B7280',
-    fontSize: 20,
+    fontSize: 18,
+    color: '#7c889b',
     fontWeight: '500',
+    marginLeft: 4,
   },
+
+  dashedLine: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e7ef',
+    borderStyle: 'dashed',
+    marginBottom: 18,
+  },
+
   featuresRow: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 28,
+    gap: 10,
   },
   featureCard: {
     flex: 1,
-    minHeight: 90,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    minHeight: 88,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: '#edf1f5',
+  },
+  featureText: {
+    textAlign: 'center',
+    marginTop: 8,
+    fontSize: 13,
+    lineHeight: 17,
+    color: '#3b4c66',
+    fontWeight: '500',
+  },
+
+  loginButton: {
+    height: 58,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  featureTitle: {
-    textAlign: 'center',
-    color: '#374151',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  loginButton: {
-    width: '100%',
-    backgroundColor: '#1677F2',
-    paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: 'center',
-    marginBottom: 20,
   },
   loginButtonText: {
-    color: '#FFFFFF',
-    fontSize: 20,
+    color: '#fff',
+    fontSize: 22,
     fontWeight: '700',
   },
-  signUpContainer: {
+
+  signUpRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 2,
+    justifyContent: 'center',
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#dfe4ec',
   },
   signUpText: {
-    fontSize: 18,
+    marginHorizontal: 12,
+    fontSize: 16,
+    color: '#5f6d84',
     fontWeight: '700',
-    color: '#6B7280',
   },
   signUpSubtext: {
-    marginTop: 6,
-    fontSize: 15,
-    color: '#9CA3AF',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 18,
+    fontSize: 16,
+    color: '#7d899b',
+  },
+
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderRadius: 22,
+    paddingVertical: 14,
+    justifyContent: 'space-around',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+  navItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  navLabel: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#97a2b5',
+  },
+  navLabelActive: {
+    color: '#1f7cff',
+    fontWeight: '700',
   },
 });
