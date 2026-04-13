@@ -1,6 +1,8 @@
 [
   {
     "externalId": 0,
+    "name": "ime1",
+    "address": "Adresa1233",
     "isLive": false,
     "availableSpots": 0,
     "parkingPrice": [
