@@ -33,6 +33,8 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         userRepository.deleteById(id);
     }
 }
