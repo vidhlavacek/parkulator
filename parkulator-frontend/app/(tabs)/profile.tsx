@@ -7,13 +7,13 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Profile</Text>
 
-      {/* HEADER */}
       <View style={styles.card}>
         <View style={styles.row}>
           <Image
@@ -32,22 +32,18 @@ export default function Profile() {
         </View>
       </View>
 
-      {/* SETTINGS */}
       <View style={styles.card}>
         <MenuItem icon="person-outline" text="Personal Info" />
         <MenuItem icon="mail-outline" text="Email & Password" />
-        <MenuItem icon="card-outline" text="Payment Methods" />
         <MenuItem icon="notifications-outline" text="Notification Settings" />
       </View>
 
-      {/* SUPPORT */}
       <View style={styles.card}>
         <MenuItem icon="help-circle-outline" text="Help & Support" />
         <MenuItem icon="warning-outline" text="Report Issue" />
         <MenuItem icon="document-text-outline" text="Legal Information" />
       </View>
 
-      {/* LOGOUT */}
       <TouchableOpacity style={styles.logout}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
@@ -69,12 +65,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f6fa",
     padding: 15,
+    paddingTop: 40,
   },
+  
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 15,
-    color: "blue",
   },
   card: {
     backgroundColor: "white",
