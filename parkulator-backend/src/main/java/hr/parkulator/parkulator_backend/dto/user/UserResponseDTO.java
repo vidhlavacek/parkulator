@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.dto;
+package hr.parkulator.parkulator_backend.dto.user;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthResponseDTO {
+public class UserResponseDTO {
     private Long id;
     private String email;
     private String username;

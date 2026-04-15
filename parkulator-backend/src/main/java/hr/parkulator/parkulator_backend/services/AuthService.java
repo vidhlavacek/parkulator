@@ -7,9 +7,9 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
-import hr.parkulator.parkulator_backend.dto.AuthResponseDTO;
-import hr.parkulator.parkulator_backend.dto.LoginRequestDTO;
-import hr.parkulator.parkulator_backend.dto.RegistrationRequestDTO;
+import hr.parkulator.parkulator_backend.dto.auth.AuthResponseDTO;
+import hr.parkulator.parkulator_backend.dto.auth.LoginRequestDTO;
+import hr.parkulator.parkulator_backend.dto.auth.RegistrationRequestDTO;
 import hr.parkulator.parkulator_backend.entities.User;
 
 @Service
@@ -17,14 +17,16 @@ import hr.parkulator.parkulator_backend.entities.User;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
 
     public AuthResponseDTO  register(RegistrationRequestDTO request){
         if(userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
 
         if(userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
         }
 
         User user = User.builder()
@@ -34,17 +36,31 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return AuthResponseDTO.builder().id(savedUser.getId()).email(savedUser.getEmail()).username(savedUser.getUsername()).build();
+        String token = jwtService.generateToken(savedUser);
+
+        return AuthResponseDTO.builder()
+            .id(savedUser.getId())
+            .email(savedUser.getEmail())
+            .username(savedUser.getUsername())
+            .token(token)
+            .build();
     }
 
     public AuthResponseDTO login(LoginRequestDTO request){
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        return AuthResponseDTO.builder().id(user.getId()).email(user.getEmail()).username(user.getUsername()).build();
+        String token = jwtService.generateToken(user);
+
+        return AuthResponseDTO.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .token(token)
+            .build();
     }
 }

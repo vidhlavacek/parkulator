@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.dto;
+package hr.parkulator.parkulator_backend.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

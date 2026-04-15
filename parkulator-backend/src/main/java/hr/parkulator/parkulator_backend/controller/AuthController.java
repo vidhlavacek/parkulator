@@ -1,8 +1,8 @@
 package hr.parkulator.parkulator_backend.controller;
 
-import hr.parkulator.parkulator_backend.dto.AuthResponseDTO;
-import hr.parkulator.parkulator_backend.dto.LoginRequestDTO;
-import hr.parkulator.parkulator_backend.dto.RegistrationRequestDTO;
+import hr.parkulator.parkulator_backend.dto.auth.AuthResponseDTO;
+import hr.parkulator.parkulator_backend.dto.auth.LoginRequestDTO;
+import hr.parkulator.parkulator_backend.dto.auth.RegistrationRequestDTO;
 import hr.parkulator.parkulator_backend.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
