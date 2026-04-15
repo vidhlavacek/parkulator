@@ -4,18 +4,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Image,
+  Pressable,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome5,
-  Entypo,
-} from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+
+const parkingImage = require('../../assets/images/slikaparking.png');
 
 export default function HomeScreen() {
   return (
@@ -27,7 +24,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.wrapper}>
-          <View style={styles.topCard}>
+          <View style={styles.heroCard}>
             <Text style={styles.title}>
               Find <Text style={styles.titleBold}>Parking</Text> Quickly{'\n'}& Easily
             </Text>
@@ -38,71 +35,115 @@ export default function HomeScreen() {
 
             <View style={styles.imageWrapper}>
               <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?q=80&w=1200&auto=format&fit=crop',
-                }}
+                source={parkingImage}
                 style={styles.heroImage}
                 resizeMode="cover"
               />
             </View>
 
-            <TouchableOpacity activeOpacity={0.9} style={styles.shadowButton}>
-              <LinearGradient
-                colors={['#58cc3a', '#2fa51f']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.primaryButton}
+
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => [
+                styles.mainButtonShadow,
+                pressed && styles.pressedScale,
+              ]}
+            >
+              {({ pressed }) => (
+                <LinearGradient
+                  colors={pressed ? ['#45b92e', '#238916'] : ['#58cc3a', '#2fa51f']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.mainButton}
+                >
+                  <MaterialCommunityIcons name="car-search" size={24} color="#fff" />
+                  <Text style={styles.mainButtonText}>Find Parking</Text>
+                </LinearGradient>
+              )}
+            </Pressable>
+
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => [
+                styles.mapButton,
+                styles.softShadow,
+                pressed && styles.mapButtonPressed,
+                pressed && styles.pressedScale,
+              ]}
+            >
+              <Entypo name="map" size={20} color="#72819a" />
+              <Text style={styles.mapButtonText}>Open Map</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.quickSection}>
+            <Text style={styles.sectionTitle}>Quick Access</Text>
+
+            <View style={styles.quickGrid}>
+              <Pressable
+                onPress={() => {}}
+                style={({ pressed }) => [
+                  styles.quickCard,
+                  styles.softShadow,
+                  pressed && styles.quickCardPressed,
+                  pressed && styles.pressedScale,
+                ]}
               >
-                <MaterialCommunityIcons name="car" size={24} color="#fff" />
-                <Text style={styles.primaryButtonText}>Find Parking</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+                <Ionicons name="heart" size={22} color="#e21b1b" />
+                <Text style={styles.quickCardTitle}>Favourites</Text>
+                <Text style={styles.quickCardSubtitle}>Saved places</Text>
+              </Pressable>
 
-            <TouchableOpacity activeOpacity={0.9} style={[styles.secondaryButton, styles.shadowSoft]}>
-              <Entypo name="location-pin" size={22} color="#7e8aa0" />
-              <Text style={styles.secondaryButtonText}>Go to Map</Text>
-            </TouchableOpacity>
-
-            <View style={styles.dashedLine} />
-
-            <View style={styles.featuresRow}>
-              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
-                <FontAwesome5 name="coins" size={21} color="#f4c247" />
-                <Text style={styles.featureText}>Pay in Seconds</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
-                <Ionicons name="notifications" size={22} color="#394b65" />
-                <Text style={styles.featureText}>Parking Alerts</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity activeOpacity={0.9} style={[styles.featureCard, styles.shadowSoft]}>
-                <Ionicons name="time" size={22} color="#394b65" />
-                <Text style={styles.featureText}>Parking History</Text>
-              </TouchableOpacity>
+              <Pressable
+                onPress={() => {}}
+                style={({ pressed }) => [
+                  styles.quickCard,
+                  styles.softShadow,
+                  pressed && styles.quickCardPressed,
+                  pressed && styles.pressedScale,
+                ]}
+              >
+                <Ionicons name="time" size={22} color="#b88500" />
+                <Text style={styles.quickCardTitle}>History</Text>
+                <Text style={styles.quickCardSubtitle}>Recent parking</Text>
+              </Pressable>
             </View>
           </View>
 
-          <TouchableOpacity activeOpacity={0.9} style={styles.shadowButton}>
-            <LinearGradient
-              colors={['#2c8cff', '#0066e8']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.loginButton}
+          <View style={styles.authCard}>
+            <Text style={styles.authTitle}>Already have an account?</Text>
+
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => [
+                styles.loginShadow,
+                pressed && styles.pressedScale,
+              ]}
             >
-              <Text style={styles.loginButtonText}>Log In</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              {({ pressed }) => (
+                <LinearGradient
+                  colors={pressed ? ['#247ee8', '#0059c9'] : ['#2c8cff', '#0066e8']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.loginButton}
+                >
+                  <Text style={styles.loginButtonText}>Log In</Text>
+                </LinearGradient>
+              )}
+            </Pressable>
 
-          <View style={styles.signUpRow}>
-            <View style={styles.line} />
-            <Text style={styles.signUpText}>Sign Up</Text>
-            <View style={styles.line} />
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => [
+                styles.signUpLink,
+                pressed && styles.signUpLinkPressed,
+              ]}
+            >
+              <Text style={styles.signUpText}>
+                Don’t have an account? <Text style={styles.signUpBold}>Sign Up</Text>
+              </Text>
+            </Pressable>
           </View>
-
-          <Text style={styles.signUpSubtext}>Create an Account</Text>
-
-
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -118,142 +159,169 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 20,
+    paddingHorizontal: 16,
+    paddingTop: 18,
+    paddingBottom: 24,
   },
   wrapper: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: 380,
+    gap: 16,
   },
 
-  topCard: {
+  heroCard: {
     backgroundColor: '#ffffff',
-    borderRadius: 28,
-    paddingHorizontal: 18,
+    borderRadius: 30,
+    paddingHorizontal: 20,
     paddingTop: 28,
     paddingBottom: 20,
-    marginBottom: 18,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
   },
-
   title: {
-    marginTop: 8,
     textAlign: 'center',
     fontSize: 24,
-    lineHeight: 31,
-    color: '#324765',
+    lineHeight: 32,
+    color: '#33496b',
     fontWeight: '400',
   },
   titleBold: {
     fontWeight: '800',
   },
   subtitle: {
-    marginTop: 12,
-    marginBottom: 18,
     textAlign: 'center',
     fontSize: 16,
     color: '#7a879b',
+    marginTop: 12,
+    marginBottom: 18,
   },
-
   imageWrapper: {
+    backgroundColor: '#ffffff',
     borderRadius: 18,
     overflow: 'hidden',
     marginBottom: 18,
-    backgroundColor: '#edf4ff',
+    padding: 10,
   },
   heroImage: {
     width: '100%',
     height: 170,
   },
 
-  shadowButton: {
-    shadowColor: '#000',
-    shadowOpacity: 0.16,
+  mainButtonShadow: {
+    borderRadius: 16,
+    marginBottom: 12,
+    shadowColor: '#2fa51f',
+    shadowOpacity: 0.24,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-    marginBottom: 14,
-    borderRadius: 14,
+    elevation: 7,
   },
-  shadowSoft: {
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-
-  primaryButton: {
-    height: 72,
-    borderRadius: 14,
+  mainButton: {
+    height: 68,
+    borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primaryButtonText: {
+  mainButtonText: {
     color: '#fff',
-    fontSize: 21,
+    fontSize: 22,
     fontWeight: '700',
     marginLeft: 10,
   },
 
-  secondaryButton: {
-    height: 58,
-    borderRadius: 12,
+  mapButton: {
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: '#fbfcfe',
     borderWidth: 1,
     borderColor: '#d9dee7',
-    backgroundColor: '#fbfcfe',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 18,
   },
-  secondaryButtonText: {
+  mapButtonPressed: {
+    backgroundColor: '#dbe3ed',
+    borderColor: '#9eb0c5',
+  },
+  mapButtonText: {
+    marginLeft: 8,
+    color: '#72819a',
     fontSize: 18,
-    color: '#7c889b',
-    fontWeight: '500',
-    marginLeft: 4,
+    fontWeight: '600',
   },
 
-  dashedLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e7ef',
-    borderStyle: 'dashed',
-    marginBottom: 18,
-  },
-
-  featuresRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  quickSection: {
     gap: 10,
   },
-  featureCard: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#465a79',
+    paddingHorizontal: 4,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  quickCard: {
     flex: 1,
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    minHeight: 88,
+    borderRadius: 22,
+    minHeight: 115,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: '#edf1f5',
   },
-  featureText: {
-    textAlign: 'center',
-    marginTop: 8,
+  quickCardPressed: {
+    backgroundColor: '#e9eef5',
+    borderColor: '#c8d3df',
+  },
+  quickCardTitle: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#3a4e6c',
+  },
+  quickCardSubtitle: {
+    marginTop: 4,
     fontSize: 13,
-    lineHeight: 17,
-    color: '#3b4c66',
-    fontWeight: '500',
+    color: '#8a97aa',
   },
 
+  authCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  authTitle: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#72819a',
+    marginBottom: 14,
+  },
+  loginShadow: {
+    borderRadius: 16,
+    shadowColor: '#0067ea',
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 7,
+  },
   loginButton: {
     height: 58,
-    borderRadius: 14,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -263,54 +331,35 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  signUpRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-    justifyContent: 'center',
+  signUpLink: {
+    marginTop: 14,
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
   },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#dfe4ec',
+  signUpLinkPressed: {
+    backgroundColor: '#e9edf3',
+    transform: [{ scale: 0.97 }],
   },
   signUpText: {
-    marginHorizontal: 12,
-    fontSize: 16,
-    color: '#5f6d84',
-    fontWeight: '700',
+    fontSize: 15,
+    color: '#6f7d92',
   },
-  signUpSubtext: {
-    textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 18,
-    fontSize: 16,
-    color: '#7d899b',
+  signUpBold: {
+    color: '#2c8cff',
+    fontWeight: '700',
   },
 
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderRadius: 22,
-    paddingVertical: 14,
-    justifyContent: 'space-around',
+  softShadow: {
     shadowColor: '#000',
     shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
+    elevation: 4,
   },
-  navItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  navLabel: {
-    marginTop: 4,
-    fontSize: 14,
-    color: '#97a2b5',
-  },
-  navLabelActive: {
-    color: '#1f7cff',
-    fontWeight: '700',
+  pressedScale: {
+    transform: [{ scale: 0.97 }],
   },
 });
+aaaaa
