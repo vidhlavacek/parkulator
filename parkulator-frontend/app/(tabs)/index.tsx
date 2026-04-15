@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   SafeAreaView,
@@ -362,3 +363,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
 });
+
+
+
+
