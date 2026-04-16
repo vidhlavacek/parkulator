@@ -12,8 +12,12 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+
 
 const parkingImage = require('../../assets/images/slikaparking.png');
+const router = useRouter();
 
 export default function HomeScreen() {
   return (
@@ -115,7 +119,10 @@ export default function HomeScreen() {
             <Text style={styles.authTitle}>Already have an account?</Text>
 
             <Pressable
-              onPress={() => {}}
+              //onPress={() => router.navigate('/login')}
+              onPress={() => {
+                router.push('/login');
+              }}           
               style={({ pressed }) => [
                 styles.loginShadow,
                 pressed && styles.pressedScale,
@@ -132,9 +139,11 @@ export default function HomeScreen() {
                 </LinearGradient>
               )}
             </Pressable>
-
+              
             <Pressable
-              onPress={() => {}}
+              onPress={() => {
+                router.push('/register');
+              }}
               style={({ pressed }) => [
                 styles.signUpLink,
                 pressed && styles.signUpLinkPressed,

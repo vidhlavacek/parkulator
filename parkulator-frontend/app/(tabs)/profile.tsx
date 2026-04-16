@@ -9,6 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+
 export default function Profile() {
   return (
     <ScrollView style={styles.container}>
