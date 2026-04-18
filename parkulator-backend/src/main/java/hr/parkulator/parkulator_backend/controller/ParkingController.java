@@ -1,6 +1,7 @@
 package hr.parkulator.parkulator_backend.controller;
 
 import hr.parkulator.parkulator_backend.entities.Parking;
+import hr.parkulator.parkulator_backend.dto.ParkingDTO;
 import hr.parkulator.parkulator_backend.services.ParkingService;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,11 @@ public class ParkingController {
             @RequestParam(required = false) Double lng
     ) {
         return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
+    }
+
+    @GetMapping("/all")
+    public List<ParkingDTO> getAllParkingLots(){
+        return parkingService.getAllParkings();
     }
     
 }

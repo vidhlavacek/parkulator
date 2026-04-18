@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ParkingDataDTO {
-    private Long externalId;
+    private String sourceKey;
     private String name;
     private String address;
     private String link;

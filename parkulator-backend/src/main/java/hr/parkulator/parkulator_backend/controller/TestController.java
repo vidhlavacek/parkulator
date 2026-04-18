@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hr.parkulator.parkulator_backend.services.ParkingDataService;
 
+
 @RestController
 public class TestController {
     ParkingDataService parkingDataService;
@@ -12,10 +13,16 @@ public class TestController {
     public TestController(ParkingDataService parkingDataService) {
         this.parkingDataService = parkingDataService;
     }
-
+   
     @GetMapping("/test-live-data")
     public String testLiveData() {
         parkingDataService.saveInitialData();
         return "POSLANO";
     }
+    @GetMapping("/refresh")
+    public String refresh() {
+        parkingDataService.saveRefreshData();
+        return "Refreshano";
+    }
+    
 }

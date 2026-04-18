@@ -15,7 +15,7 @@ public class Parking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long externalId;
+    private String sourceKey;
     private String name;
     private String address;
     private String link;
