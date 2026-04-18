@@ -8,9 +8,38 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
+import { useAuth } from "../../context/AuthContext";
 
 
 export default function Profile() {
+
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    router.replace("/login");
+  };
+
+  if (isLoading) return null;
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Profile</Text>
+        <View style={styles.card}>
+          <Text style={styles.name}>You are not logged in</Text>
+          <Text style={styles.email}>Please log in to access your profile.</Text>
+
+          <TouchableOpacity style={styles.loginButton} onPress={() => router.push("/login")}>
+            <Text style={styles.loginButtonText}>Log In</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Profile</Text>
@@ -23,8 +52,8 @@ export default function Profile() {
           />
 
           <View style={{ flex: 1 }}>
-            <Text style={styles.name}>Marko Petrovic</Text>
-            <Text style={styles.email}>marko@email.com</Text>
+            <Text style={styles.name}>{user?.username}</Text>
+            <Text style={styles.email}>{user?.email}</Text>
           </View>
 
           <TouchableOpacity style={styles.editBtn}>
@@ -45,7 +74,7 @@ export default function Profile() {
         <MenuItem icon="document-text-outline" text="Legal Information" />
       </View>
 
-      <TouchableOpacity style={styles.logout}>
+      <TouchableOpacity style={styles.logout} onPress={handleLogout}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -119,6 +148,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoutText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  loginButton: {
+    backgroundColor: "#007AFF",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  loginButtonText: {
     color: "white",
     fontWeight: "bold",
   },

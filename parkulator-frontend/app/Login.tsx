@@ -1,13 +1,31 @@
-import { View, Text, StyleSheet, Pressable,} from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert,} from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { useAuth } from "../context/AuthContext";
+import { loginRequest } from "../services/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { signIn } = useAuth();
+
+
+  const handleLogin = async () => {
+    try {
+      const data = await loginRequest({
+        email,
+        password,
+      });
+
+      await signIn(data);
+      router.replace("/");
+    } catch (error: any) {
+      Alert.alert("Login error", error?.message || "Neuspješna prijava");
+    }
+  };
 
 
   return (
@@ -18,7 +36,7 @@ export default function Login() {
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
         <Input placeholder="Password" secure value={password} onChangeText={setPassword} />
 
-        <Button title="Login" onPress={() => {}} />
+        <Button title="Login" onPress={handleLogin} />
       </View>
 
       <Pressable

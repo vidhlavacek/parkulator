@@ -1,25 +1,43 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { useAuth } from "../context/AuthContext";
+import { registerRequest } from "../services/auth";
 
 export default function Register() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { signIn } = useAuth();
+
+  const handleRegister = async () => {
+    try {
+      const data = await registerRequest({
+        email,
+        username,
+        password,
+      });
+
+      await signIn(data);
+      router.replace("/");
+    } catch (error: any) {
+      Alert.alert("Register error", error?.message || "Neuspješna registracija");
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create account</Text>
 
       <View style={styles.card}>
-        <Input placeholder="Name" value={name} onChangeText={setName} />
+        <Input placeholder="Username" value={username} onChangeText={setUsername} />
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
         <Input placeholder="Password" secure value={password} onChangeText={setPassword} />
 
-        <Button title="Register" onPress={() => {}} />
+        <Button title="Register" onPress={handleRegister} />
       </View>
 
       <Pressable

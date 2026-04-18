@@ -13,13 +13,25 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
 
 
 
 const parkingImage = require('../../assets/images/slikaparking.png');
-const router = useRouter();
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const { isAuthenticated, user } = useAuth();
+
+  const requireAuth = (callback: () => void) => {
+    if (!isAuthenticated) {
+      router.push('/login' as any);
+      return;
+    }
+
+    callback();
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
@@ -48,7 +60,9 @@ export default function HomeScreen() {
 
 
             <Pressable
-              onPress={() => {}}
+              onPress={() => {
+                //logika za find parking
+              }}
               style={({ pressed }) => [
                 styles.mainButtonShadow,
                 pressed && styles.pressedScale,
@@ -68,7 +82,9 @@ export default function HomeScreen() {
             </Pressable>
 
             <Pressable
-              onPress={() => {}}
+              onPress={() => {
+                //logika za mapu
+              }}
               style={({ pressed }) => [
                 styles.mapButton,
                 styles.softShadow,
@@ -86,74 +102,123 @@ export default function HomeScreen() {
 
             <View style={styles.quickGrid}>
               <Pressable
-                onPress={() => {}}
+                onPress={() =>
+                  requireAuth(() => {
+                    // ovdje kasnije npr. router.push('/favourites') kad bude gotova stranica
+                  })
+                }
                 style={({ pressed }) => [
                   styles.quickCard,
                   styles.softShadow,
+                  !isAuthenticated && styles.quickCardDisabled,
                   pressed && styles.quickCardPressed,
                   pressed && styles.pressedScale,
                 ]}
               >
                 <Ionicons name="heart" size={22} color="#e21b1b" />
-                <Text style={styles.quickCardTitle}>Favourites</Text>
-                <Text style={styles.quickCardSubtitle}>Saved places</Text>
+                <Text
+                  style={[
+                    styles.quickCardTitle,
+                    !isAuthenticated && styles.quickCardTextDisabled,
+                  ]}
+                >
+                  Favourites
+                </Text>
+                <Text
+                  style={[
+                    styles.quickCardSubtitle,
+                    !isAuthenticated && styles.quickCardTextDisabled,
+                  ]}
+                >
+                  Saved places
+                </Text>
               </Pressable>
 
               <Pressable
-                onPress={() => {}}
+                onPress={() =>
+                  requireAuth(() => {
+                    // ovdje kasnije npr. router.push('/history') kad bude gotova stranica
+                  })
+                }
                 style={({ pressed }) => [
                   styles.quickCard,
                   styles.softShadow,
+                  !isAuthenticated && styles.quickCardDisabled,
                   pressed && styles.quickCardPressed,
                   pressed && styles.pressedScale,
                 ]}
               >
                 <Ionicons name="time" size={22} color="#b88500" />
-                <Text style={styles.quickCardTitle}>History</Text>
-                <Text style={styles.quickCardSubtitle}>Recent parking</Text>
+                <Text
+                  style={[
+                    styles.quickCardTitle,
+                    !isAuthenticated && styles.quickCardTextDisabled,
+                  ]}
+                >
+                  History
+                </Text>
+                <Text
+                  style={[
+                    styles.quickCardSubtitle,
+                    !isAuthenticated && styles.quickCardTextDisabled,
+                  ]}
+                >
+                  Recent parking
+                </Text>
               </Pressable>
             </View>
-          </View>
 
-          <View style={styles.authCard}>
-            <Text style={styles.authTitle}>Already have an account?</Text>
-
-            <Pressable
-              //onPress={() => router.navigate('/login')}
-              onPress={() => {
-                router.push('/login');
-              }}           
-              style={({ pressed }) => [
-                styles.loginShadow,
-                pressed && styles.pressedScale,
-              ]}
-            >
-              {({ pressed }) => (
-                <LinearGradient
-                  colors={pressed ? ['#247ee8', '#0059c9'] : ['#2c8cff', '#0066e8']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
-                  style={styles.loginButton}
-                >
-                  <Text style={styles.loginButtonText}>Log In</Text>
-                </LinearGradient>
-              )}
-            </Pressable>
-              
-            <Pressable
-              onPress={() => {
-                router.push('/register');
-              }}
-              style={({ pressed }) => [
-                styles.signUpLink,
-                pressed && styles.signUpLinkPressed,
-              ]}
-            >
-              <Text style={styles.signUpText}>
-                Don’t have an account? <Text style={styles.signUpBold}>Sign Up</Text>
+            {!isAuthenticated && (
+              <Text style={styles.lockedHint}>
+                Log in to access favourites and history.
               </Text>
-            </Pressable>
+            )}
           </View>
+
+          {!isAuthenticated ? (
+            <View style={styles.authCard}>
+              <Text style={styles.authTitle}>Already have an account?</Text>
+
+              <Pressable
+                onPress={() => {
+                  router.push('/login');
+                }}           
+                style={({ pressed }) => [
+                  styles.loginShadow,
+                  pressed && styles.pressedScale,
+                ]}
+              >
+                {({ pressed }) => (
+                  <LinearGradient
+                    colors={pressed ? ['#247ee8', '#0059c9'] : ['#2c8cff', '#0066e8']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.loginButton}
+                  >
+                    <Text style={styles.loginButtonText}>Log In</Text>
+                  </LinearGradient>
+                )}
+              </Pressable>
+                
+              <Pressable
+                onPress={() => {
+                  router.push('/register');
+                }}
+                style={({ pressed }) => [
+                  styles.signUpLink,
+                  pressed && styles.signUpLinkPressed,
+                ]}
+              >
+                <Text style={styles.signUpText}>
+                  Don’t have an account? <Text style={styles.signUpBold}>Sign Up</Text>
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+              <View style={styles.authCard}>
+                <Text style={styles.authTitle}>Welcome, {user?.username}</Text>
+              </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -303,7 +368,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#8a97aa',
   },
-
+  quickCardTextDisabled: {
+    color: '#aab4c3',
+  },
   authCard: {
     backgroundColor: '#ffffff',
     borderRadius: 24,
@@ -370,6 +437,14 @@ const styles = StyleSheet.create({
   },
   pressedScale: {
     transform: [{ scale: 0.97 }],
+  },
+  lockedHint: {
+    fontSize: 13,
+    color: '#72819a',
+    paddingHorizontal: 4,
+  },
+  quickCardDisabled: {
+    opacity: 0.6,
   },
 });
 
