@@ -1,11 +1,11 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.DataServices;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 
 import org.springframework.stereotype.Service;
 import org.springframework.core.io.ClassPathResource;

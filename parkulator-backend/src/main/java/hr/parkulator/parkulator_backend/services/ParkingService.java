@@ -10,10 +10,10 @@ import java.util.List;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
-import hr.parkulator.parkulator_backend.dto.ParkingDTO;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
 
 @Service

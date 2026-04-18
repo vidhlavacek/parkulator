@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.dto;
+package hr.parkulator.parkulator_backend.dto.parking;
 
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import lombok.*;

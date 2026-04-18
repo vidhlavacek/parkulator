@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.DataServices;
 
 import org.springframework.stereotype.Service;
 
@@ -6,9 +6,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import tools.jackson.databind.JsonNode;
 import java.time.LocalDate;
@@ -158,16 +158,11 @@ public class LiveParkingDataService {
             String currPrice = prices.path("termin").stringValue();
             if(currPrice.equals("Parkirališno mjesto za punjenje električnih vozila") || currPrice.equals("Kamperi parkirnu naknadu plaćaju od 0-24")) continue;
 
-
-            if(parking.path("parking_name").stringValue().equals("Javna garaža Bazeni Kantrida")) System.out.print("OVDJEEE " + currPrice + "\n\n\n\n");
             if(currPrice.equals("") || currPrice.isBlank()){
                 defaultPriceFlag = true;
-                parkingPrice = prices.path("cijena").doubleValue();
-                 if(parking.path("parking_name").stringValue().equals("Javna garaža Bazeni Kantrida"))System.out.println("TU SAM U DEFPRICE FLAGU");
-            }
+                parkingPrice = prices.path("cijena").doubleValue();            }
             else {
                 specialPriceFlag = true;
-                 if(parking.path("parking_name").stringValue().equals("Javna garaža Bazeni Kantrida"))System.out.print("TU sam u special;");
             }
         }
 
