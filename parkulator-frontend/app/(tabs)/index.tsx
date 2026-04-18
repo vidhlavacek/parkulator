@@ -62,6 +62,7 @@ export default function HomeScreen() {
             <Pressable
               onPress={() => {
                 //logika za find parking
+                router.push("/allparkings");
               }}
               style={({ pressed }) => [
                 styles.mainButtonShadow,
