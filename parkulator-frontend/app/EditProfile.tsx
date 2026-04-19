@@ -8,7 +8,7 @@ const API_URL = "http://192.168.1.4:8080";
 
 export default function EditProfile() {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { updateUser, signOut } = useAuth();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -20,7 +20,7 @@ export default function EditProfile() {
 
   const updateUsername = async () => {
     if (!username.trim()) {
-      Alert.alert("Greška", "Unesi novi username");
+      Alert.alert("Error", "Please enter a new username");
       return;
     }
 
@@ -37,25 +37,16 @@ export default function EditProfile() {
       });
 
       if (res.ok) {
-        Alert.alert(
-          "Uspjeh",
-          "Username je ažuriran. Prijavi se ponovno da vidiš promjene.",
-          [
-            {
-              text: "OK",
-              onPress: async () => {
-                await signOut();
-                router.replace("/login");
-              },
-            },
-          ]
-        );
+        await updateUser({ username: username.trim() });
+        Alert.alert("Success", "Username updated");
+        setUsername("");
+        router.back();
       } else {
         const msg = await res.text();
-        Alert.alert("Greška", msg || "Neuspješno ažuriranje");
+        Alert.alert("Error", msg || "Failed to update username");
       }
     } catch (e) {
-      Alert.alert("Greška", "Problem s vezom na server");
+      Alert.alert("Error", "Could not connect to server");
     } finally {
       setLoading(false);
     }
@@ -63,7 +54,7 @@ export default function EditProfile() {
 
   const updateEmail = async () => {
     if (!email.trim() || !email.includes("@")) {
-      Alert.alert("Greška", "Unesi ispravan email");
+      Alert.alert("Error", "Please enter a valid email");
       return;
     }
 
@@ -80,9 +71,11 @@ export default function EditProfile() {
       });
 
       if (res.ok) {
+        // IMPORTANT: JWT token still contains the old email in the 'sub' claim.
+        // Until the backend returns a new token, the safest option is to log the user out.
         Alert.alert(
-          "Email ažuriran",
-          "Molimo prijavi se ponovno s novim emailom.",
+          "Email updated",
+          "Please log in again with your new email.",
           [
             {
               text: "OK",
@@ -95,10 +88,10 @@ export default function EditProfile() {
         );
       } else {
         const msg = await res.text();
-        Alert.alert("Greška", msg || "Neuspješno ažuriranje");
+        Alert.alert("Error", msg || "Failed to update email");
       }
     } catch (e) {
-      Alert.alert("Greška", "Problem s vezom na server");
+      Alert.alert("Error", "Could not connect to server");
     } finally {
       setLoading(false);
     }
@@ -106,15 +99,15 @@ export default function EditProfile() {
 
   const updatePassword = async () => {
     if (!oldPassword || !newPassword) {
-      Alert.alert("Greška", "Popuni obje lozinke");
+      Alert.alert("Error", "Please fill in both password fields");
       return;
     }
     if (newPassword.length < 6) {
-      Alert.alert("Greška", "Nova lozinka mora imati najmanje 6 znakova");
+      Alert.alert("Error", "New password must be at least 6 characters");
       return;
     }
     if (oldPassword === newPassword) {
-      Alert.alert("Greška", "Nova lozinka mora biti različita od stare");
+      Alert.alert("Error", "New password must be different from the old one");
       return;
     }
 
@@ -131,16 +124,16 @@ export default function EditProfile() {
       });
 
       if (res.ok) {
-        Alert.alert("Uspjeh", "Lozinka je promijenjena");
+        Alert.alert("Success", "Password changed");
         setOldPassword("");
         setNewPassword("");
         router.back();
       } else {
         const msg = await res.text();
-        Alert.alert("Greška", msg || "Pogrešna stara lozinka");
+        Alert.alert("Error", msg || "Incorrect old password");
       }
     } catch (e) {
-      Alert.alert("Greška", "Problem s vezom na server");
+      Alert.alert("Error", "Could not connect to server");
     } finally {
       setLoading(false);
     }
@@ -148,10 +141,10 @@ export default function EditProfile() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Uredi profil</Text>
+      <Text style={styles.title}>Edit Profile</Text>
 
       <TextInput
-        placeholder="Novi username"
+        placeholder="New username"
         value={username}
         onChangeText={setUsername}
         style={styles.input}
@@ -163,11 +156,11 @@ export default function EditProfile() {
         onPress={updateUsername}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>Promijeni username</Text>
+        <Text style={styles.buttonText}>Change username</Text>
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Novi email"
+        placeholder="New email"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -180,11 +173,11 @@ export default function EditProfile() {
         onPress={updateEmail}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>Promijeni email</Text>
+        <Text style={styles.buttonText}>Change email</Text>
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Stara lozinka"
+        placeholder="Old password"
         secureTextEntry
         value={oldPassword}
         onChangeText={setOldPassword}
@@ -192,7 +185,7 @@ export default function EditProfile() {
         editable={!loading}
       />
       <TextInput
-        placeholder="Nova lozinka"
+        placeholder="New password"
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
@@ -204,7 +197,7 @@ export default function EditProfile() {
         onPress={updatePassword}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>Promijeni lozinku</Text>
+        <Text style={styles.buttonText}>Change password</Text>
       </TouchableOpacity>
     </View>
   );

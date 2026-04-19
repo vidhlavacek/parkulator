@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_URL = 'http://192.168.1.4:8080'; // izvuci u config poslije
+
 type User = {
   id: number;
   email: string;
@@ -21,6 +23,8 @@ type AuthContextType = {
   isLoading: boolean;
   signIn: (data: AuthResponse) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  updateUser: (partial: Partial<User>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       token,
       isAuthenticated: !!token,
       isLoading,
+
       signIn: async (data: AuthResponse) => {
         const userData = {
           id: data.id,
@@ -70,12 +75,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await AsyncStorage.setItem(TOKEN_KEY, data.token);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
       },
+
       signOut: async () => {
         setToken(null);
         setUser(null);
 
         await AsyncStorage.removeItem(TOKEN_KEY);
         await AsyncStorage.removeItem(USER_KEY);
+      },
+
+      // Dohvaća svježe podatke s backenda
+      refreshUser: async () => {
+        if (!token) return;
+
+        try {
+          const res = await fetch(`${API_URL}/users/current`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (res.ok) {
+            const fresh: User = await res.json();
+            setUser(fresh);
+            await AsyncStorage.setItem(USER_KEY, JSON.stringify(fresh));
+          }
+        } catch (e) {
+          console.log('Refresh user error:', e);
+        }
+      },
+
+      // Lokalni update bez odlaska na backend (za odmah nakon uspješnog PUT-a)
+      updateUser: async (partial: Partial<User>) => {
+        if (!user) return;
+        const updated = { ...user, ...partial };
+        setUser(updated);
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(updated));
       },
     }),
     [user, token, isLoading]
