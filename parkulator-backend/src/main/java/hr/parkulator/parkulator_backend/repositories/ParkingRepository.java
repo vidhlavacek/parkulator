@@ -10,6 +10,8 @@ import hr.parkulator.parkulator_backend.entities.Parking;
 @Repository
 public interface ParkingRepository extends JpaRepository<Parking, Long> {
 
+    Optional<Parking> findBySourceKey(String sourceKey);
+
     Optional<Parking> findByName(String name);
 
     Optional<Parking> findByAddress(String address);

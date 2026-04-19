@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = 'http://192.168.1.4:8080'; 
+const API_URL = 'http://192.168.1.105:8080'; 
 // Android emulator: 10.0.2.2
 // Ako testiraš na fizičkom mobitelu, ovdje ide IP od tvog računala, npr. http://192.168.1.5:8080
 

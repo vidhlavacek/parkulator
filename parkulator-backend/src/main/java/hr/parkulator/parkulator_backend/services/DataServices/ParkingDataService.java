@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.DataServices;
 
 import java.util.List;
 
@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.entities.Parking;
-import hr.parkulator.parkulator_backend.dto.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 
 @Service
@@ -27,8 +28,9 @@ public class ParkingDataService {
         dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
         for(ParkingDataDTO dto : dtos){
+            if(parkingRepository.findBySourceKey(dto.getSourceKey()).isPresent()) continue;
             Parking parking = new Parking();
-            parking.setExternalId(dto.getExternalId());
+            parking.setSourceKey(dto.getSourceKey());
             parking.setName(dto.getName());
             parking.setAddress(dto.getAddress());
             parking.setLink(dto.getLink());
@@ -54,6 +56,32 @@ public class ParkingDataService {
     
     @Transactional
     public void saveRefreshData(){
-        
+        List<ParkingRefreshDTO> pr = liveParkingDataService.refreshRijekaPlusData();
+        //pr.addAll(staticParkingDataService.getRefreshStaticParkingData());
+
+        for(ParkingRefreshDTO RefreshData : pr){
+            Parking parking = parkingRepository
+                .findBySourceKey(RefreshData.getSourceKey())
+                .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
+
+            parking.setSourceKey(RefreshData.getSourceKey());
+            parking.setName(RefreshData.getName());
+            parking.setLive(RefreshData.isLive());
+            parking.setAvailableSpots(RefreshData.getAvailableSpots());
+            
+            parking.getParkingPrices().clear();
+            List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
+            for(ParkingPriceDTO pp : ppDto){
+                ParkingPrice parkingPrice = new ParkingPrice();
+                
+                parkingPrice.setDay(pp.getDay());
+                parkingPrice.setSpecial(pp.getSpecial());
+                parkingPrice.setOpeningHour(pp.getOpeningHour());
+                parkingPrice.setClosingHour(pp.getClosingHour());
+                parkingPrice.setPrice(pp.getPrice());
+                
+                parking.addPrice(parkingPrice);
+            }
+        }
     }
 }
