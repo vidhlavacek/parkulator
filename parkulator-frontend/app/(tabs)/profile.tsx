@@ -7,14 +7,10 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
-
 export default function Profile() {
-
   const router = useRouter();
   const { user, isAuthenticated, isLoading, signOut } = useAuth();
 
@@ -24,15 +20,21 @@ export default function Profile() {
   };
 
   if (isLoading) return null;
+
   if (!isAuthenticated) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Profile</Text>
         <View style={styles.card}>
           <Text style={styles.name}>You are not logged in</Text>
-          <Text style={styles.email}>Please log in to access your profile.</Text>
+          <Text style={styles.email}>
+            Please log in to access your profile.
+          </Text>
 
-          <TouchableOpacity style={styles.loginButton} onPress={() => router.push("/login")}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push("/login")}
+          >
             <Text style={styles.loginButtonText}>Log In</Text>
           </TouchableOpacity>
         </View>
@@ -56,7 +58,11 @@ export default function Profile() {
             <Text style={styles.email}>{user?.email}</Text>
           </View>
 
-          <TouchableOpacity style={styles.editBtn}>
+          {/* ✅ FIXED BUTTON */}
+          <TouchableOpacity
+            style={styles.editBtn}
+            onPress={() => router.push("/EditProfile")}
+          >
             <Text>Edit</Text>
           </TouchableOpacity>
         </View>
@@ -97,7 +103,6 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingTop: 40,
   },
-  
   title: {
     fontSize: 22,
     fontWeight: "bold",
