@@ -52,5 +52,5 @@ class ParkingServiceUnitTest {
         assertThat(result).contains(near);
         assertThat(result).doesNotContain(far);
         */
-        }
-}
+    }
+} 

@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.DataServices;
 
 import org.springframework.stereotype.Service;
 
@@ -6,9 +6,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import tools.jackson.databind.JsonNode;
 import java.time.LocalDate;
@@ -129,7 +129,6 @@ public class LiveParkingDataService {
                 availableSpots = parking.get("parking_data").get("slobodno").asLong(0);
                 
                 ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, parkingPrices);
-                System.out.print(lpd.toString());
                 lpd_list.add(lpd);
             }
             else{
@@ -157,13 +156,11 @@ public class LiveParkingDataService {
         //special price if termin != ""
         for(JsonNode prices : parking.path("parking_data").path("cijena")){
             String currPrice = prices.path("termin").stringValue();
-            
             if(currPrice.equals("Parkirališno mjesto za punjenje električnih vozila") || currPrice.equals("Kamperi parkirnu naknadu plaćaju od 0-24")) continue;
-            
-            if(currPrice.equals("")){
+
+            if(currPrice.equals("") || currPrice.isBlank()){
                 defaultPriceFlag = true;
-                parkingPrice = prices.path("cijena").doubleValue();
-            }
+                parkingPrice = prices.path("cijena").doubleValue();            }
             else {
                 specialPriceFlag = true;
             }
@@ -179,22 +176,6 @@ public class LiveParkingDataService {
 
         if(defaultPriceFlag && !specialPriceFlag) {
             for(JsonNode workhours : parking.path("parking_data").path("vrijeme_naplate")){
-                /*if(workhours.get("dani_i_sati").stringValue().equals("Radnim danom") || workhours.get("dani_i_sati").stringValue().equals("Radnim danom:")){
-                    workdays = WorkDayEnum.WORKDAY;
-                }
-                else if(workhours.get("dani_i_sati").stringValue().equals("Subotom") || workhours.get("dani_i_sati").stringValue().equals("Subotom:")){
-                    workdays = WorkDayEnum.SATURDAY;
-                }
-                else if(workhours.get("dani_i_sati").stringValue().equals("Nedjeljom") || workhours.get("dani_i_sati").stringValue().equals("Nedjeljom:")){
-                    workdays = WorkDayEnum.SUNDAY;
-                }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom")){
-                    workdays = WorkDayEnum.ALLDAYS;
-                }
-                else {
-                    workdays = WorkDayEnum.SPECIAL;
-                    special = workhours.get("dani_i_sati").stringValue();
-                }*/
                 if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom")){
                     workdays = WorkDayEnum.WORKDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
@@ -207,7 +188,7 @@ public class LiveParkingDataService {
                     workdays = WorkDayEnum.SUNDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom")){
+                else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom") || workhours.get("dani_i_sati").stringValue().contains("Naplata parkiranja vrši se:") || workhours.get("dani_i_sati").stringValue().contains("Naplata se vrši od")){
                     workdays = WorkDayEnum.ALLDAYS;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
                 }
@@ -216,15 +197,6 @@ public class LiveParkingDataService {
                     special = workhours.get("dani_i_sati").stringValue();
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
                 }
-                /*
-                String[] opening = workhours.get("vrijeme_start").stringValue().split(":");
-                openingHour = Integer.parseInt(opening[0]);
-                String[] closing = workhours.get("vrijeme_kraj").stringValue().split(":");
-                closingHour = Integer.parseInt(closing[0]);
-                
-                ParkingPriceDTO pp = new ParkingPriceDTO(workdays, special, openingHour, closingHour, parkingPrice);
-                parkingPrices.add(pp);
-                */
             }
         }
         else if (specialPriceFlag && !defaultPriceFlag) {
@@ -320,7 +292,6 @@ public class LiveParkingDataService {
                 adr_final.add(adr);
             }
         }
-        System.out.print(adr_final.toString() + "\n");
         return adr_final;
     }
 }

@@ -1,4 +1,4 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.DataServices;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import hr.parkulator.parkulator_backend.dto.ParkingDataDTO;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.entities.Parking;
-import hr.parkulator.parkulator_backend.dto.ParkingPriceDTO;
-import hr.parkulator.parkulator_backend.dto.ParkingRefreshDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 
 @Service
@@ -28,6 +28,7 @@ public class ParkingDataService {
         dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
         for(ParkingDataDTO dto : dtos){
+            if(parkingRepository.findBySourceKey(dto.getSourceKey()).isPresent()) continue;
             Parking parking = new Parking();
             parking.setSourceKey(dto.getSourceKey());
             parking.setName(dto.getName());
