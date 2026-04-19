@@ -51,7 +51,7 @@ public class ParkingService {
                 else if(day == DayOfWeek.SUNDAY){
                     wde = WorkDayEnum.SUNDAY;
                 }
-                System.out.print("Parking:" + parking.getName() + "|" + parkingPrice.getDay().toString() + "|" + wde.toString() + "\n" );
+                
                 if(parkingPrice.getDay() != WorkDayEnum.SPECIAL){
                     if(parkingPrice.getDay() == wde || parkingPrice.getDay() == WorkDayEnum.ALLDAYS){
                         

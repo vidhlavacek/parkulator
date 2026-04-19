@@ -6,6 +6,7 @@ import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
 
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +31,23 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
+
+      <Pressable
+          onPress={() => router.back()}
+          style={{
+            padding: 5,
+            margin: 5,
+            borderRadius: 30,
+            position: "absolute",
+            top: 45,
+            left: 20,
+            zIndex: 10,
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>Back</Text>
+        </Pressable>
+      
+
       <Text style={styles.title}>Welcome back!</Text>
 
       <View style={styles.card}>
