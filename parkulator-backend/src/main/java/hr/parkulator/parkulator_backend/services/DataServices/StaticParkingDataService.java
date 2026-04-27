@@ -17,13 +17,11 @@ import tools.jackson.databind.ObjectMapper;
 public class StaticParkingDataService {
     
     public List<ParkingDataDTO> getInitialStaticParkingData(){
+        //Reads our manually written JSON file and maps it to ParkingDataDTO object list
         try{
             InputStream inputStream = new ClassPathResource("data/parkings.json").getInputStream();
-
             ObjectMapper om = new ObjectMapper();
-
             JsonNode root = om.readTree(inputStream);
-
             List<ParkingDataDTO> result = new ArrayList<>();
             
             for (JsonNode node : root) {
@@ -46,10 +44,11 @@ public class StaticParkingDataService {
     }
 
     public List<ParkingRefreshDTO> getRefreshStaticParkingData(){
+        //Reads our manually written refresh JSON for refreshing the parking data
         try{
             InputStream inputStream = new ClassPathResource("data/parkingsUpdate.json").getInputStream();
             ObjectMapper om = new ObjectMapper();
-             JsonNode root = om.readTree(inputStream);
+            JsonNode root = om.readTree(inputStream);
 
             List<ParkingRefreshDTO> result = new ArrayList<>();
             
@@ -72,6 +71,7 @@ public class StaticParkingDataService {
     }
 
     public String createSourceKey(String externalId, String name, String address){
+        //Creates a source key, the same method is in the LiveParkingDataService :(
         return externalId.toLowerCase().trim() + "|" + name.toLowerCase().trim() + "|" + address.toLowerCase().trim();
     }
     

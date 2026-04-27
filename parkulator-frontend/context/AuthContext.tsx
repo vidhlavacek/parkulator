@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-const API_URL = 'http://192.168.1.4:8080'; // izvuci u config poslije
+const API_URL = 'http://10.0.2.2:8080'; // izvuci u config poslije
 
 type User = {
   id: number;

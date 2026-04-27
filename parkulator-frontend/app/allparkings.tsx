@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
-import { blue, green } from "react-native-reanimated/lib/typescript/Colors";
 import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, Linking, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 
 interface Parking {
   id: number;
@@ -28,7 +26,7 @@ const AllParkings = () => {
     console.log("FETCHING PARKINGS...");
   
     try {
-      const response = await fetch("http://192.168.1.105:8080/parkings/all");
+      const response = await fetch("http://10.0.2.2:8080/parkings/all");
   
       console.log("STATUS:", response.status);
   

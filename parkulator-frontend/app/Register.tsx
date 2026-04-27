@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
-import { useState } from "react";
 import { useRouter } from "expo-router";
-import Input from "../components/ui/Input";
+import { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
 
@@ -30,6 +30,22 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
+
+      <Pressable
+          onPress={() => router.push('/')}
+          style={{
+            padding: 5,
+            margin: 5,
+            borderRadius: 30,
+            position: "absolute",
+            top: 45,
+            left: 20,
+            zIndex: 10,
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>Back</Text>
+        </Pressable>
+        
       <Text style={styles.title}>Create account</Text>
 
       <View style={styles.card}>

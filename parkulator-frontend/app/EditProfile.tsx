@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://192.168.1.4:8080";
+const API_URL = "http://10.0.2.2:8080";
 
 export default function EditProfile() {
   const router = useRouter();

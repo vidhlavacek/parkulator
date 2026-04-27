@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Pressable, Alert,} from "react-native";
-import { useState } from "react";
 import { useRouter } from "expo-router";
-import Input from "../components/ui/Input";
+import { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View, } from "react-native";
 import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
 
@@ -33,7 +33,7 @@ export default function Login() {
     <View style={styles.container}>
 
       <Pressable
-          onPress={() => router.back()}
+          onPress={() => router.push('/')}
           style={{
             padding: 5,
             margin: 5,
