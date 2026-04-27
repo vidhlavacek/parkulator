@@ -1,36 +1,38 @@
 # Parkulator
 
-Parkulator je mobilna aplikacija koja pomaže korisnicima pronaći parkirna mjesta u Rijeci.
-Korisnik unosi željenu lokaciju, nakon čega aplikacija automatski pretražuje parkirališta u okolici te lokacije koja se zatim prikazuju korisniku. Svako parkiralište se rangira prema više kriterija, kako bi korisnik što lakše odabrao najbolju opciju. Rangiranje se temelji na udaljenosti od unesene lokacije, cijeni parkiranja te dostupnosti slobodnih mjesta u trenutku pretrage.
+Parkulator is a mobile application that helps users find available parking spaces in Rijeka.
+The user enters a desired location, after which the application automatically searches for nearby parking lots. These parking options are then displayed to the user.
+Each parking lot is ranked based on multiple criteria to help the user choose the best option. The ranking is based on the distance from the entered location, the parking price and the number of free spaces at the time of the search.
 
-## Funkcionalnost
+## Functionality
 
-- unos odredišne lokacije
-- pronalaženje parkirališta u okolici lokacije
-- rangiranje parkirališta
-- prikaz detalja parkirališta (cijena, udaljenost, dostupnost)
-- prikaz parkirališta na karti
-- omogućena navigacija do parkirališta
-- spremanje parkirališta u favorite
-- prikaz povijesti
+- entering a destination location
+- finding nearby parking lots
+- ranking parking options
+- displaying parking details (price, distance, availability)
+- showing parking locations on a map
+- navigation to selected parking
+- saving parking lots to favorites
+- viewing search and selected parking history
 
-## Rangiranje
+## Ranking
 
-Aplikacija za rangiranje koristi bodovanje:
-- udaljenost (40%)
-- cijena (30%)
-- dostupnost (30%)
+The application uses this scoring system for ranking:
 
-## Arhitektura
+- distance (40%)
+- price (30%)
+- availability (30%)
+
+## Architecture
 
 - Frontend: React Native (Expo)
 - Backend: Spring Boot REST API
-- Baza: PostgreSQL
+- Database: PostgreSQL
 
-Frontend komunicira s backendom putem HTTP zahtjeva.
+The frontend communicates with the backend via HTTP requests.
 
-## Sigurnost i autentikacija
+## Security and Authentication
 
-- JWT autentikacija
-- lozinke se hashiraju
-- token vrijedi 1 sat
+- JWT authentication
+- passwords are hashed
+- token validity: 1 hour
