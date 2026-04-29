@@ -15,13 +15,6 @@ Each parking lot is ranked based on multiple criteria to help the user choose th
 - saving parking lots to favorites
 - viewing search and selected parking history
 
-## Ranking
-
-The application uses this scoring system for ranking:
-
-- distance (40%)
-- price (30%)
-- availability (30%)
 
 ## Architecture
 
@@ -31,8 +24,48 @@ The application uses this scoring system for ranking:
 
 The frontend communicates with the backend via HTTP requests.
 
-## Security and Authentication
 
-- JWT authentication
-- passwords are hashed
-- token validity: 1 hour
+## Installation
+
+Before running the project, make sure you have installed:
+
+  - Java JDK 17
+  - Android Studio
+  - PostgreSQL
+  - Git
+  - Node.js
+
+
+## Running the Project
+
+  ### Backend (Spring Boot)
+  
+  Navigate to the backend directory and run:
+  ```bash
+  cd parkulator-backend
+  ./mvnw spring-boot:run
+  ```
+  
+  ### Frontend (React Native - Expo)
+  
+  Navigate to the frontend directory and run:
+  ```bash
+  cd parkulator-frontend
+  npx expo start
+  ```
+
+  This will open the Expo Developer Tools.
+  
+  To run the app:
+  
+  - Press  ```a```  to open on an Android emulator (must be running in Android Studio)
+  - Or scan the QR code using Expo Go on a physical device
+
+
+## Usage guide
+
+  1. Launch the application on your device
+  2. Enter a destination location
+  3. The app will display nearby parking options ranked by distance, price and availability
+  4. Select a parking lot to view detailed information
+  5. Start navigation to your chosen parking location
