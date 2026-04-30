@@ -25,20 +25,25 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //Main configuration for authentication
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
+            //Disable CSRF
             .csrf(csrf -> csrf.disable())
+            //Ensure session is not stored on server
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**", "/test-live-data", "/parkings/**").permitAll() 
                 .anyRequest().authenticated()
             )
+            //Add JWT filter before authentication filter
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+     //Loads user for authentication
     @Bean
     public UserDetailsService userDetailsService(UserRepository repo) {
         return email -> {
