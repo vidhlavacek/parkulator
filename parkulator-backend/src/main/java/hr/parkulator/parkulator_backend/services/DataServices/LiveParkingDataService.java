@@ -15,40 +15,53 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class LiveParkingDataService {
     //Method for connecting to Rijeka Plus REST API
     public JsonNode getRijekaPlusJSON(){
         WebClient webClient = WebClient.create();
         try {
+        log.info("Fetching https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/");
         JsonNode JSON = webClient.get()
             .uri("https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/")
             .retrieve()
             .bodyToMono(JsonNode.class)
             .block();
 
+        log.info("Fetching success");
         return JSON;
         } 
         catch (WebClientResponseException e) {
+            log.warn("Fetching failed, https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/ not responding");
             return null;
         } 
         catch (WebClientRequestException e) {
+            log.warn("Fetching failed, request failed");
             return null;
         } 
         catch (Exception e) {
+            log.warn("Fetching failed, exception {}", e);
             return null;
         }
     }
     
     //For refreshing occupancy data and checking online state of online parkings (Rijeka Plus)
     public List<ParkingRefreshDTO> refreshRijekaPlusData() {
+
+        log.info("Refreshing parking lot data...");
+
         //Get json from Rijeka Plus REST API Endpoint
         JsonNode parkiralista = getRijekaPlusJSON();
         List<ParkingRefreshDTO> lpr_list = new ArrayList<>();
-        if(parkiralista.isNull()) return lpr_list;
+        if(parkiralista.isNull()) {
+            log.warn("[LIVE PARKING LOT REFRESH] Error with fetch, returning null");
+            return lpr_list;
+        } 
 
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
@@ -88,15 +101,20 @@ public class LiveParkingDataService {
 
            
         }
+        log.info("[LIVE PARKING LOT REFRESH] Success");
         return lpr_list;
     } 
     
     //For getting initial data from Rijeka Plus 
     public  List<ParkingDataDTO> getInitialRijekaPlusData() {
+        log.info("[LIVE PARKING LOT INITIALIZATION] Starting...");
         //Get json from Rijeka Plus REST API Endpoint
         JsonNode parkiralista = getRijekaPlusJSON();
         List<ParkingDataDTO> lpd_list = new ArrayList<>();
-        if(parkiralista.isNull()) return lpd_list;
+        if(parkiralista.isNull()){
+            log.warn("[LIVE PARKING LOT INITIALIZATION] Error with fetch, returning null");
+            return lpd_list;
+        }
        
         //Building an array of ParkingDataDTO objects
         for(JsonNode parking : parkiralista){
@@ -144,7 +162,7 @@ public class LiveParkingDataService {
                 
             }
         }
-            
+            log.info("[LIVE PARKING LOT INITIALIZATION] Success");
             return lpd_list;
     }
 
