@@ -9,7 +9,7 @@ interface Parking {
   sourceKey: string;
   name: string;
   address: string;
-  link: string;
+  link: string;               
   type: string;
   isLive: boolean;
   spots: number;
@@ -18,21 +18,21 @@ interface Parking {
 }
 
 const AllParkings = () => {
-  const [parkings, setParkings] = useState<Parking[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [parkings, setParkings] = useState<Parking[]>([]);    
+  const [loading, setLoading] = useState(true);              
 
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";  
+  const isDark = colorScheme === "dark";                  
 
   const fetchParkings = async () => {
-    console.log("FETCHING PARKINGS...");
+    console.log("FETCHING PARKINGS...");        
   
     try {
-      const response = await fetch("http://192.168.1.105:8080/parkings/all");
+      const response = await fetch("http://192.168.1.105:8080/parkings/all");     
   
       console.log("STATUS:", response.status);
   
-      const text = await response.text();
+      const text = await response.text();       
       console.log("RAW RESPONSE:", text);
   
       let data = [];
@@ -47,7 +47,7 @@ const AllParkings = () => {
       }
   
       if (Array.isArray(data)) {
-        setParkings(data);
+        setParkings(data);          
       } else {
         console.log("DATA IS NOT ARRAY:", data);
         setParkings([]);
@@ -57,7 +57,7 @@ const AllParkings = () => {
       console.log("FETCH ERROR:", error);
       setParkings([]);
     } finally {
-      setLoading(false);
+      setLoading(false);        
     }
   };
 
@@ -67,9 +67,9 @@ const AllParkings = () => {
     fetchParkings();
   }, []);
 
-  //if (loading) return <Text style={{color: "white"}}>Loading...</Text>;
+  
 
-  if (!parkings.length) return <Text>Parking je prazan...</Text>;
+  if (!parkings.length) return <Text>Loading...</Text>;
 
   return (
     <>
@@ -78,6 +78,7 @@ const AllParkings = () => {
         headerBackTitle: "Back",}} />
 
     <View style={{ padding: 20,
+                  backgroundColor: '#dfe3ea',
                  }}>
       <FlatList
         data={parkings}
@@ -87,8 +88,9 @@ const AllParkings = () => {
       style={{
         marginBottom: 12,
         padding: 12,
-        borderRadius: 8,
+        borderRadius: 16,
 
+          
         backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
         borderWidth: 1,
         borderColor: isDark ? "#333" : "#ddd",
@@ -97,7 +99,7 @@ const AllParkings = () => {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
-        shadowRadius: 4,
+        shadowRadius: 2,
         elevation: 3,
       }}
     >

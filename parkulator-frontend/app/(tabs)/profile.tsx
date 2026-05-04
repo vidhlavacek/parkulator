@@ -9,6 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
+import Button from "@/components/ui/Button"
 
 export default function Profile() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     await signOut();
-    router.replace("/login");
+    router.replace("/Login");
   };
 
   if (isLoading) return null;
@@ -31,12 +32,11 @@ export default function Profile() {
             Please log in to access your profile.
           </Text>
 
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => router.push("/login")}
-          >
-            <Text style={styles.loginButtonText}>Log In</Text>
-          </TouchableOpacity>
+          <Button
+            title="Log In"
+            onPress={() => router.push("/Login")}
+            variant="primary"
+          />
         </View>
       </View>
     );
@@ -48,23 +48,21 @@ export default function Profile() {
 
       <View style={styles.card}>
         <View style={styles.row}>
-          <Image
-            source={{ uri: "https://via.placeholder.com/80" }}
-            style={styles.avatar}
-          />
+          
 
           <View style={{ flex: 1 }}>
             <Text style={styles.name}>{user?.username}</Text>
             <Text style={styles.email}>{user?.email}</Text>
           </View>
 
-          {/* ✅ FIXED BUTTON */}
           <TouchableOpacity
             style={styles.editBtn}
             onPress={() => router.push("/EditProfile")}
           >
             <Text>Edit</Text>
           </TouchableOpacity>
+          
+
         </View>
       </View>
 
@@ -99,7 +97,7 @@ function MenuItem({ icon, text }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f6fa",
+    backgroundColor: '#dfe3ea',
     padding: 15,
     paddingTop: 40,
   },
@@ -128,9 +126,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "bold",
+    //marginLeft: 5,
   },
   email: {
     color: "gray",
+    marginTop: 2,
+    marginBottom: 5,
   },
   editBtn: {
     padding: 6,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   logout: {
-    backgroundColor: "red",
+    backgroundColor: "#CA0B00",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -156,14 +157,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  loginButton: {
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  loginButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+ 
 });

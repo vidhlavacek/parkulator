@@ -1,8 +1,22 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/AuthContext";
+import { ScrollView } from "react-native";
+import Button from "@/components/ui/Button";
+import { Stack } from "expo-router";
 
 const API_URL = "http://192.168.1.4:8080";
 
@@ -27,6 +41,7 @@ export default function EditProfile() {
     setLoading(true);
     try {
       const token = await getToken();
+
       const res = await fetch(`${API_URL}/users/username`, {
         method: "PUT",
         headers: {
@@ -61,6 +76,7 @@ export default function EditProfile() {
     setLoading(true);
     try {
       const token = await getToken();
+
       const res = await fetch(`${API_URL}/users/email`, {
         method: "PUT",
         headers: {
@@ -71,8 +87,6 @@ export default function EditProfile() {
       });
 
       if (res.ok) {
-        // IMPORTANT: JWT token still contains the old email in the 'sub' claim.
-        // Until the backend returns a new token, the safest option is to log the user out.
         Alert.alert(
           "Email updated",
           "Please log in again with your new email.",
@@ -81,7 +95,7 @@ export default function EditProfile() {
               text: "OK",
               onPress: async () => {
                 await signOut();
-                router.replace("/login");
+                router.replace("/Login");
               },
             },
           ]
@@ -102,18 +116,21 @@ export default function EditProfile() {
       Alert.alert("Error", "Please fill in both password fields");
       return;
     }
+
     if (newPassword.length < 6) {
       Alert.alert("Error", "New password must be at least 6 characters");
       return;
     }
+
     if (oldPassword === newPassword) {
-      Alert.alert("Error", "New password must be different from the old one");
+      Alert.alert("Error", "New password must be different");
       return;
     }
 
     setLoading(true);
     try {
       const token = await getToken();
+
       const res = await fetch(`${API_URL}/users/password`, {
         method: "PUT",
         headers: {
@@ -140,80 +157,140 @@ export default function EditProfile() {
   };
 
   return (
+    <>
+    <Stack.Screen options={{ 
+      title: "Edit Profile",
+      headerBackTitle: "Back",}} />
+
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+    contentContainerStyle={{ flexGrow: 1, paddingBottom: 150}}
+    keyboardShouldPersistTaps="handled"
+  >
+
     <View style={styles.container}>
       <Text style={styles.title}>Edit Profile</Text>
 
-      <TextInput
-        placeholder="New username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.input}
-        autoCapitalize="none"
-        editable={!loading}
-      />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={updateUsername}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>Change username</Text>
-      </TouchableOpacity>
+      <View style={styles.card}>
+        <TextInput
+          placeholder="New username"
+          value={username}
+          onChangeText={setUsername}
+          style={styles.input}
+          autoCapitalize="none"
+          editable={!loading}
+        />
 
-      <TextInput
-        placeholder="New email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        editable={!loading}
-      />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={updateEmail}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>Change email</Text>
-      </TouchableOpacity>
+        <Button
+          title="Change username"
+          onPress={updateUsername}
+          variant="primary"
+          style={styles.buttonSpacing} 
+          
+        />
+        </View>
+        
 
-      <TextInput
-        placeholder="Old password"
-        secureTextEntry
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        style={styles.input}
-        editable={!loading}
-      />
-      <TextInput
-        placeholder="New password"
-        secureTextEntry
-        value={newPassword}
-        onChangeText={setNewPassword}
-        style={styles.input}
-        editable={!loading}
-      />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={updatePassword}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>Change password</Text>
-      </TouchableOpacity>
+
+        <View style={styles.card}>
+        <TextInput
+          placeholder="New email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          editable={!loading}
+        />
+
+        <Button
+          title="Change email"
+          onPress={updateEmail}
+          variant="primary"
+          style={styles.buttonSpacing}
+        />
+        </View>
+
+        <View style={styles.card}>
+        <TextInput
+          placeholder="Old password"
+          secureTextEntry
+          value={oldPassword}
+          onChangeText={setOldPassword}
+          style={styles.input}
+          editable={!loading}
+        />
+
+        <TextInput
+          placeholder="New password"
+          secureTextEntry
+          value={newPassword}
+          onChangeText={setNewPassword}
+          style={styles.input}
+          editable={!loading}
+        />
+
+        <Button
+          title="Change password"
+          onPress={updatePassword}
+          variant="primary"
+        />
+
+      </View>
     </View>
+    </ScrollView>
+      </TouchableWithoutFeedback>
+      
+  </KeyboardAvoidingView>
+  </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, paddingTop: 50, backgroundColor: "#f5f6fa" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  input: { backgroundColor: "white", padding: 12, borderRadius: 10, marginBottom: 10 },
-  button: {
-    backgroundColor: "#4b7bec",
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#f5f6fa",
+  },
+
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+    marginBottom: 5,
+  },
+
+  input: {
+    backgroundColor: "white",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 15,
-    alignItems: "center",
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
   },
-  buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: "white", fontWeight: "bold" },
+
+  smallButton: {
+    alignSelf: "center",
+    width: "70%",
+    marginBottom: 16,
+  },
+
+  buttonSpacing: {
+    marginBottom: 16,
+  },
 });

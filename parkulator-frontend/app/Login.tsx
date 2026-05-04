@@ -1,10 +1,13 @@
 import { View, Text, StyleSheet, Pressable, Alert,} from "react-native";
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import Input from "../components/ui/Input";
+import Input from "../components/ui/Input"; 
 import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
+import { useColorScheme } from "react-native";
+import { Stack } from "expo-router";
 
 
 export default function Login() {
@@ -13,6 +16,7 @@ export default function Login() {
   const router = useRouter();
   const { signIn } = useAuth();
 
+  const isDark = useColorScheme() === "dark";
 
   const handleLogin = async () => {
     try {
@@ -24,41 +28,36 @@ export default function Login() {
       await signIn(data);
       router.replace("/");
     } catch (error: any) {
-      Alert.alert("Login error", error?.message || "Neuspješna prijava");
+      Alert.alert("Login error", error?.message || "Failed to log in");
     }
   };
 
 
   return (
-    <View style={styles.container}>
+    <>
+    <Stack.Screen options={{ 
+      title: "Log In",
+      headerBackTitle: "Profile",}} />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <View style={[styles.container, { backgroundColor: isDark ? "#000" : "#f7f7f7" }]}>
 
-      <Pressable
-          onPress={() => router.back()}
-          style={{
-            padding: 5,
-            margin: 5,
-            borderRadius: 30,
-            position: "absolute",
-            top: 45,
-            left: 20,
-            zIndex: 10,
-          }}
-        >
-          <Text style={{ fontSize: 16 }}>Back</Text>
-        </Pressable>
-      
 
-      <Text style={styles.title}>Welcome back!</Text>
+      <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>
+        Welcome back!
+      </Text>
 
-      <View style={styles.card}>
+      <View style={[styles.card, { backgroundColor: isDark ? "#1e1e1e" : "#fff" }]}>
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
         <Input placeholder="Password" secure value={password} onChangeText={setPassword} />
-
-        <Button title="Login" onPress={handleLogin} />
+        <Button title="Log In" onPress={handleLogin} />
       </View>
 
       <Pressable
-        onPress={() => router.navigate("/register")}
+        onPress={() => router.navigate("/Register")}
         style={({ pressed }) => [styles.linkButton, pressed && styles.linkPressed]}
       >
         <Text style={styles.link}>
@@ -66,6 +65,9 @@ export default function Login() {
         </Text>
       </Pressable>
     </View>
+  </TouchableWithoutFeedback>
+</KeyboardAvoidingView>
+</>
   );
 }
 
@@ -96,7 +98,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#007AFF",
   },
-
   linkButton: {
     marginTop: 20,
     alignSelf: "center",
@@ -111,4 +112,5 @@ const styles = StyleSheet.create({
   linkBold: {
     fontWeight: "700",
   },
+  
 });

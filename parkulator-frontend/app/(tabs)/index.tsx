@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
+import Button from "@/components/ui/Button";
 
 
 
@@ -25,7 +26,7 @@ export default function HomeScreen() {
 
   const requireAuth = (callback: () => void) => {
     if (!isAuthenticated) {
-      router.push('/login' as any);
+      router.push('/Login' as any);
       return;
     }
 
@@ -61,7 +62,6 @@ export default function HomeScreen() {
 
             <Pressable
               onPress={() => {
-                //logika za find parking
                 router.push("/allparkings");
               }}
               style={({ pressed }) => [
@@ -84,7 +84,6 @@ export default function HomeScreen() {
 
             <Pressable
               onPress={() => {
-                //logika za mapu
               }}
               style={({ pressed }) => [
                 styles.mapButton,
@@ -105,7 +104,6 @@ export default function HomeScreen() {
               <Pressable
                 onPress={() =>
                   requireAuth(() => {
-                    // ovdje kasnije npr. router.push('/favourites') kad bude gotova stranica
                   })
                 }
                 style={({ pressed }) => [
@@ -138,7 +136,7 @@ export default function HomeScreen() {
               <Pressable
                 onPress={() =>
                   requireAuth(() => {
-                    // ovdje kasnije npr. router.push('/history') kad bude gotova stranica
+
                   })
                 }
                 style={({ pressed }) => [
@@ -180,30 +178,15 @@ export default function HomeScreen() {
             <View style={styles.authCard}>
               <Text style={styles.authTitle}>Already have an account?</Text>
 
-              <Pressable
-                onPress={() => {
-                  router.push('/login');
-                }}           
-                style={({ pressed }) => [
-                  styles.loginShadow,
-                  pressed && styles.pressedScale,
-                ]}
-              >
-                {({ pressed }) => (
-                  <LinearGradient
-                    colors={pressed ? ['#247ee8', '#0059c9'] : ['#2c8cff', '#0066e8']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={styles.loginButton}
-                  >
-                    <Text style={styles.loginButtonText}>Log In</Text>
-                  </LinearGradient>
-                )}
-              </Pressable>
+              <Button
+                    title="Log In"
+                    onPress={() => router.push("/Login")}
+                    variant="primary"
+                  />
                 
               <Pressable
                 onPress={() => {
-                  router.push('/register');
+                  router.push('/Register');
                 }}
                 style={({ pressed }) => [
                   styles.signUpLink,
@@ -376,7 +359,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 24,
     paddingHorizontal: 18,
-    paddingVertical: 18,
+    paddingVertical: 8,
     shadowColor: '#000',
     shadowOpacity: 0.06,
     shadowRadius: 10,
@@ -387,7 +370,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     color: '#72819a',
-    marginBottom: 14,
+    marginBottom: 3,
+   
   },
   loginShadow: {
     borderRadius: 16,
@@ -423,6 +407,7 @@ const styles = StyleSheet.create({
   signUpText: {
     fontSize: 15,
     color: '#6f7d92',
+    marginTop: 0,
   },
   signUpBold: {
     color: '#2c8cff',

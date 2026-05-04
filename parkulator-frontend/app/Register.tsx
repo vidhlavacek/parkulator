@@ -5,6 +5,8 @@ import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { Stack } from "expo-router";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -24,11 +26,21 @@ export default function Register() {
       await signIn(data);
       router.replace("/");
     } catch (error: any) {
-      Alert.alert("Register error", error?.message || "Neuspješna registracija");
+      Alert.alert("Register error", error?.message || "Failed to register");
     }
   };
 
   return (
+    <>
+
+    <Stack.Screen options={{ 
+      title: "Register",
+      headerBackTitle: "Log In",}} />
+    <KeyboardAvoidingView
+  style={{ flex: 1 }}
+  behavior={Platform.OS === "ios" ? "padding" : undefined}
+>
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <Text style={styles.title}>Create account</Text>
 
@@ -41,7 +53,7 @@ export default function Register() {
       </View>
 
       <Pressable
-        onPress={() => router.navigate("/login")}
+        onPress={() => router.navigate("/Login")}
         style={({ pressed }) => [styles.linkButton, pressed && styles.linkPressed]}
       >
         <Text style={styles.link}>
@@ -49,6 +61,9 @@ export default function Register() {
         </Text>
       </Pressable>
     </View>
+    </TouchableWithoutFeedback>
+</KeyboardAvoidingView>
+</>
   );
 }
 
