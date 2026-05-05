@@ -1,24 +1,38 @@
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = 'http://192.168.1.105:8080'; 
+const PARKULATOR_URL = "http://10.0.2.2:8080";
 // Android emulator: 10.0.2.2
-// Ako testiraš na fizičkom mobitelu, ovdje ide IP od tvog računala, npr. http://192.168.1.5:8080
+// If testing on physical phone, use the IP of your computer, e.g., http://192.168.1.5:8080
 
 const TOKEN_KEY = "auth_token";
 
-export async function authFetch(path: string, options: RequestInit = {}) {
+const api = axios.create({
+  baseURL: PARKULATOR_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  return config;
+});
 
-  return response;
+export function getApiErrorMessage(error: unknown, fallback = "Something went wrong") {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data;
+
+    if (typeof data === "string") return data;
+    if (data?.message) return data.message;
+  }
+
+  return fallback;
 }
+
+export default api;

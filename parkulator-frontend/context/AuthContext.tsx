@@ -1,13 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = 'http://192.168.1.4:8080'; // izvuci u config poslije
-
-type User = {
-  id: number;
-  email: string;
-  username: string;
-};
+import { getCurrentUserRequest, User } from "../services/user";
 
 type AuthResponse = {
   id: number;
@@ -89,17 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!token) return;
 
         try {
-          const res = await fetch(`${API_URL}/users/current`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const fresh = await getCurrentUserRequest();
 
-          if (res.ok) {
-            const fresh: User = await res.json();
-            setUser(fresh);
-            await AsyncStorage.setItem(USER_KEY, JSON.stringify(fresh));
-          }
+          setUser(fresh);
+          await AsyncStorage.setItem(USER_KEY, JSON.stringify(fresh));
         } catch (e) {
-          console.log('Refresh user error:', e);
+          console.log("Refresh user error:", e);
         }
       },
 

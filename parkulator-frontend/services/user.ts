@@ -1,16 +1,27 @@
-import { authFetch } from "./api";
+import api from "./api";
 
-export async function getCurrentUserRequest() {
-  const response = await authFetch("/users/current", {
-    method: "GET",
+export type User = {
+  id: number;
+  email: string;
+  username: string;
+};
+
+export async function getCurrentUserRequest(): Promise<User> {
+  const response = await api.get<User>("/users/current");
+  return response.data;
+}
+
+export async function updateUsernameRequest(username: string): Promise<void> {
+  await api.put("/users/username", { username });
+}
+
+export async function updateEmailRequest(email: string): Promise<void> {
+  await api.put("/users/email", { email });
+}
+
+export async function updatePasswordRequest(oldPassword: string, newPassword: string): Promise<void> {
+  await api.put("/users/password", {
+    oldPassword,
+    newPassword,
   });
-
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
-
-  if (!response.ok) {
-    throw new Error(data?.message || "Failed to load current user");
-  }
-
-  return data;
 }
