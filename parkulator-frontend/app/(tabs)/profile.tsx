@@ -67,12 +67,6 @@ export default function Profile() {
       </View>
 
       <View style={styles.card}>
-        <MenuItem icon="person-outline" text="Personal Info" />
-        <MenuItem icon="mail-outline" text="Email & Password" />
-        <MenuItem icon="notifications-outline" text="Notification Settings" />
-      </View>
-
-      <View style={styles.card}>
         <MenuItem icon="help-circle-outline" text="Help & Support" />
         <MenuItem icon="warning-outline" text="Report Issue" />
         <MenuItem icon="document-text-outline" text="Legal Information" />
@@ -117,16 +111,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 15,
-  },
   name: {
     fontSize: 16,
     fontWeight: "bold",
-    //marginLeft: 5,
   },
   email: {
     color: "gray",

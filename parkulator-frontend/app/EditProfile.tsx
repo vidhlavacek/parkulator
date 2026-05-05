@@ -194,8 +194,6 @@ export default function EditProfile() {
         />
         </View>
         
-
-
         <View style={styles.card}>
         <TextInput
           placeholder="New email"
@@ -282,12 +280,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: "#eee",
-  },
-
-  smallButton: {
-    alignSelf: "center",
-    width: "70%",
-    marginBottom: 16,
   },
 
   buttonSpacing: {

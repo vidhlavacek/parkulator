@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Stack } from "expo-router";
+import { ScrollView } from "react-native";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -32,16 +33,19 @@ export default function Register() {
 
   return (
     <>
-
-    <Stack.Screen options={{ 
+  <Stack.Screen options={{ 
       title: "Register",
       headerBackTitle: "Log In",}} />
-    <KeyboardAvoidingView
-  style={{ flex: 1 }}
-  behavior={Platform.OS === "ios" ? "padding" : undefined}
->
+  <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={styles.container}>
+  <ScrollView
+        contentContainerStyle={{ flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+      >
+  <View style={styles.container}>
       <Text style={styles.title}>Create account</Text>
 
       <View style={styles.card}>
@@ -61,8 +65,9 @@ export default function Register() {
         </Text>
       </Pressable>
     </View>
+    </ScrollView>
     </TouchableWithoutFeedback>
-</KeyboardAvoidingView>
+    </KeyboardAvoidingView>
 </>
   );
 }

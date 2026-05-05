@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
 import { useColorScheme } from "react-native";
 import { Stack } from "expo-router";
-
+import { ScrollView } from "react-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -43,6 +43,10 @@ export default function Login() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
 >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+    contentContainerStyle={{ flexGrow: 1}}
+    keyboardShouldPersistTaps="handled"
+    >
     <View style={[styles.container, { backgroundColor: isDark ? "#000" : "#f7f7f7" }]}>
 
 
@@ -65,6 +69,7 @@ export default function Login() {
         </Text>
       </Pressable>
     </View>
+    </ScrollView>
   </TouchableWithoutFeedback>
 </KeyboardAvoidingView>
 </>

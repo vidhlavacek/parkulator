@@ -407,7 +407,6 @@ const styles = StyleSheet.create({
   signUpText: {
     fontSize: 15,
     color: '#6f7d92',
-    marginTop: 0,
   },
   signUpBold: {
     color: '#2c8cff',
