@@ -5,29 +5,34 @@ import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
+import { getApiErrorMessage } from "../services/api";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
 
   const handleRegister = async () => {
-    try {
-      const data = await registerRequest({
-        email,
-        username,
-        password,
-      });
+  setLoading(true);
 
-      await signIn(data);
-      router.replace("/");
-    } catch (error: any) {
-      Alert.alert("Register error", error?.message || "Neuspješna registracija");
-    }
-  };
+  try {
+    const data = await registerRequest({
+      email: email.trim(),
+      username: username.trim(),
+      password,
+    });
 
+    await signIn(data);
+    router.replace("/(tabs)");
+  } catch (e) {
+    Alert.alert("Registration failed", getApiErrorMessage(e, "Registration failed"));
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create account</Text>
