@@ -5,20 +5,21 @@ import {
   TextInput,
   StyleSheet,
   Alert,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { useAuth } from "../context/AuthContext";
-import { ScrollView } from "react-native";
+import { Stack, useRouter } from "expo-router";
 import Button from "@/components/ui/Button";
-import { Stack } from "expo-router";
-
-const API_URL = "http://192.168.1.4:8080";
+import { useAuth } from "../context/AuthContext";
+import {
+  updateUsernameRequest,
+  updateEmailRequest,
+  updatePasswordRequest,
+} from "../services/user";
+import { getApiErrorMessage } from "../services/api";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -30,7 +31,6 @@ export default function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getToken = async () => await AsyncStorage.getItem("auth_token");
 
   const updateUsername = async () => {
     if (!username.trim()) {
@@ -39,29 +39,17 @@ export default function EditProfile() {
     }
 
     setLoading(true);
+
     try {
-      const token = await getToken();
+      await updateUsernameRequest(username.trim());
 
-      const res = await fetch(`${API_URL}/users/username`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ username: username.trim() }),
-      });
+      await updateUser({ username: username.trim() });
 
-      if (res.ok) {
-        await updateUser({ username: username.trim() });
-        Alert.alert("Success", "Username updated");
-        setUsername("");
-        router.back();
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Failed to update username");
-      }
+      Alert.alert("Success", "Username updated");
+      setUsername("");
+      router.back();
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Failed to update username"));
     } finally {
       setLoading(false);
     }
@@ -74,38 +62,25 @@ export default function EditProfile() {
     }
 
     setLoading(true);
+
     try {
-      const token = await getToken();
+      await updateEmailRequest(email.trim());
 
-      const res = await fetch(`${API_URL}/users/email`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-
-      if (res.ok) {
-        Alert.alert(
-          "Email updated",
-          "Please log in again with your new email.",
-          [
-            {
-              text: "OK",
-              onPress: async () => {
-                await signOut();
-                router.replace("/Login");
-              },
+      Alert.alert(
+        "Email updated",
+        "Please log in again with your new email.",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              await signOut();
+              router.replace("/login");
             },
-          ]
-        );
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Failed to update email");
-      }
+          },
+        ]
+      );
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Failed to update email"));
     } finally {
       setLoading(false);
     }
@@ -128,29 +103,16 @@ export default function EditProfile() {
     }
 
     setLoading(true);
+
     try {
-      const token = await getToken();
+      await updatePasswordRequest(oldPassword, newPassword);
 
-      const res = await fetch(`${API_URL}/users/password`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
-
-      if (res.ok) {
-        Alert.alert("Success", "Password changed");
-        setOldPassword("");
-        setNewPassword("");
-        router.back();
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Incorrect old password");
-      }
+      Alert.alert("Success", "Password changed");
+      setOldPassword("");
+      setNewPassword("");
+      router.back();
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Incorrect old password"));
     } finally {
       setLoading(false);
     }

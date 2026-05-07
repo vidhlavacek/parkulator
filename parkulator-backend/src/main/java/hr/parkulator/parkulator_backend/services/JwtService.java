@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 public class JwtService {
     private final SecretKey key;
 
+    //JWT signing key loaded from application properties
     public JwtService(@Value("${jwt.secret}") String secret){
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }

@@ -15,88 +15,116 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class LiveParkingDataService {
-    //Method for connecting to Rijeka Plus REST API
+    
     public JsonNode getRijekaPlusJSON(){
+        //Method for connecting to Rijeka Plus REST API, returns a JSON response
+
         WebClient webClient = WebClient.create();
         try {
+        log.info("Fetching https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/");
         JsonNode JSON = webClient.get()
             .uri("https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/")
             .retrieve()
             .bodyToMono(JsonNode.class)
             .block();
 
+        log.info("Fetching success");
         return JSON;
         } 
+        //Returns null, handled when calling the method
         catch (WebClientResponseException e) {
+            log.warn("Fetching failed, https://www.rijeka-plus.hr/wp-json/restAPI/v1/parkingAPI/ not responding");
             return null;
         } 
         catch (WebClientRequestException e) {
+            log.warn("Fetching failed, request failed");
             return null;
         } 
         catch (Exception e) {
+            log.warn("Fetching failed, exception {}", e);
             return null;
         }
     }
     
-    //For refreshing occupancy data and checking online state of online parkings (Rijeka Plus)
     public List<ParkingRefreshDTO> refreshRijekaPlusData() {
+
+        log.info("Refreshing parking lot data...");
+
         //Get json from Rijeka Plus REST API Endpoint
         JsonNode parkiralista = getRijekaPlusJSON();
         List<ParkingRefreshDTO> lpr_list = new ArrayList<>();
-        if(parkiralista.isNull()) return lpr_list;
+        if(parkiralista.isNull()) {
+            log.warn("[LIVE PARKING LOT REFRESH] Error with fetch, returning null");
+            return lpr_list;
+        } 
 
+        //For checking if the data is recent
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
 
         //Checks live status and updates all live parkings
         for(JsonNode parking : parkiralista){
             List<ParkingPriceDTO> pp = mapParkingPrice(parking);
+            
             String externalID = parking.get("parking_data").get("parking_id").asString("");
             String name = parking.get("parking_name").asString("");
             String address = parking.path("parking_data").path("parkiralista-ulice").asString("");
             boolean isLive = false;
             Long availableSpots = 0L;
+            
+            if(pp == null){
+                //To be replaced with logger when logger is implemented
+                System.out.print("Parking with name " + name + " and ExternalID " + externalID + "error in getting parking prices (refresh)");
+                continue;
+            } 
+            
             //Just parkings that have live data
             if(parking.get("category").stringValue().equals("Garaže i zatvorena parkirališta")){
             
-            isLive = true;
+                isLive = true;
             
-            //Checking live status
-            if(!parking.path("parking_data").path("live_status").booleanValue()) isLive = false;    
+                //Checking live status
+                if(!parking.path("parking_data").path("live_status").booleanValue()) isLive = false;    
                 //For cases when live status is wrong but last update date was before today
                 LocalDate date =LocalDate.parse(parking.path("parking_data").path("last_update_date").asString(), formatter); 
                 if(date.isBefore(today)) isLive = false;
-                //ID for connecting with databse, new available spots data
+                //new available spots data
                 availableSpots = parking.get("parking_data").get("slobodno").asLong(0);
-            
+                
+                //Creating an instance of ParkingRefreshDTO, source key is created here
                 ParkingRefreshDTO lpr = new ParkingRefreshDTO(createSourceKey(externalID, name, address), name, isLive, availableSpots, pp);
                 lpr_list.add(lpr);
             }
+            //Zone parking lots
             else{
+                //Splitting the zone parking lots into streets with their addresses
                 List<String> addresses = addressSplitter(address);
 
                 for(String adr : addresses){
                     lpr_list.add(new ParkingRefreshDTO(createSourceKey(externalID, name, adr), name, isLive, availableSpots, pp));
                 }
             }
-
-
-           
         }
+        log.info("[LIVE PARKING LOT REFRESH] Success");
         return lpr_list;
     } 
     
-    //For getting initial data from Rijeka Plus 
     public  List<ParkingDataDTO> getInitialRijekaPlusData() {
+        log.info("[LIVE PARKING LOT INITIALIZATION] Starting...");
         //Get json from Rijeka Plus REST API Endpoint
         JsonNode parkiralista = getRijekaPlusJSON();
         List<ParkingDataDTO> lpd_list = new ArrayList<>();
-        if(parkiralista.isNull()) return lpd_list;
+        if(parkiralista.isNull()){
+            log.warn("[LIVE PARKING LOT INITIALIZATION] Error with fetch, returning null");
+            return lpd_list;
+        }
        
         //Building an array of ParkingDataDTO objects
         for(JsonNode parking : parkiralista){
@@ -117,12 +145,19 @@ public class LiveParkingDataService {
             String type = parking.get("category").stringValue();
             
             List<ParkingPriceDTO> parkingPrices = mapParkingPrice(parking);
+            //Error
+            if(parkingPrices == null){
+                //To be replaced with logger when logger is implemented
+                System.out.print("Parking with name " + name + " and ExternalID " + externalId + "error in getting parking prices");
+                continue;
+            } 
 
             //isLive is true if parking has live occupancy data (category shows this in rijeka plus case)
             boolean isLive;
             Long spots = null;
             Long availableSpots = null;
 
+            //Parking that are live
             if(type.equals("Garaže i zatvorena parkirališta")){
                 isLive = true;
                 spots = parking.get("parking_data").get("kapacitet").asLong(0);
@@ -131,6 +166,7 @@ public class LiveParkingDataService {
                 ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, parkingPrices);
                 lpd_list.add(lpd);
             }
+            //Offline parkings, these are zones which need to be split into seperate parking lots
             else{
                 parkingPrices.removeIf(pp -> pp.getSpecial() != null);
                 //creating each parking in a zone
@@ -140,24 +176,30 @@ public class LiveParkingDataService {
                 for(String adr : addresses){
                     lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, parkingPrices));
                 }
-                
-                
             }
         }
-            
+            log.info("[LIVE PARKING LOT INITIALIZATION] Success");
             return lpd_list;
     }
 
     public List<ParkingPriceDTO> mapParkingPrice(JsonNode parking){
+        //for reading parking prices from Rijeka Plus
+
+        //Flags
         boolean defaultPriceFlag = false;
         boolean specialPriceFlag = false;
+
+        //Price
         double parkingPrice = 0.0;
-        //default price if termin = ""
-        //special price if termin != ""
+
+        //default price flag if termin = ""
+        //special price flag if termin != ""
         for(JsonNode prices : parking.path("parking_data").path("cijena")){
             String currPrice = prices.path("termin").stringValue();
+            
+            //Information currently not important for this application
             if(currPrice.equals("Parkirališno mjesto za punjenje električnih vozila") || currPrice.equals("Kamperi parkirnu naknadu plaćaju od 0-24")) continue;
-
+            
             if(currPrice.equals("") || currPrice.isBlank()){
                 defaultPriceFlag = true;
                 parkingPrice = prices.path("cijena").doubleValue();            }
@@ -166,15 +208,16 @@ public class LiveParkingDataService {
             }
         }
 
-        //Creating a list of workhours and prices 
+        //Creating a list of ParkingPriceDTO which includes pricing and work hours
         List<ParkingPriceDTO> parkingPrices = new ArrayList<>();
-        WorkDayEnum workdays;
+        WorkDayEnum workdays; //our enumeration with workdays according to the needs of the application
         String special = null;
         int openingHour;
         int closingHour;
 
-
+        //different cases according to the default and special flag
         if(defaultPriceFlag && !specialPriceFlag) {
+            //Default price flag, creating a ParkingPriceDTO for each mention of a different work day in our WorkDayEnum enumeration
             for(JsonNode workhours : parking.path("parking_data").path("vrijeme_naplate")){
                 if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom")){
                     workdays = WorkDayEnum.WORKDAY;
@@ -200,11 +243,15 @@ public class LiveParkingDataService {
             }
         }
         else if (specialPriceFlag && !defaultPriceFlag) {
+            //Special price flag where the price is written in another part of the JSON response
             for(JsonNode prices : parking.path("parking_data").path("cijena")){
+                //Ignoring the data not relevant for this application
                 if(prices.path("termin").stringValue().equals("Kamperi parkirnu naknadu plaćaju od 0-24") || prices.path("termin").stringValue().equals("Parkirališno mjesto za punjenje električnih vozila")) continue;
                 
+                //Using regular expression to get workhours from the 12-13 format or similar
                 Matcher matcher = Pattern.compile("(\\d{1,2}).*?(\\d{1,2})").matcher(prices.path("termin").stringValue());
-
+                
+                //For avoidng "may not have been initialized" warning
                 openingHour = 5;
                 closingHour = 5;
 
@@ -233,15 +280,18 @@ public class LiveParkingDataService {
             }
         } 
         else if(specialPriceFlag && defaultPriceFlag) {
-            //Solved by manual data
+            //This kinds of parking lots have their prices added by our manually written static data
         }
         else {
-            //If here its error :(
+            //If we end up here its an error handled when calling the function
+            return null;
         }
         return parkingPrices;
     }
 
     public ParkingPriceDTO createParkingPrice(WorkDayEnum workdays, String special, double parkingPrice, JsonNode workhours){
+                //Creating a ParkingPriceDTO instance
+
                 String[] opening = workhours.get("vrijeme_start").stringValue().split(":");
                 int openingHour = Integer.parseInt(opening[0]);
                 String[] closing = workhours.get("vrijeme_kraj").stringValue().split(":");
@@ -252,20 +302,24 @@ public class LiveParkingDataService {
     }
 
     public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots, List<ParkingPriceDTO> parkingPrice){
+        //Creating a ParkingDataDTO instance
         return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, parkingPrice);
     }
 
     public String createSourceKey(String externalId, String name, String address){
+        //Creates a source key as a combination of external id, parking name and address
         return externalId.toLowerCase().trim() + "|" + name.toLowerCase().trim() + "|" + address.toLowerCase().trim();
     }
 
     public List<String> addressSplitter(String address){
+        //The only way to create a Parking lot form parking zones is by creating a parking for each address
+        //Parking Zones have a list of addresess. This method returnes a List of all these addresses seperated
         List<String> adr_final = new ArrayList<>();
 
         String[] addresses = address.split("\\s*,\\s*");    
 
         for(String adr : addresses){
-            //for each address in list of addresses clean name and create an instance of StaticParkingDataDTO
+            //for each address in list of addresses clean address
             if(adr.contains("(")){
                 adr = adr.substring(adr.indexOf('(') + 1).trim();
             }
@@ -278,7 +332,6 @@ public class LiveParkingDataService {
             if(adr.endsWith(".")){
                 adr = adr.substring(0, adr.indexOf("."));
             }
-
             if(adr.contains(" i ")){
                 String[] iSplit = adr.split("\\s+i\\s+");
                 

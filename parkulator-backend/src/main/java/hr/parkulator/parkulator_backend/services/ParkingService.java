@@ -11,7 +11,7 @@ import java.util.List;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
-import jakarta.persistence.EntityNotFoundException;
+import hr.parkulator.parkulator_backend.exception.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
@@ -22,6 +22,9 @@ public class ParkingService {
     private ParkingRepository parkingRepository;
 
     public List<ParkingDTO> getAllParkings(){
+        //Getting all parking lots and mapping to ParkingDTO for testing purposes (displaying on frontend) 
+        //will be removed later as it is not necessary for this application
+
         List<Parking> parking_lots = parkingRepository.findAll();
         List <ParkingDTO> parkingLotsDTO = new ArrayList<>();
 
@@ -36,7 +39,7 @@ public class ParkingService {
             parkingDTO.setAvailableSpots(parking.getAvailableSpots());
             List<ParkingPrice> parkingPrices = parking.getParkingPrices();
 
-
+            //Deciding which price to send depending on the time and date
             for(ParkingPrice parkingPrice : parkingPrices){
                 DayOfWeek day = LocalDate.now().getDayOfWeek();
                 int hourNow = LocalTime.now().getHour();
@@ -67,11 +70,9 @@ public class ParkingService {
                     }
                 }
                 else{
-                    //SPECIAL
+                    //Special should display the special message, will be implemented later
                 }
-            
             }
-            
             parkingLotsDTO.add(parkingDTO);
         }
 
@@ -82,17 +83,17 @@ public class ParkingService {
 
     public Parking getParkingById(Long id) {
         return parkingRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parking with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Parking with id " + id + " not found"));
     }
 
     public Parking getParkingByName(String name) {
         return parkingRepository.findByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("Parking with name " + name + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Parking with name " + name + " not found"));
     }
 
     public Parking getParkingByAddress(String address) {
         return parkingRepository.findByAddress(address)
-                .orElseThrow(() -> new EntityNotFoundException("Parking with address " + address + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Parking with address " + address + " not found"));
     }
 
     public List<Parking> getParkingByType(String type) {

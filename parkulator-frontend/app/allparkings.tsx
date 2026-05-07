@@ -7,61 +7,30 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Stack } from "expo-router";
+import { useColorScheme } from "react-native";
+import { getAllParkingsRequest, Parking } from "../services/parking";
 
-interface Parking {
-  id: number;
-  sourceKey: string;
-  name: string;
-  address: string;
-  link: string;
-  type: string;
-  live: boolean;
-  spots: number;
-  availableSpots: number;
-  parkingPrices: any[];
-}
 
 const AllParkings = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchParkings = async () => {
-    console.log("FETCHING PARKINGS...");
+  try {
+    const data = await getAllParkingsRequest();
 
-    try {
-      const response = await fetch(
-        "http://192.168.1.105:8080/parkings/all"
-      );
-
-      console.log("STATUS:", response.status);
-
-      const text = await response.text();
-      console.log("RAW RESPONSE:", text);
-
-      let data = [];
-
-      if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch (jsonError) {
-          console.log("JSON PARSE ERROR:", jsonError);
-          data = [];
-        }
-      }
-
-      if (Array.isArray(data)) {
-        setParkings(data);
-      } else {
-        console.log("DATA IS NOT ARRAY:", data);
-        setParkings([]);
-      }
-    } catch (error) {
-      console.log("FETCH ERROR:", error);
+    if (Array.isArray(data)) {
+      setParkings(data);
+    } else {
       setParkings([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.log("Parking fetch error:", error);
+    setParkings([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchParkings();

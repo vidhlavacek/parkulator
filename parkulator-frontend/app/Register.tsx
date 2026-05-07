@@ -1,36 +1,41 @@
-import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
-import { useState } from "react";
 import { useRouter } from "expo-router";
-import Input from "../components/ui/Input";
+import { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Stack } from "expo-router";
 import { ScrollView } from "react-native";
+import { getApiErrorMessage } from "../services/api";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
 
   const handleRegister = async () => {
-    try {
-      const data = await registerRequest({
-        email,
-        username,
-        password,
-      });
+  setLoading(true);
 
-      await signIn(data);
-      router.replace("/");
-    } catch (error: any) {
-      Alert.alert("Register error", error?.message || "Failed to register");
-    }
-  };
+  try {
+    const data = await registerRequest({
+      email: email.trim(),
+      username: username.trim(),
+      password,
+    });
 
+    await signIn(data);
+    router.replace("/(tabs)");
+  } catch (e) {
+    Alert.alert("Registration failed", getApiErrorMessage(e, "Registration failed"));
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <>
   <Stack.Screen options={{ 

@@ -13,6 +13,7 @@ public class ParkingDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args){
+        //When the application is run getting the inital data (if needed) for the database
         parkingDataService.saveInitialData();
     }
 }

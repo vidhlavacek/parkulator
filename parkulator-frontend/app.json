@@ -21,6 +21,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize"
+      "package": "com.anonymous.parkulatorfrontend"
     },
     "web": {
       "output": "static",

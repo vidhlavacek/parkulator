@@ -4,33 +4,41 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import Input from "../components/ui/Input"; 
 import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
 import { useColorScheme } from "react-native";
 import { Stack } from "expo-router";
 import { ScrollView } from "react-native";
+import { getApiErrorMessage } from "../services/api";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
 
   
 
   const handleLogin = async () => {
-    try {
-      const data = await loginRequest({
-        email,
-        password,
-      });
+  setLoading(true);
 
-      await signIn(data);
-      router.replace("/");
-    } catch (error: any) {
-      Alert.alert("Login error", error?.message || "Failed to log in");
-    }
-  };
+  try {
+    const data = await loginRequest({
+      email: email.trim(),
+      password,
+    });
+
+    await signIn(data);
+    router.replace("/(tabs)");
+  } catch (e) {
+    Alert.alert("Login failed", getApiErrorMessage(e, "Invalid email or password"));
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (
@@ -48,7 +56,6 @@ export default function Login() {
     keyboardShouldPersistTaps="handled"
     >
     <View style={[styles.container, { backgroundColor: "#f7f7f7" }]}>
-
 
       <Text style={[styles.title, { color: "#000" }]}>
         Welcome back!
