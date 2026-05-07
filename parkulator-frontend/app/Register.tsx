@@ -38,7 +38,7 @@ export default function Register() {
       headerBackTitle: "Log In",}} />
   <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "position"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
   <ScrollView
@@ -75,9 +75,10 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     padding: 20,
     backgroundColor: "#f7f7f7",
+    paddingTop: 80
   },
   title: {
     textAlign: 'center',

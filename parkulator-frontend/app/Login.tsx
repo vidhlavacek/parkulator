@@ -16,7 +16,7 @@ export default function Login() {
   const router = useRouter();
   const { signIn } = useAuth();
 
-  const isDark = useColorScheme() === "dark";
+  
 
   const handleLogin = async () => {
     try {
@@ -40,21 +40,21 @@ export default function Login() {
       headerBackTitle: "Profile",}} />
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "position"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
 >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <ScrollView
     contentContainerStyle={{ flexGrow: 1}}
     keyboardShouldPersistTaps="handled"
     >
-    <View style={[styles.container, { backgroundColor: isDark ? "#000" : "#f7f7f7" }]}>
+    <View style={[styles.container, { backgroundColor: "#f7f7f7" }]}>
 
 
-      <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>
+      <Text style={[styles.title, { color: "#000" }]}>
         Welcome back!
       </Text>
 
-      <View style={[styles.card, { backgroundColor: isDark ? "#1e1e1e" : "#fff" }]}>
+      <View style={[styles.card, { backgroundColor: "#fff" }]}>
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
         <Input placeholder="Password" secure value={password} onChangeText={setPassword} />
         <Button title="Log In" onPress={handleLogin} />

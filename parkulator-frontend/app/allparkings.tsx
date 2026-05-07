@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
-import { blue, green } from "react-native-reanimated/lib/typescript/Colors";
+import {
+  View,
+  Text,
+  FlatList,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
 
 interface Parking {
   id: number;
   sourceKey: string;
   name: string;
   address: string;
-  link: string;               
+  link: string;
   type: string;
   live: boolean;
   spots: number;
@@ -18,25 +22,24 @@ interface Parking {
 }
 
 const AllParkings = () => {
-  const [parkings, setParkings] = useState<Parking[]>([]);    
-  const [loading, setLoading] = useState(true);              
-
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";                  
+  const [parkings, setParkings] = useState<Parking[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchParkings = async () => {
-    console.log("FETCHING PARKINGS...");        
-  
+    console.log("FETCHING PARKINGS...");
+
     try {
-      const response = await fetch("http://192.168.1.105:8080/parkings/all");     
-  
+      const response = await fetch(
+        "http://192.168.1.105:8080/parkings/all"
+      );
+
       console.log("STATUS:", response.status);
-  
-      const text = await response.text();       
+
+      const text = await response.text();
       console.log("RAW RESPONSE:", text);
-  
+
       let data = [];
-  
+
       if (text) {
         try {
           data = JSON.parse(text);
@@ -45,106 +48,109 @@ const AllParkings = () => {
           data = [];
         }
       }
-  
+
       if (Array.isArray(data)) {
-        setParkings(data);          
+        setParkings(data);
       } else {
         console.log("DATA IS NOT ARRAY:", data);
         setParkings([]);
       }
-  
     } catch (error) {
       console.log("FETCH ERROR:", error);
       setParkings([]);
     } finally {
-      setLoading(false);        
+      setLoading(false);
     }
   };
-
-  
 
   useEffect(() => {
     fetchParkings();
   }, []);
 
-  
-
   if (!parkings.length) return <Text>Loading...</Text>;
 
   return (
     <>
-    <Stack.Screen options={{ 
-        title: "Find Parking",
-        headerBackTitle: "Back",}} />
+      <Stack.Screen
+        options={{
+          title: "Find Parking",
+          headerBackTitle: "Back",
+        }}
+      />
 
-    <View style={{ padding: 20,
-                  backgroundColor: '#dfe3ea',
-                 }}>
-      <FlatList
-        data={parkings}
-        keyExtractor={(item, index) => `${item.name}-${index}`}
-        renderItem={({ item }) => (
-    <View
-      style={{
-        marginBottom: 12,
-        padding: 12,
-        borderRadius: 16,
-
-          
-        backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
-        borderWidth: 1,
-        borderColor: isDark ? "#333" : "#ddd",
-
-        
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 3,
-      }}
-    >
-      <Text
+      <View
         style={{
-          fontSize: 16,
-          fontWeight: "bold",
-          color: isDark ? "#fff" : "#000",
+          flex: 1,
+          padding: 20,
+          backgroundColor: "#dfe3ea",
         }}
       >
-        {item.name}
-      </Text>
+        <FlatList
+          data={parkings}
+          keyExtractor={(item, index) => `${item.name}-${index}`}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                marginBottom: 12,
+                padding: 12,
+                borderRadius: 16,
 
-      <Text style={{ color: isDark ? "#ccc" : "#555" }}>
-        {item.address}
-      </Text>
+                backgroundColor: "#ffffff",
+                borderWidth: 1,
+                borderColor: "#ddd",
 
-      <Text style={{ color: isDark ? "#ccc" : "#555" }}>
-        Type: {item.type}
-      </Text>
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 2,
+                elevation: 3,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: "#000",
+                }}
+              >
+                {item.name}
+              </Text>
 
-      <Text style={{ color: isDark ? "#ccc" : "#555" }}>
-        Free spots: {item.availableSpots}
-      </Text>
+              <Text style={{ color: "#555" }}>
+                {item.address}
+              </Text>
 
-      <Text style={{ color: isDark ? "#ccc" : "#555" }}>
-        Status: {item.live ? "Online" : "Offline"}
-      </Text>
+              <Text style={{ color: "#555" }}>
+                Type: {item.type}
+              </Text>
 
-      {item.link ? (
-        <TouchableOpacity onPress={() => Linking.openURL(item.link)}>
-          <Text
-            style={{
-              color: isDark ? "#4da6ff" : "blue",
-              marginTop: 5,
-            }}
-          >
-            Open in maps
-          </Text>
-        </TouchableOpacity>
-      ) : null}
-    </View>
-  )}
-/>
-    </View></>
+              <Text style={{ color: "#555" }}>
+                Free spots: {item.availableSpots}
+              </Text>
+
+              <Text style={{ color: "#555" }}>
+                Status: {item.live ? "Online" : "Offline"}
+              </Text>
+
+              {item.link ? (
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(item.link)}
+                >
+                  <Text
+                    style={{
+                      color: "blue",
+                      marginTop: 5,
+                    }}
+                  >
+                    Open in maps
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          )}
+        />
+      </View>
+    </>
   );
 };
 

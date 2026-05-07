@@ -164,7 +164,7 @@ export default function EditProfile() {
 
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "position"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
 >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <ScrollView
