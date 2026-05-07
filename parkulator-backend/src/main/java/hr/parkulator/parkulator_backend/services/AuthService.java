@@ -1,9 +1,10 @@
 package hr.parkulator.parkulator_backend.services;
 
-import org.springframework.http.HttpStatus;
+import hr.parkulator.parkulator_backend.exception.ConflictException;
+import hr.parkulator.parkulator_backend.exception.UnauthorizedException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
@@ -22,11 +23,11 @@ public class AuthService {
 
     public AuthResponseDTO  register(RegistrationRequestDTO request){
         if(userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ConflictException("Email already exists");
         }
 
         if(userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+            throw new ConflictException("Username already exists");
         }
 
         User user = User.builder()
@@ -48,10 +49,10 @@ public class AuthService {
 
     public AuthResponseDTO login(LoginRequestDTO request){
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+            .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new UnauthorizedException("Invalid email or password");
         }
 
         String token = jwtService.generateToken(user);

@@ -13,7 +13,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -39,14 +41,20 @@ public class JwtFilter extends OncePerRequestFilter {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
                     if (jwtService.isTokenValid(jwt, userDetails)) {
-
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                    } else {
+                        log.warn("Invalid JWT token", userEmail);
                     }
                 }
-            }catch (Exception e){
-                System.out.println("JWT filter error: " + e.getMessage());
+            }catch (io.jsonwebtoken.ExpiredJwtException e) {
+                log.warn("JWT expired", e);
+            }catch (io.jsonwebtoken.JwtException e) {
+                log.warn("Invalid JWT", e);
+            }catch (Exception e) {
+                log.error("Unexpected error in JWT filter", e);
             }
 
             filterChain.doFilter(request, response);

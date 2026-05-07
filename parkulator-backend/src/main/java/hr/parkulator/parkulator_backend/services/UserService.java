@@ -2,8 +2,10 @@ package hr.parkulator.parkulator_backend.services;
 
 import hr.parkulator.parkulator_backend.dto.user.UserResponseDTO;
 import hr.parkulator.parkulator_backend.entities.User;
+import hr.parkulator.parkulator_backend.exception.ConflictException;
+import hr.parkulator.parkulator_backend.exception.ResourceNotFoundException;
+import hr.parkulator.parkulator_backend.exception.UnauthorizedException;
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,12 +31,12 @@ public class UserService {
 
     public User getUserById(Long id){
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id: " + id + "not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + "not found"));
     }
 
     public UserResponseDTO getUserByEmail(String email){
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + "not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with email: " + email + "not found"));
 
         return UserResponseDTO.builder()
                 .id(user.getId())
@@ -49,13 +51,13 @@ public class UserService {
 
     public void deleteUser(Long id){
         userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id: " + id + "not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + "not found"));
         userRepository.deleteById(id);
     }
 
     public UserResponseDTO updateUsername(String email, String newUsername) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with email: " + email + " not found"));
 
         user.setUsername(newUsername);
         userRepository.save(user);
@@ -69,10 +71,10 @@ public class UserService {
 
     public UserResponseDTO updateEmail(String currentEmail, String newEmail) {
         User user = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User with email: " + currentEmail + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with email: " + currentEmail + " not found"));
 
         if (userRepository.findByEmail(newEmail).isPresent()) {
-            throw new IllegalStateException("Email already in use");
+            throw new ConflictException("Email already in use");
         }
 
         user.setEmail(newEmail);
@@ -87,10 +89,10 @@ public class UserService {
 
     public void updatePassword(String email, String oldPassword, String newPassword) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with email: " + email + " not found"));
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect");
+            throw new UnauthorizedException("Old password is incorrect");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
