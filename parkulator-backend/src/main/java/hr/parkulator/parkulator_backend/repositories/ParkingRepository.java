@@ -18,11 +18,11 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
 
     List<Parking> findByType(String type);
 
+    //filtering by type and distance only
     @Query(value = """
         SELECT *
         FROM parking p
         WHERE (:type IS NULL OR LOWER(p.type) = LOWER(:type))
-        AND (:maxPrice IS NULL OR p.price <= :maxPrice)
         AND (
             :maxDistance IS NULL OR :lat IS NULL OR :lng IS NULL
             OR (
@@ -38,7 +38,6 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     """, nativeQuery = true)
     List<Parking> filterAll(
             @Param("type") String type,
-            @Param("maxPrice") Double maxPrice,
             @Param("maxDistance") Double maxDistance,
             @Param("lat") Double lat,
             @Param("lng") Double lng

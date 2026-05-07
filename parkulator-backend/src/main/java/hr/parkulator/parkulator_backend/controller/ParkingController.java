@@ -8,8 +8,6 @@ import hr.parkulator.parkulator_backend.services.DataServices.ParkingDataService
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -32,12 +30,12 @@ public class ParkingController {
     @GetMapping
     public List<Parking> getParkings(
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double maxDistance,
             @RequestParam(required = false) Double lat,
-            @RequestParam(required = false) Double lng
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false)Double maxPrice
     ) {
-        return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
+        return parkingService.getFilteredParkings(type, maxDistance, lat, lng, maxPrice);
     }
 
     //temporary route for testing purposes, will be removed later

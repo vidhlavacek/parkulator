@@ -102,11 +102,71 @@ public class ParkingService {
 
    public List<Parking> getFilteredParkings(
         String type,
-        Double maxPrice,
         Double maxDistance,
         Double lat,
-        Double lng
+        Double lng,
+        Double maxPrice
     ) {
-        return parkingRepository.filterAll(type, maxPrice, maxDistance, lat, lng);
+        List<Parking> parkings = parkingRepository.filterAll(type, maxDistance, lat, lng);
+
+        if (maxPrice == null) {
+            return parkings;
+        }
+
+        List<Parking> result = new ArrayList<>();
+
+        for (Parking parking : parkings) {
+            double price = getCurrentPrice(parking);
+
+            if (price < 0) {
+                continue;
+            }
+            
+            if (price <= maxPrice) {
+                result.add(parking);
+            }
+        }
+
+        return result;
+    }
+
+    private double getCurrentPrice(Parking parking) {
+        DayOfWeek day = LocalDate.now().getDayOfWeek();
+        int hourNow = LocalTime.now().getHour();
+
+        WorkDayEnum wde;
+
+        if (day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY) {
+            wde = WorkDayEnum.WORKDAY; //mon-fri
+        } else if (day == DayOfWeek.SATURDAY) {
+            wde = WorkDayEnum.SATURDAY;
+        } else {
+            wde = WorkDayEnum.SUNDAY;
+        }
+
+        for (ParkingPrice priceRule : parking.getParkingPrices()) {
+
+            if (priceRule.getDay() == WorkDayEnum.SPECIAL) {
+                continue;
+            }
+
+            if (priceRule.getDay() != wde &&
+                priceRule.getDay() != WorkDayEnum.ALLDAYS) {
+                continue;
+            }
+
+            int open = priceRule.getOpeningHour();
+            int close = priceRule.getClosingHour();
+
+            boolean inRange =
+                    (open <= close && hourNow >= open && hourNow <= close)
+                    || (open > close && (hourNow >= open || hourNow <= close));
+
+            if ((open == 0 && close == 0) || inRange) {
+                return priceRule.getPrice();
+            }
+        }
+
+        return -1; 
     }
 }
