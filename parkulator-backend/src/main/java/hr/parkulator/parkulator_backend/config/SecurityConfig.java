@@ -26,9 +26,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //Main configuration for authentication
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
         http
+            //Disable CSRF
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -45,11 +47,13 @@ public class SecurityConfig {
                 .requestMatchers("/users/**").authenticated()
                 .anyRequest().authenticated()
             )
+            //Add JWT filter before authentication filter
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+     //Loads user for authentication
     @Bean
     public UserDetailsService userDetailsService(UserRepository repo) {
         return email -> {

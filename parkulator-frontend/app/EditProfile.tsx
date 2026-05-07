@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 //import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import {
   updateUsernameRequest,

@@ -22,6 +22,9 @@ public class ParkingService {
     private ParkingRepository parkingRepository;
 
     public List<ParkingDTO> getAllParkings(){
+        //Getting all parking lots and mapping to ParkingDTO for testing purposes (displaying on frontend) 
+        //will be removed later as it is not necessary for this application
+
         List<Parking> parking_lots = parkingRepository.findAll();
         List <ParkingDTO> parkingLotsDTO = new ArrayList<>();
 
@@ -36,7 +39,7 @@ public class ParkingService {
             parkingDTO.setAvailableSpots(parking.getAvailableSpots());
             List<ParkingPrice> parkingPrices = parking.getParkingPrices();
 
-
+            //Deciding which price to send depending on the time and date
             for(ParkingPrice parkingPrice : parkingPrices){
                 DayOfWeek day = LocalDate.now().getDayOfWeek();
                 int hourNow = LocalTime.now().getHour();
@@ -67,11 +70,9 @@ public class ParkingService {
                     }
                 }
                 else{
-                    //SPECIAL
+                    //Special should display the special message, will be implemented later
                 }
-            
             }
-            
             parkingLotsDTO.add(parkingDTO);
         }
 

@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
-import { blue, green } from "react-native-reanimated/lib/typescript/Colors";
 import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import { getAllParkingsRequest, Parking } from "../services/parking";

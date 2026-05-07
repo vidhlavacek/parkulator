@@ -15,6 +15,7 @@ import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 
 @Service
 public class ParkingDataService {
+
     @Autowired
     private ParkingRepository parkingRepository;
     @Autowired
@@ -24,10 +25,16 @@ public class ParkingDataService {
 
     @Transactional
     public void saveInitialData(){
+        //Saving initial Parking data with LiveParkingDataService and StaticParkingDataService
+        //Run when the backend application is started
+
+        //Getting the data
         List<ParkingDataDTO> dtos = liveParkingDataService.getInitialRijekaPlusData();
         dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
+        //Creating list of Parking entities for the database
         for(ParkingDataDTO dto : dtos){
+            //Check if a parking already exists
             if(parkingRepository.findBySourceKey(dto.getSourceKey()).isPresent()) continue;
             Parking parking = new Parking();
             parking.setSourceKey(dto.getSourceKey());
@@ -50,25 +57,31 @@ public class ParkingDataService {
                 
                 parking.addPrice(parkingPrice);
             }
+            //Save to the database
             parkingRepository.save(parking);
         }
     }
     
     @Transactional
     public void saveRefreshData(){
+        //Refreshing Parking data in the database
+        //Scheduler runs this method
+
+        //Getting the data
         List<ParkingRefreshDTO> pr = liveParkingDataService.refreshRijekaPlusData();
         //pr.addAll(staticParkingDataService.getRefreshStaticParkingData());
 
+        //Updateing each Parking (if it exists)
         for(ParkingRefreshDTO RefreshData : pr){
             Parking parking = parkingRepository
                 .findBySourceKey(RefreshData.getSourceKey())
                 .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
 
-            parking.setSourceKey(RefreshData.getSourceKey());
             parking.setName(RefreshData.getName());
             parking.setLive(RefreshData.isLive());
             parking.setAvailableSpots(RefreshData.getAvailableSpots());
             
+            //Clearing all prices in a parking in case there has been a big change in data
             parking.getParkingPrices().clear();
             List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
             for(ParkingPriceDTO pp : ppDto){
