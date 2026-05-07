@@ -1,6 +1,5 @@
-const API_URL = 'http://10.0.2.2:8080'; 
-// Android emulator: 10.0.2.2
-// Ako testiraš na fizičkom mobitelu, ovdje ide IP od tvog računala, npr. http://192.168.1.5:8080
+import api from "./api";
+
 
 type LoginPayload = {
   email: string;
@@ -21,35 +20,11 @@ export type AuthResponse = {
 };
 
 export async function loginRequest(payload: LoginPayload): Promise<AuthResponse> {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || 'Login failed');
-  }
-
-  return response.json();
+  const response = await api.post<AuthResponse>("/auth/login", payload);
+  return response.data;
 }
 
 export async function registerRequest(payload: RegisterPayload): Promise<AuthResponse> {
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || 'Registration failed');
-  }
-
-  return response.json();
+  const response = await api.post<AuthResponse>("/auth/register", payload);
+  return response.data;
 }

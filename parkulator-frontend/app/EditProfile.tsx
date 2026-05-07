@@ -1,10 +1,17 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+//import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import {
+  updateUsernameRequest,
+  updateEmailRequest,
+  updatePasswordRequest,
+} from "../services/user";
 
-const API_URL = "http://10.0.2.2:8080";
+import { getApiErrorMessage } from "../services/api";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -16,7 +23,6 @@ export default function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getToken = async () => await AsyncStorage.getItem("auth_token");
 
   const updateUsername = async () => {
     if (!username.trim()) {
@@ -25,28 +31,17 @@ export default function EditProfile() {
     }
 
     setLoading(true);
-    try {
-      const token = await getToken();
-      const res = await fetch(`${API_URL}/users/username`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ username: username.trim() }),
-      });
 
-      if (res.ok) {
-        await updateUser({ username: username.trim() });
-        Alert.alert("Success", "Username updated");
-        setUsername("");
-        router.back();
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Failed to update username");
-      }
+    try {
+      await updateUsernameRequest(username.trim());
+
+      await updateUser({ username: username.trim() });
+
+      Alert.alert("Success", "Username updated");
+      setUsername("");
+      router.back();
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Failed to update username"));
     } finally {
       setLoading(false);
     }
@@ -59,39 +54,25 @@ export default function EditProfile() {
     }
 
     setLoading(true);
-    try {
-      const token = await getToken();
-      const res = await fetch(`${API_URL}/users/email`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email: email.trim() }),
-      });
 
-      if (res.ok) {
-        // IMPORTANT: JWT token still contains the old email in the 'sub' claim.
-        // Until the backend returns a new token, the safest option is to log the user out.
-        Alert.alert(
-          "Email updated",
-          "Please log in again with your new email.",
-          [
-            {
-              text: "OK",
-              onPress: async () => {
-                await signOut();
-                router.replace("/login");
-              },
+    try {
+      await updateEmailRequest(email.trim());
+
+      Alert.alert(
+        "Email updated",
+        "Please log in again with your new email.",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              await signOut();
+              router.replace("/login");
             },
-          ]
-        );
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Failed to update email");
-      }
+          },
+        ]
+      );
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Failed to update email"));
     } finally {
       setLoading(false);
     }
@@ -102,38 +83,28 @@ export default function EditProfile() {
       Alert.alert("Error", "Please fill in both password fields");
       return;
     }
+
     if (newPassword.length < 6) {
       Alert.alert("Error", "New password must be at least 6 characters");
       return;
     }
+
     if (oldPassword === newPassword) {
       Alert.alert("Error", "New password must be different from the old one");
       return;
     }
 
     setLoading(true);
-    try {
-      const token = await getToken();
-      const res = await fetch(`${API_URL}/users/password`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
 
-      if (res.ok) {
-        Alert.alert("Success", "Password changed");
-        setOldPassword("");
-        setNewPassword("");
-        router.back();
-      } else {
-        const msg = await res.text();
-        Alert.alert("Error", msg || "Incorrect old password");
-      }
+    try {
+      await updatePasswordRequest(oldPassword, newPassword);
+
+      Alert.alert("Success", "Password changed");
+      setOldPassword("");
+      setNewPassword("");
+      router.back();
     } catch (e) {
-      Alert.alert("Error", "Could not connect to server");
+      Alert.alert("Error", getApiErrorMessage(e, "Incorrect old password"));
     } finally {
       setLoading(false);
     }

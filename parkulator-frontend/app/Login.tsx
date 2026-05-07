@@ -5,28 +5,34 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../services/auth";
+import { getApiErrorMessage } from "../services/api";
 
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
 
 
   const handleLogin = async () => {
-    try {
-      const data = await loginRequest({
-        email,
-        password,
-      });
+  setLoading(true);
 
-      await signIn(data);
-      router.replace("/");
-    } catch (error: any) {
-      Alert.alert("Login error", error?.message || "Neuspješna prijava");
-    }
-  };
+  try {
+    const data = await loginRequest({
+      email: email.trim(),
+      password,
+    });
+
+    await signIn(data);
+    router.replace("/(tabs)");
+  } catch (e) {
+    Alert.alert("Login failed", getApiErrorMessage(e, "Invalid email or password"));
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (
