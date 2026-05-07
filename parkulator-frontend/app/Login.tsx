@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Pressable, Alert,} from "react-native";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import Input from "../components/ui/Input"; 
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
