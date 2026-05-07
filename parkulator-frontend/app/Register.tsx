@@ -5,6 +5,9 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { registerRequest } from "../services/auth";
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { Stack } from "expo-router";
+import { ScrollView } from "react-native";
 import { getApiErrorMessage } from "../services/api";
 
 export default function Register() {
@@ -34,23 +37,20 @@ export default function Register() {
   }
 };
   return (
-    <View style={styles.container}>
-
-      <Pressable
-          onPress={() => router.push('/')}
-          style={{
-            padding: 5,
-            margin: 5,
-            borderRadius: 30,
-            position: "absolute",
-            top: 45,
-            left: 20,
-            zIndex: 10,
-          }}
-        >
-          <Text style={{ fontSize: 16 }}>Back</Text>
-        </Pressable>
-        
+    <>
+  <Stack.Screen options={{ 
+      title: "Register",
+      headerBackTitle: "Log In",}} />
+  <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+  <ScrollView
+        contentContainerStyle={{ flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+      >
+  <View style={styles.container}>
       <Text style={styles.title}>Create account</Text>
 
       <View style={styles.card}>
@@ -62,7 +62,7 @@ export default function Register() {
       </View>
 
       <Pressable
-        onPress={() => router.navigate("/login")}
+        onPress={() => router.navigate("/Login")}
         style={({ pressed }) => [styles.linkButton, pressed && styles.linkPressed]}
       >
         <Text style={styles.link}>
@@ -70,15 +70,20 @@ export default function Register() {
         </Text>
       </Pressable>
     </View>
+    </ScrollView>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+</>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     padding: 20,
     backgroundColor: "#f7f7f7",
+    paddingTop: 80
   },
   title: {
     textAlign: 'center',
