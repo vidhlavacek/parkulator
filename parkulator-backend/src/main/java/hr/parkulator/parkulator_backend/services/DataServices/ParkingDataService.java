@@ -1,19 +1,33 @@
 package hr.parkulator.parkulator_backend.services.DataServices;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingLocationDTO;
 
+
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ParkingDataService {
 
     @Autowired
@@ -22,6 +36,10 @@ public class ParkingDataService {
     private LiveParkingDataService liveParkingDataService;
     @Autowired
     private StaticParkingDataService staticParkingDataService;
+    @Autowired
+    private ParkingLocationDataService parkingLocationDataService;
+
+    private final ObjectMapper om;
 
     @Transactional
     public void saveInitialData(){
@@ -60,6 +78,7 @@ public class ParkingDataService {
             //Save to the database
             parkingRepository.save(parking);
         }
+        saveParkingLocationData();
     }
     
     @Transactional
@@ -96,5 +115,123 @@ public class ParkingDataService {
                 parking.addPrice(parkingPrice);
             }
         }
+    }
+
+    private void saveParkingLocationData(){
+        List<Parking> parkings = parkingRepository.findByLatitudeIsNullOrLongitudeIsNull();
+
+        if(parkings.isEmpty()){
+            log.info("All parkings have longitude and latitude");
+            return;
+        }
+        for(Parking p : parkings){
+            try{
+                ParkingLocationDTO parkingLocation;
+
+                parkingLocation = getLocationFromJson(p.getSourceKey());
+                if(parkingLocation != null) continue;
+
+                parkingLocation = parkingLocationDataService.getParkingLocation(p.getName(), p.getAddress());
+
+                if(parkingLocation != null){
+                p.setLatitude(parkingLocation.latitude());
+                p.setLongitude(parkingLocation.longitude());
+
+                parkingRepository.save(p);
+
+                saveLocationToJson(p.getSourceKey(), parkingLocation.longitude(), parkingLocation.latitude());
+                log.info("Saved " + p.getSourceKey());
+                }
+                else{
+                    log.warn("Parking location failed. Skipping " + p.getSourceKey());
+                }
+
+                Thread.sleep(1100);
+                
+            }
+            catch(InterruptedException e){
+                Thread.currentThread().interrupt();
+                log.error("Thread interrupted while waiting between Nominatim requests", e);
+                return;
+            }
+            catch(Exception e){
+                log.warn("[ParkingDataService] Parking location failed", e);
+            }
+
+
+        }
+    }
+
+    private void saveLocationToJson(String sourceKey, Double longitude, Double latitude){
+        try {
+        Path filePath = Paths.get("data", "parking-locations.json");
+
+        if (Files.notExists(filePath.getParent())) {
+            Files.createDirectories(filePath.getParent());
+        }
+
+        ArrayNode locationsArray;
+
+        if (Files.exists(filePath) && Files.size(filePath) > 0) {
+            JsonNode existingJson = om.readTree(filePath.toFile());
+
+            if (existingJson != null && existingJson.isArray()) {
+                locationsArray = (ArrayNode) existingJson;
+            } else {
+                locationsArray = om.createArrayNode();
+            }
+        } else {
+            locationsArray = om.createArrayNode();
+        }
+
+        ObjectNode parkingNode = om.createObjectNode();
+        parkingNode.put("sourceKey", sourceKey);
+        parkingNode.put("longitude", longitude);
+        parkingNode.put("latitude", latitude);
+
+        locationsArray.add(parkingNode);
+
+        om.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), locationsArray);
+
+        log.info("Parking written to JSON: {}", sourceKey);
+
+    } catch (Exception e) {
+        log.error("Failed to save parking to JSON: {}", sourceKey, e);
+    }
+    }
+
+    private ParkingLocationDTO getLocationFromJson(String sourceKey){
+        try {
+        Path filePath = Paths.get("data", "parking-locations.json");
+
+        if (Files.notExists(filePath) || Files.size(filePath) == 0) {
+            return null;
+        }
+
+        JsonNode root = om.readTree(filePath.toFile());
+
+        if (root == null || !root.isArray()) {
+            return null;
+        }
+
+        for (JsonNode node : root) {
+            String jsonSourceKey = node.path("sourceKey").asString();
+
+            if (sourceKey.equals(jsonSourceKey)) {
+                Double latitude = node.path("latitude").asDouble();
+                Double longitude = node.path("longitude").asDouble();
+
+                return new ParkingLocationDTO(latitude, longitude);
+            }
+        }
+
+    } catch (Exception e) {
+        log.error("Failed to read parking location from JSON: {}", sourceKey, e);
+        return null;
+    }
+        
+        
+        
+        return null; 
     }
 }
