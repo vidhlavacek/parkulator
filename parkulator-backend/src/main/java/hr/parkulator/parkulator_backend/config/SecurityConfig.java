@@ -1,6 +1,6 @@
 package hr.parkulator.parkulator_backend.config;
 
-import java.util.ArrayList;
+import org.springframework.http.HttpMethod;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
 import hr.parkulator.parkulator_backend.entities.User;
+import hr.parkulator.parkulator_backend.security.JwtAuthenticationEntryPoint;
 import hr.parkulator.parkulator_backend.security.JwtFilter;
 
 @Configuration
@@ -27,14 +28,23 @@ public class SecurityConfig {
 
     //Main configuration for authentication
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
         http
             //Disable CSRF
             .csrf(csrf -> csrf.disable())
-            //Ensure session is not stored on server
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/test-live-data", "/parkings/**").permitAll() 
+                .requestMatchers(HttpMethod.GET, "/parkings/**").permitAll()
+                .requestMatchers("/test-live-data").permitAll() // remove later
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/favorites/**").authenticated()
+                .requestMatchers("/history/**").authenticated()
+                .requestMatchers("/users/**").authenticated()
                 .anyRequest().authenticated()
             )
             //Add JWT filter before authentication filter
@@ -48,12 +58,11 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(UserRepository repo) {
         return email -> {
             User user = repo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getEmail())
                     .password(user.getPassword())
-                    .authorities(new ArrayList<>())
                     .build();
         };
     }

@@ -12,13 +12,17 @@ import org.springframework.core.io.ClassPathResource;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class StaticParkingDataService {
     
     public List<ParkingDataDTO> getInitialStaticParkingData(){
         //Reads our manually written JSON file and maps it to ParkingDataDTO object list
         try{
+            log.info("[STATIC INITIAL PARKING DATA] Starting...");
+
             InputStream inputStream = new ClassPathResource("data/parkings.json").getInputStream();
             ObjectMapper om = new ObjectMapper();
             JsonNode root = om.readTree(inputStream);
@@ -34,11 +38,13 @@ public class StaticParkingDataService {
                 ParkingDataDTO dto = om.treeToValue(node, ParkingDataDTO.class);
                 dto.setSourceKey(sourceKey);
                 result.add(dto);
-        }
+            }
 
+        log.info("[STATIC INITIAL PARKING DATA] SUCCESS");
         return result;
         } catch(Exception e){
-            throw new RuntimeException("Can't open parking.json", e);
+            log.warn("[STATIC INITIAL PARKING DATA] Failed, can't open file");
+            return new ArrayList<>();
         }
         
     }
@@ -46,6 +52,8 @@ public class StaticParkingDataService {
     public List<ParkingRefreshDTO> getRefreshStaticParkingData(){
         //Reads our manually written refresh JSON for refreshing the parking data
         try{
+            log.info("[STATIC REFRESH PARKING DATA] Starting...");
+
             InputStream inputStream = new ClassPathResource("data/parkingsUpdate.json").getInputStream();
             ObjectMapper om = new ObjectMapper();
             JsonNode root = om.readTree(inputStream);
@@ -63,10 +71,11 @@ public class StaticParkingDataService {
                 dto.setSourceKey(sourceKey);
                 result.add(dto);
         }
-
+        log.info("[STATIC REFRESH PARKING DATA] SUCCESS");
         return result;
         } catch(Exception e){
-            throw new RuntimeException("Can't open parkingsUpdate.json", e);
+            log.warn("[STATIC REFRESH PARKING DATA] Failed, can't open file");
+            return new ArrayList<>();
         }
     }
 
