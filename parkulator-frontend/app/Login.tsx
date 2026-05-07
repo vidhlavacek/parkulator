@@ -40,7 +40,7 @@ export default function Login() {
       headerBackTitle: "Profile",}} />
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "position"}
 >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <ScrollView

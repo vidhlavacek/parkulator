@@ -11,7 +11,7 @@ interface Parking {
   address: string;
   link: string;               
   type: string;
-  isLive: boolean;
+  live: boolean;
   spots: number;
   availableSpots: number;
   parkingPrices: any[];
@@ -126,7 +126,7 @@ const AllParkings = () => {
       </Text>
 
       <Text style={{ color: isDark ? "#ccc" : "#555" }}>
-        Status: {item.isLive ? "Online" : "Offline"}
+        Status: {item.live ? "Online" : "Offline"}
       </Text>
 
       {item.link ? (

@@ -38,7 +38,7 @@ export default function Register() {
       headerBackTitle: "Log In",}} />
   <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "position"}
     >
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
   <ScrollView
