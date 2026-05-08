@@ -24,8 +24,9 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
         FROM parking p
         WHERE (:type IS NULL OR LOWER(p.type) = LOWER(:type))
         AND (
-            :maxDistance IS NULL OR :lat IS NULL OR :lng IS NULL
-            OR (
+            :maxDistance IS NULL
+            OR (:lat IS NOT NULL AND :lng IS NOT NULL)
+            AND (
                 6371 * acos(
                     cos(radians(:lat)) *
                     cos(radians(p.latitude)) *
@@ -35,6 +36,8 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
                 )
             ) <= :maxDistance
         )
+        AND p.latitude <> 0
+        AND p.longitude <> 0
     """, nativeQuery = true)
     List<Parking> filterAll(
             @Param("type") String type,
