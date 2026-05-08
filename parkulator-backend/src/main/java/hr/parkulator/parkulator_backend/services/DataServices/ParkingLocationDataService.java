@@ -30,6 +30,10 @@ public class ParkingLocationDataService {
 
             //Creating a query with regard to inconsistencies in the database :)
             if(name == null || name.toLowerCase().contains("zona")){
+                if(address.toLowerCase().contains("ul.") || address.toLowerCase().contains("ulica") || address.toLowerCase().contains("parkiralište")){
+                    address = cleanAddress(address.toLowerCase());
+                    log.info("ADDRESS CLEANED: " + address);
+                }
                 query = address + place; 
             }
             else if(address == null || address.isBlank()){
@@ -55,8 +59,8 @@ public class ParkingLocationDataService {
                 .body(String.class);
 
             JsonNode root = objectMapper.readTree(response);
-
-            if(!root.isArray() || root.isEmpty()) throw new Exception();
+            if(address == "trg ricarda zanelle") log.warn("aaaaaa" + root.toString());
+            if(!root.isArray() || root.isEmpty()) throw new Exception("Location not found");
 
             Double latitude = Double.parseDouble(root.get(0).get("lat").asString());
             Double longitude = Double.parseDouble(root.get(0).get("lon").asString());
@@ -68,5 +72,27 @@ public class ParkingLocationDataService {
             log.error("[ParkingLocationDataService] Failed, return null", e);
             return null;
         }        
+    }
+
+    private String cleanAddress(String raw){
+        if (raw == null) return null;
+
+        String result = raw.trim();
+
+        //Remove double spaces
+        result = result.replaceAll("\\s+", " ");
+
+        //Remove "ul."" or "ulica" or "parkiralište" from the start 
+        result = result.replaceFirst("(?i)^ul\\.\\s*", "");
+        result = result.replaceFirst("(?i)^ulica\\s*", "");
+        result = result.replaceFirst("(?i)^parkiralište\\s*", "");
+
+        // Remove "ulica" from the end
+        result = result.replaceFirst("(?i)\\s+ulica$", "");
+
+        //Remove double spaces again
+        result = result.replaceAll("\\s+", " ").trim();
+
+        return result;
     }
 }

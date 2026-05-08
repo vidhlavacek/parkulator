@@ -163,7 +163,11 @@ public class LiveParkingDataService {
                 spots = parking.get("parking_data").get("kapacitet").asLong(0);
                 availableSpots = parking.get("parking_data").get("slobodno").asLong(0);
                 
-                ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, parkingPrices);
+                Double latitude = parking.get("parking_data").get("lokacija").get("lat").asDouble();
+                Double longitude = parking.get("parking_data").get("lokacija").get("lng").asDouble();
+
+
+                ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrices);
                 lpd_list.add(lpd);
             }
             //Offline parkings, these are zones which need to be split into seperate parking lots
@@ -174,7 +178,7 @@ public class LiveParkingDataService {
                 List<String> addresses = addressSplitter(address);
 
                 for(String adr : addresses){
-                    lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, parkingPrices));
+                    lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, null, null, parkingPrices));
                 }
             }
         }
@@ -301,9 +305,9 @@ public class LiveParkingDataService {
                 return pp;
     }
 
-    public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots, List<ParkingPriceDTO> parkingPrice){
+    public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots,Double latitude, Double longitude, List<ParkingPriceDTO> parkingPrice){
         //Creating a ParkingDataDTO instance
-        return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, parkingPrice);
+        return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrice);
     }
 
     public String createSourceKey(String externalId, String name, String address){

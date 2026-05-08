@@ -63,6 +63,8 @@ public class ParkingDataService {
             parking.setType(dto.getType());
             parking.setSpots(dto.getSpots());
             parking.setAvailableSpots(dto.getAvailableSpots());
+            parking.setLatitude(dto.getLatitude());
+            parking.setLongitude(dto.getLongitude());
             List<ParkingPriceDTO> pps = dto.getParkingPrice();
             for(ParkingPriceDTO price : pps){
                 ParkingPrice parkingPrice = new ParkingPrice();
@@ -127,11 +129,14 @@ public class ParkingDataService {
         for(Parking p : parkings){
             try{
                 ParkingLocationDTO parkingLocation;
+                boolean cached_flag = false;
 
                 parkingLocation = getLocationFromJson(p.getSourceKey());
-                if(parkingLocation != null) continue;
-
-                parkingLocation = parkingLocationDataService.getParkingLocation(p.getName(), p.getAddress());
+                if(parkingLocation != null){
+                    cached_flag = true;
+                }
+                
+                if(!cached_flag) parkingLocation = parkingLocationDataService.getParkingLocation(p.getName(), p.getAddress());
 
                 if(parkingLocation != null){
                 p.setLatitude(parkingLocation.latitude());
@@ -139,7 +144,7 @@ public class ParkingDataService {
 
                 parkingRepository.save(p);
 
-                saveLocationToJson(p.getSourceKey(), parkingLocation.longitude(), parkingLocation.latitude());
+                if(!cached_flag) saveLocationToJson(p.getSourceKey(), parkingLocation.longitude(), parkingLocation.latitude());
                 log.info("Saved " + p.getSourceKey());
                 }
                 else{
@@ -147,7 +152,6 @@ public class ParkingDataService {
                 }
 
                 Thread.sleep(1100);
-                
             }
             catch(InterruptedException e){
                 Thread.currentThread().interrupt();
@@ -157,8 +161,6 @@ public class ParkingDataService {
             catch(Exception e){
                 log.warn("[ParkingDataService] Parking location failed", e);
             }
-
-
         }
     }
 
