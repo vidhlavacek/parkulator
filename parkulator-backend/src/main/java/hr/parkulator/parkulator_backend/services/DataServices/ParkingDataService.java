@@ -3,6 +3,7 @@ package hr.parkulator.parkulator_backend.services.DataServices;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +63,9 @@ public class ParkingDataService {
         }
     }
     
+
     @Transactional
+    @Scheduled(fixedDelay = 5000)
     public void saveRefreshData(){
         //Refreshing Parking data in the database
         //Scheduler runs this method
