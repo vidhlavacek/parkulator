@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
+import lombok.extern.slf4j.Slf4j;
 import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingRefreshDTO;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 
+@Slf4j
 @Service
 public class ParkingDataService {
 
@@ -69,35 +71,40 @@ public class ParkingDataService {
     public void saveRefreshData(){
         //Refreshing Parking data in the database
         //Scheduler runs this method
+        try{
+            //Getting the data
+            List<ParkingRefreshDTO> pr = liveParkingDataService.refreshRijekaPlusData();
+            //pr.addAll(staticParkingDataService.getRefreshStaticParkingData());
 
-        //Getting the data
-        List<ParkingRefreshDTO> pr = liveParkingDataService.refreshRijekaPlusData();
-        //pr.addAll(staticParkingDataService.getRefreshStaticParkingData());
+            //Updateing each Parking (if it exists)
+            for(ParkingRefreshDTO RefreshData : pr){
+                Parking parking = parkingRepository
+                    .findBySourceKey(RefreshData.getSourceKey())
+                    .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
 
-        //Updateing each Parking (if it exists)
-        for(ParkingRefreshDTO RefreshData : pr){
-            Parking parking = parkingRepository
-                .findBySourceKey(RefreshData.getSourceKey())
-                .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
-
-            parking.setName(RefreshData.getName());
-            parking.setLive(RefreshData.isLive());
-            parking.setAvailableSpots(RefreshData.getAvailableSpots());
-            
-            //Clearing all prices in a parking in case there has been a big change in data
-            parking.getParkingPrices().clear();
-            List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
-            for(ParkingPriceDTO pp : ppDto){
-                ParkingPrice parkingPrice = new ParkingPrice();
+                parking.setName(RefreshData.getName());
+                parking.setLive(RefreshData.isLive());
+                parking.setAvailableSpots(RefreshData.getAvailableSpots());
                 
-                parkingPrice.setDay(pp.getDay());
-                parkingPrice.setSpecial(pp.getSpecial());
-                parkingPrice.setOpeningHour(pp.getOpeningHour());
-                parkingPrice.setClosingHour(pp.getClosingHour());
-                parkingPrice.setPrice(pp.getPrice());
-                
-                parking.addPrice(parkingPrice);
+                //Clearing all prices in a parking in case there has been a big change in data
+                parking.getParkingPrices().clear();
+                List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
+                for(ParkingPriceDTO pp : ppDto){
+                    ParkingPrice parkingPrice = new ParkingPrice();
+                    
+                    parkingPrice.setDay(pp.getDay());
+                    parkingPrice.setSpecial(pp.getSpecial());
+                    parkingPrice.setOpeningHour(pp.getOpeningHour());
+                    parkingPrice.setClosingHour(pp.getClosingHour());
+                    parkingPrice.setPrice(pp.getPrice());
+                    
+                    parking.addPrice(parkingPrice);
+                }
+                parkingRepository.save(parking);
             }
+        } catch(Exception e){
+            log.error("Parking refresh failed");
+            return;
         }
     }
 }
