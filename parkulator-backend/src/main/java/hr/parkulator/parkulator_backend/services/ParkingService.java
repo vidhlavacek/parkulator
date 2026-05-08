@@ -119,42 +119,52 @@ public class ParkingService {
         if (maxPrice != null && maxPrice < 0) {
             throw new BadRequestException("maxPrice cannot be negative");
         }
-        // if no parking found in radius
-        List<Parking> parkings = new ArrayList<>();
+    
+        List<Parking> parkingEntities;
         boolean expanded = false;
         Double radius = null;
 
+        //distance and type filter
         if (maxDistance == null) {
             if (type != null) {
-                parkings = parkingRepository.findByType(type);
+                parkingEntities = parkingRepository.findByType(type);
             }else {
-                parkings = parkingRepository.findAll();
+                parkingEntities = parkingRepository.findAll();
             }
         }else {
             radius = maxDistance;
 
-            while (radius <= 20) {
-                parkings = parkingRepository.filterAll(type, radius, lat, lng);
+            List<Parking> result = new ArrayList<>();
 
-                if (!parkings.isEmpty()) {
+            while (radius <= 20) {
+                result = parkingRepository.filterAll(type, radius, lat, lng);
+
+                if (!result .isEmpty()) {
                     break;
                 }
 
                 radius += 0.5;
                 expanded = true;
             }
+
+            parkingEntities = result;
         }
 
-        // price filtering 
-        if (maxPrice != null) {
-            List<Parking> filtered = new ArrayList<>();
+        // turning enitiy to DTO
+        List<ParkingDTO> parkings = parkingEntities.stream()
+                .map(this::mapToDTO)
+                .toList();
 
-            for (Parking p : parkings) {
-                double price = getCurrentPrice(p);
-                if (price >= 0 && price <= maxPrice) {
+        // price filter on DTO 
+        if (maxPrice != null) {
+            List<ParkingDTO> filtered = new ArrayList<>();
+
+            for (ParkingDTO p : parkings) {
+                if (p.getPrice() >= 0 && p.getPrice() <= maxPrice) {
                     filtered.add(p);
                 }
             }
+
             parkings = filtered;
         }
 
@@ -170,6 +180,25 @@ public class ParkingService {
         return response;
     }
 
+    private ParkingDTO mapToDTO(Parking parking) {
+        ParkingDTO dto = new ParkingDTO();
+
+        dto.setName(parking.getName());
+        dto.setAddress(parking.getAddress());
+        dto.setType(parking.getType());
+        dto.setLink(parking.getLink());
+        dto.setLive(parking.isLive());
+        dto.setAvailableSpots(parking.getAvailableSpots());
+
+        dto.setLatitude(parking.getLatitude());
+        dto.setLongitude(parking.getLongitude());
+
+        dto.setPrice(getCurrentPrice(parking));
+
+        return dto;
+    }
+
+    //price calculation
     private double getCurrentPrice(Parking parking) {
         DayOfWeek day = LocalDate.now().getDayOfWeek();
         int hourNow = LocalTime.now().getHour();

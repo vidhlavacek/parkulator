@@ -3,8 +3,6 @@ package hr.parkulator.parkulator_backend.dto.parking;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import hr.parkulator.parkulator_backend.entities.Parking;
 import lombok.Data;
 
 @Data
@@ -12,5 +10,5 @@ import lombok.Data;
 public class ParkingSearchResponseDTO {
     private boolean radiusExpanded;
     private Double finalRadius;
-    private List<Parking> parkings;
+    private List<ParkingDTO> parkings;
 }
