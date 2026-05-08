@@ -11,9 +11,12 @@ import java.util.List;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import hr.parkulator.parkulator_backend.entities.ParkingPrice;
+import hr.parkulator.parkulator_backend.exception.BadRequestException;
+import hr.parkulator.parkulator_backend.exception.NoParkingsFoundException;
 import hr.parkulator.parkulator_backend.exception.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingSearchResponseDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
 
 @Service
@@ -100,34 +103,71 @@ public class ParkingService {
         return parkingRepository.findByType(type);
     }
 
-   public List<Parking> getFilteredParkings(
+   public ParkingSearchResponseDTO getFilteredParkings(
         String type,
         Double maxDistance,
         Double lat,
         Double lng,
         Double maxPrice
     ) {
-        List<Parking> parkings = parkingRepository.filterAll(type, maxDistance, lat, lng);
+        if (lat == null || lng == null) {
+            throw new BadRequestException("User location (lat/lng) is required for filtering");
+        }
+        if (maxDistance != null && maxDistance < 0) {
+            throw new BadRequestException("maxDistance cannot be negative");
+        }
+        if (maxPrice != null && maxPrice < 0) {
+            throw new BadRequestException("maxPrice cannot be negative");
+        }
+        // if no parking found in radius
+        List<Parking> parkings = new ArrayList<>();
+        boolean expanded = false;
+        Double radius = null;
 
-        if (maxPrice == null) {
-            return parkings;
+        if (maxDistance == null) {
+            if (type != null) {
+                parkings = parkingRepository.findByType(type);
+            }else {
+                parkings = parkingRepository.findAll();
+            }
+        }else {
+            radius = maxDistance;
+
+            while (radius <= 20) {
+                parkings = parkingRepository.filterAll(type, radius, lat, lng);
+
+                if (!parkings.isEmpty()) {
+                    break;
+                }
+
+                radius += 0.5;
+                expanded = true;
+            }
         }
 
-        List<Parking> result = new ArrayList<>();
+        // price filtering 
+        if (maxPrice != null) {
+            List<Parking> filtered = new ArrayList<>();
 
-        for (Parking parking : parkings) {
-            double price = getCurrentPrice(parking);
-
-            if (price < 0) {
-                continue;
+            for (Parking p : parkings) {
+                double price = getCurrentPrice(p);
+                if (price >= 0 && price <= maxPrice) {
+                    filtered.add(p);
+                }
             }
-            
-            if (price <= maxPrice) {
-                result.add(parking);
-            }
+            parkings = filtered;
         }
 
-        return result;
+        if (parkings.isEmpty()) {
+            throw new NoParkingsFoundException("No parkings found");
+        }
+
+        ParkingSearchResponseDTO response = new ParkingSearchResponseDTO();
+        response.setParkings(parkings);
+        response.setRadiusExpanded(expanded);
+        response.setFinalRadius(radius);
+
+        return response;
     }
 
     private double getCurrentPrice(Parking parking) {
