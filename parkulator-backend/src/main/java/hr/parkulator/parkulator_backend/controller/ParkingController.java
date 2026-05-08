@@ -40,12 +40,6 @@ public class ParkingController {
         return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
     }
 
-    //temporary route for testing purposes, will be removed later
-    @GetMapping("/all")
-    public List<ParkingDTO> getAllParkingLots(){
-        return parkingService.getAllParkings();
-    }
-
     @GetMapping("/refresh")
     public String refreshParkingLots() {
         parkingDataService.saveRefreshData();
