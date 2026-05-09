@@ -7,15 +7,16 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors.light.tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
+        
       <Tabs.Screen
         name="index"
         options={{
@@ -27,29 +28,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="time-outline" size={24} color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => (
             <Ionicons name="person" size={24} color={color} />
           ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="explore"
-        options={{
-          href: null,
         }}
       />
 

@@ -12,6 +12,8 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
 
     Optional<Parking> findBySourceKey(String sourceKey);
 
+    List<Parking> findByLatitudeIsNullOrLongitudeIsNull();
+
     Optional<Parking> findByName(String name);
 
     Optional<Parking> findByAddress(String address);
