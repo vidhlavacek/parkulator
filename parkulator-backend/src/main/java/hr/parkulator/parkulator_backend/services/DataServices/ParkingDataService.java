@@ -34,8 +34,8 @@ public class ParkingDataService {
     private ParkingRepository parkingRepository;
     @Autowired
     private LiveParkingDataService liveParkingDataService;
-    @Autowired
-    private StaticParkingDataService staticParkingDataService;
+    /*@Autowired
+    private StaticParkingDataService staticParkingDataService;*/
     @Autowired
     private ParkingLocationDataService parkingLocationDataService;
 
@@ -48,7 +48,7 @@ public class ParkingDataService {
 
         //Getting the data
         List<ParkingDataDTO> dtos = liveParkingDataService.getInitialRijekaPlusData();
-        dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
+        //dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
         //Creating list of Parking entities for the database
         for(ParkingDataDTO dto : dtos){

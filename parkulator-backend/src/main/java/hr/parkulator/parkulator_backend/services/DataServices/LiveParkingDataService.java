@@ -148,7 +148,7 @@ public class LiveParkingDataService {
             //Error
             if(parkingPrices == null){
                 //To be replaced with logger when logger is implemented
-                System.out.print("Parking with name " + name + " and ExternalID " + externalId + "error in getting parking prices");
+                log.error("Parking with name " + name + " and ExternalID " + externalId + "error in getting parking prices");
                 continue;
             } 
 
