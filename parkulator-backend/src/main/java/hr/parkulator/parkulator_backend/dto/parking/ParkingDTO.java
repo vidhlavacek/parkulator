@@ -16,4 +16,6 @@ public class ParkingDTO {
     private double Price;
     private int openingHour;
     private int closingHour;
+    private Double latitude;
+    private Double longitude;
 }
