@@ -55,7 +55,7 @@ public class LiveParkingDataService {
     
     public List<ParkingRefreshDTO> refreshRijekaPlusData() {
 
-        log.info("Refreshing parking lot data...");
+        log.info("[LIVE PARKING LOT REFRESH] Refreshing parking lot data...");
 
         //Get json from Rijeka Plus REST API Endpoint
         JsonNode parkiralista = getRijekaPlusJSON();

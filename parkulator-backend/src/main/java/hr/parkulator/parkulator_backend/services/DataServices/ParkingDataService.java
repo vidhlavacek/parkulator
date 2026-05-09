@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,8 @@ public class ParkingDataService {
     private LiveParkingDataService liveParkingDataService;
     @Autowired
     private StaticParkingDataService staticParkingDataService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public void saveInitialData(){
@@ -67,14 +71,13 @@ public class ParkingDataService {
     
 
     @Transactional
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 60000)
     public void saveRefreshData(){
         //Refreshing Parking data in the database
         //Scheduler runs this method
         try{
             //Getting the data
             List<ParkingRefreshDTO> pr = liveParkingDataService.refreshRijekaPlusData();
-            //pr.addAll(staticParkingDataService.getRefreshStaticParkingData());
 
             //Updateing each Parking (if it exists)
             for(ParkingRefreshDTO RefreshData : pr){
@@ -87,7 +90,8 @@ public class ParkingDataService {
                 parking.setAvailableSpots(RefreshData.getAvailableSpots());
                 
                 //Clearing all prices in a parking in case there has been a big change in data
-                parking.getParkingPrices().clear();
+                parking.clearParkingPrices();
+                entityManager.flush();
                 List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
                 for(ParkingPriceDTO pp : ppDto){
                     ParkingPrice parkingPrice = new ParkingPrice();
@@ -102,9 +106,48 @@ public class ParkingDataService {
                 }
                 parkingRepository.save(parking);
             }
+            saveStaticRefreshData();
         } catch(Exception e){
             log.error("Parking refresh failed");
             return;
         }
+    }
+
+    @Transactional
+    public void saveStaticRefreshData(){
+        try{
+            //Getting the data
+            List<ParkingRefreshDTO> pr = staticParkingDataService.getRefreshStaticParkingData();
+
+            //Updateing each Parking (if it exists)
+            for(ParkingRefreshDTO RefreshData : pr){
+                Parking parking = parkingRepository
+                    .findBySourceKey(RefreshData.getSourceKey())
+                    .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
+
+                if(RefreshData.getAvailableSpots() != null) parking.setAvailableSpots(RefreshData.getAvailableSpots());
+                
+                //Clearing all prices in a parking in case there has been a big change in data
+                parking.clearParkingPrices();
+                List<ParkingPriceDTO> ppDto = RefreshData.getParkingPrice();
+                for(ParkingPriceDTO pp : ppDto){
+                    ParkingPrice parkingPrice = new ParkingPrice();
+                    
+                    parkingPrice.setDay(pp.getDay());
+                    parkingPrice.setSpecial(pp.getSpecial());
+                    parkingPrice.setOpeningHour(pp.getOpeningHour());
+                    parkingPrice.setClosingHour(pp.getClosingHour());
+                    parkingPrice.setPrice(pp.getPrice());
+                    
+                    parking.addPrice(parkingPrice);
+                }
+                parkingRepository.save(parking);
+            }
+
+        } catch(Exception e){
+            log.error("Parking static data refresh failed");
+            return;
+        }
+
     }
 }

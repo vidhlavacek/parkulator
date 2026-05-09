@@ -45,4 +45,7 @@ public class Parking {
         parkingPrices.remove(price);
         price.setParking(null);
     }
+    public void clearParkingPrices(){
+        parkingPrices.clear();
+    }
 }
