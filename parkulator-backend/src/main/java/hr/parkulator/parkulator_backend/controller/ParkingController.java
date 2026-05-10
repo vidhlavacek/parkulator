@@ -36,20 +36,6 @@ public class ParkingController {
             @RequestParam Double lng,
             @RequestParam(required = false)Double maxPrice
     ) {
-        return parkingService.getFilteredParkings(type, maxDistance, lat, lng, maxPrice);
-    }
-
-    //temporary route for testing purposes, will be removed later
-    @GetMapping("/all")
-    public List<ParkingDTO> getAllParkingLots(){
-        return parkingService.getAllParkings();
-    }
-
-    @GetMapping("/refresh")
-    public String refreshParkingLots() {
-        parkingDataService.saveRefreshData();
-        return "DONE";
-    }
-    
-    
+        return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
+    }    
 }

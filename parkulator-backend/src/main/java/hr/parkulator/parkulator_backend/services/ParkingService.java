@@ -24,66 +24,6 @@ import hr.parkulator.parkulator_backend.entities.Parking;
 public class ParkingService {
     private ParkingRepository parkingRepository;
 
-    public List<ParkingDTO> getAllParkings(){
-        //Getting all parking lots and mapping to ParkingDTO for testing purposes (displaying on frontend) 
-        //will be removed later as it is not necessary for this application
-
-        List<Parking> parking_lots = parkingRepository.findAll();
-        List <ParkingDTO> parkingLotsDTO = new ArrayList<>();
-
-        for(Parking parking : parking_lots){
-            ParkingDTO parkingDTO = new ParkingDTO();
-            
-            parkingDTO.setName(parking.getName());
-            parkingDTO.setAddress(parking.getAddress());
-            parkingDTO.setType(parking.getType());
-            parkingDTO.setLink(parking.getLink());
-            parkingDTO.setLive(parking.isLive());
-            parkingDTO.setAvailableSpots(parking.getAvailableSpots());
-            List<ParkingPrice> parkingPrices = parking.getParkingPrices();
-
-            //Deciding which price to send depending on the time and date
-            for(ParkingPrice parkingPrice : parkingPrices){
-                DayOfWeek day = LocalDate.now().getDayOfWeek();
-                int hourNow = LocalTime.now().getHour();
-                
-                WorkDayEnum wde = WorkDayEnum.SPECIAL;
-                if(day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY){
-                    wde = WorkDayEnum.WORKDAY;
-                }
-                else if(day == DayOfWeek.SATURDAY){
-                    wde = WorkDayEnum.SATURDAY;
-                }
-                else if(day == DayOfWeek.SUNDAY){
-                    wde = WorkDayEnum.SUNDAY;
-                }
-                
-                if(parkingPrice.getDay() != WorkDayEnum.SPECIAL){
-                    if(parkingPrice.getDay() == wde || parkingPrice.getDay() == WorkDayEnum.ALLDAYS){
-                        
-                        int open  = parkingPrice.getOpeningHour();
-                        int close = parkingPrice.getClosingHour();  
-                        boolean inRange = (open <= close  && hourNow >= open  && hourNow <= close) || (open >  close && (hourNow >= open || hourNow <= close));
-
-                        if((open == 0 && close == 0) || inRange){
-                            parkingDTO.setOpeningHour(open);
-                            parkingDTO.setClosingHour(close);
-                            parkingDTO.setPrice(parkingPrice.getPrice());
-                        }
-                    }
-                }
-                else{
-                    //Special should display the special message, will be implemented later
-                }
-            }
-            parkingLotsDTO.add(parkingDTO);
-        }
-
-
-
-        return parkingLotsDTO;
-    }
-
     public Parking getParkingById(Long id) {
         return parkingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Parking with id " + id + " not found"));
@@ -239,3 +179,4 @@ public class ParkingService {
         return -1; 
     }
 }
+
