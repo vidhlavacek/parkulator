@@ -80,11 +80,12 @@ public class ParkingScoreService {
         double weightDistance = 0.45;
         double weightAvailability = 0.3;
 
+
         //convert all metrics so higher scores always represent better parking options
         double priceScore = 1 - normalizedPrice;
         double distanceScore = 1 - normalizedDistance;
         double availabilityScore = normalizedAvailability;
-        
+    
         double score;
 
         //if parking status unknown don't include price
