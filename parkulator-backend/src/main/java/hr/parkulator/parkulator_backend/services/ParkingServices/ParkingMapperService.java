@@ -63,6 +63,8 @@ public class ParkingMapperService {
                 .stream()
                 .anyMatch(rule -> rule.getDay() == workDay || rule.getDay() == WorkDayEnum.ALLDAYS);
 
+        boolean isInRange = false;
+
         for (ParkingPrice rule : parking.getParkingPrices()){
             if (rule.getPrice() < 0) continue;
             if (rule.getOpeningHour() < 0 || rule.getOpeningHour() > 24) continue;
@@ -82,11 +84,12 @@ public class ParkingMapperService {
                                 || (open > close && (currentHour >= open || currentHour <= close));
 
             if ((open == 0 && close == 0) || inRange){
+                isInRange = true;
                 return rule.getPrice();
             }
         }
 
-        if (!hasRuleForToday) {
+        if (!hasRuleForToday || isInRange == false) {
             message.append("No pricing information available. Parking may be free or closed.");
         }
 

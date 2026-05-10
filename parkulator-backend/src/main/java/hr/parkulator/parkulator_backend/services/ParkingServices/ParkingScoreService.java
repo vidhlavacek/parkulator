@@ -18,7 +18,7 @@ public class ParkingScoreService {
         double[] distances = new double[parkings.size()];
         double[] availabilities = new double[parkings.size()];
 
-
+        //get data for every parking in the list
         for (int i = 0; i < parkings.size(); i++) {
             ParkingDTO parking = parkings.get(i);
 
@@ -36,7 +36,7 @@ public class ParkingScoreService {
             availabilities[i] = availability;
         }
 
-        //dynamic normalization
+        //dynamic normalization so parking scores are compared relative to each other
         double maxPrice = max(prices);
         double maxDistance = max(distances);
         double maxAvailability = max(availabilities);
@@ -45,17 +45,18 @@ public class ParkingScoreService {
         if (maxDistance == 0) maxDistance = 1;
         if (maxAvailability == 0) maxAvailability = 1;
 
-        //scoring each
+        //score each
         for (int i = 0; i < parkings.size(); i++) {
 
             ParkingDTO parking = parkings.get(i);
 
             String message = parking.getParkingStatus();
-            double priceScore = maxPrice == 0 ? 0 : prices[i] / maxPrice;
-            double distanceScore = maxDistance == 0 ? 0 : distances[i] / maxDistance;
-            double availabilityScore = maxAvailability == 0 ? 0 : availabilities[i] / maxAvailability;
+            //normalize values to 0-1 so different metrics can be weighted and compared fairly
+            double normalizedPrice = maxPrice == 0 ? 0 : prices[i] / maxPrice;
+            double normalizedDistance = maxDistance == 0 ? 0 : distances[i] / maxDistance;
+            double normalizedAvailability = maxAvailability == 0 ? 0 : availabilities[i] / maxAvailability;
 
-            double score = calculateScore(priceScore, message, distanceScore, availabilityScore);
+            double score = calculateScore(normalizedPrice, message, normalizedDistance, normalizedAvailability);
 
             parking.setScore(score);
         }
@@ -74,39 +75,52 @@ public class ParkingScoreService {
     }
 
 
-    private double calculateScore(double price, String message, double distance, double availability) {
+    private double calculateScore(double normalizedPrice, String message, double normalizedDistance, double normalizedAvailability) {
         double weightPrice = 0.25;
         double weightDistance = 0.45;
         double weightAvailability = 0.3;
 
-        double priceScore = 1 - price;
-        double distanceScore = 1 - distance;
-        double availabilityScore = availability;
+        //convert all metrics so higher scores always represent better parking options
+        double priceScore = 1 - normalizedPrice;
+        double distanceScore = 1 - normalizedDistance;
+        double availabilityScore = normalizedAvailability;
         
         double score;
 
+        //if parking status unknown don't include price
         if(message != null){
             score = weightDistance * distanceScore + weightAvailability * availabilityScore;
         }else{
             score = weightPrice * priceScore + weightDistance * distanceScore + weightAvailability * availabilityScore;
         }
 
-        //creating a better scale 0-5:
+        //make a better scale: 0-5
         score = score * 5.0;
         return Math.round(score * 100.0) / 100.0;
     }
 
-    private double resolveAvailability(ParkingDTO p) {
-        if (p.isLive() == true) {
-            return p.getAvailableSpots();
+    private double resolveAvailability(ParkingDTO parking) {
+        //if online then take existing data and normalize it
+        if (parking.isLive() == true) {
+            return (double) parking.getAvailableSpots() / parking.getSpots();
         }
+        //if offline make an estimation
+        return 1.0 - estimateOccupancy(parking);
 
-        return estimateOccupancy(p);
+        //if working with raw availableSpots data (no normalization):
+        //if online then take existing data 
+        /* 
+        if (parking.isLive() == true) {
+            return parking.getAvailableSpots();
+        }
+        //if offline make an estimation
+        return estimateOccupancy(parking);*/
     }
 
-    private double estimateOccupancy(ParkingDTO p) {
+    private double estimateOccupancy(ParkingDTO parking) {
         //add algorithm for estimation of occupancy
-        return 0;
+        return 0.9; //normalized
+        //return 600;
     }   
 
     //Haversine formula
