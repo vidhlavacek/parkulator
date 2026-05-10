@@ -15,5 +15,7 @@ public class ParkingDataDTO {
     private boolean isLive;
     private Long spots;
     private Long availableSpots;
+    private Double latitude;
+    private Double longitude;
     List<ParkingPriceDTO> parkingPrice;
 }

@@ -148,7 +148,7 @@ public class LiveParkingDataService {
             //Error
             if(parkingPrices == null){
                 //To be replaced with logger when logger is implemented
-                System.out.print("Parking with name " + name + " and ExternalID " + externalId + "error in getting parking prices");
+                log.error("Parking with name " + name + " and ExternalID " + externalId + "error in getting parking prices");
                 continue;
             } 
 
@@ -163,7 +163,11 @@ public class LiveParkingDataService {
                 spots = parking.get("parking_data").get("kapacitet").asLong(0);
                 availableSpots = parking.get("parking_data").get("slobodno").asLong(0);
                 
-                ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, parkingPrices);
+                Double latitude = parking.get("parking_data").get("lokacija").get("lat").asDouble();
+                Double longitude = parking.get("parking_data").get("lokacija").get("lng").asDouble();
+
+
+                ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrices);
                 lpd_list.add(lpd);
             }
             //Offline parkings, these are zones which need to be split into seperate parking lots
@@ -174,7 +178,7 @@ public class LiveParkingDataService {
                 List<String> addresses = addressSplitter(address);
 
                 for(String adr : addresses){
-                    lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, parkingPrices));
+                    lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, null, null, parkingPrices));
                 }
             }
         }
@@ -219,23 +223,29 @@ public class LiveParkingDataService {
         if(defaultPriceFlag && !specialPriceFlag) {
             //Default price flag, creating a ParkingPriceDTO for each mention of a different work day in our WorkDayEnum enumeration
             for(JsonNode workhours : parking.path("parking_data").path("vrijeme_naplate")){
-                if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom")){
+                boolean special_flag = true;
+                
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("radnim danom")){
                     workdays = WorkDayEnum.WORKDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Subotom") || workhours.get("dani_i_sati").stringValue().equals("Subotom:")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("subotom") || workhours.get("dani_i_sati").stringValue().toLowerCase().equals("subotom:")){
                     workdays = WorkDayEnum.SATURDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Nedjeljom") || workhours.get("dani_i_sati").stringValue().equals("Nedjeljom:")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("nedjeljom") || workhours.get("dani_i_sati").stringValue().toLowerCase().equals("nedjeljom:")){
                     workdays = WorkDayEnum.SUNDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom") || workhours.get("dani_i_sati").stringValue().contains("Naplata parkiranja vrši se:") || workhours.get("dani_i_sati").stringValue().contains("Naplata se vrši od")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("naplata parkiranja vrši se:") || workhours.get("dani_i_sati").stringValue().toLowerCase().contains("naplata se vrši od")){
                     workdays = WorkDayEnum.ALLDAYS;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else {
+                if (special_flag) {
                     workdays = WorkDayEnum.SPECIAL;
                     special = workhours.get("dani_i_sati").stringValue();
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
@@ -301,9 +311,9 @@ public class LiveParkingDataService {
                 return pp;
     }
 
-    public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots, List<ParkingPriceDTO> parkingPrice){
+    public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots,Double latitude, Double longitude, List<ParkingPriceDTO> parkingPrice){
         //Creating a ParkingDataDTO instance
-        return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, parkingPrice);
+        return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrice);
     }
 
     public String createSourceKey(String externalId, String name, String address){
