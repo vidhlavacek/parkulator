@@ -14,7 +14,7 @@ public class ParkingDTO {
     private boolean isLive;
     private Long availableSpots;
     private Long spots;
-    private String priceMessage;
+    private String parkingStatus;
     private double Price;
     private int openingHour;
     private int closingHour;
