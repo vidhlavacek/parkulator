@@ -223,23 +223,29 @@ public class LiveParkingDataService {
         if(defaultPriceFlag && !specialPriceFlag) {
             //Default price flag, creating a ParkingPriceDTO for each mention of a different work day in our WorkDayEnum enumeration
             for(JsonNode workhours : parking.path("parking_data").path("vrijeme_naplate")){
-                if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom")){
+                boolean special_flag = true;
+                
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("radnim danom")){
                     workdays = WorkDayEnum.WORKDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Subotom") || workhours.get("dani_i_sati").stringValue().equals("Subotom:")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("subotom") || workhours.get("dani_i_sati").stringValue().toLowerCase().equals("subotom:")){
                     workdays = WorkDayEnum.SATURDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Nedjeljom") || workhours.get("dani_i_sati").stringValue().equals("Nedjeljom:")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("nedjeljom") || workhours.get("dani_i_sati").stringValue().toLowerCase().equals("nedjeljom:")){
                     workdays = WorkDayEnum.SUNDAY;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else if(workhours.get("dani_i_sati").stringValue().contains("Radnim danom, subotom, nedjeljom i blagdanom") || workhours.get("dani_i_sati").stringValue().contains("Naplata parkiranja vrši se:") || workhours.get("dani_i_sati").stringValue().contains("Naplata se vrši od")){
+                if(workhours.get("dani_i_sati").stringValue().toLowerCase().contains("naplata parkiranja vrši se:") || workhours.get("dani_i_sati").stringValue().toLowerCase().contains("naplata se vrši od")){
                     workdays = WorkDayEnum.ALLDAYS;
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
+                    special_flag = false;
                 }
-                else {
+                if (special_flag) {
                     workdays = WorkDayEnum.SPECIAL;
                     special = workhours.get("dani_i_sati").stringValue();
                     parkingPrices.add(createParkingPrice(workdays, special, parkingPrice, workhours));
