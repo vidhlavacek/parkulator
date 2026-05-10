@@ -193,13 +193,17 @@ public class ParkingService {
         dto.setLatitude(parking.getLatitude());
         dto.setLongitude(parking.getLongitude());
 
-        dto.setPrice(getCurrentPrice(parking));
+        StringBuilder message = new StringBuilder();
+        double price = getCurrentPrice(parking, message);
+
+        dto.setPrice(price);
+        dto.setPriceMessage(message.length() == 0 ? null : message.toString());
 
         return dto;
     }
 
     //price calculation
-    private double getCurrentPrice(Parking parking) {
+    private double getCurrentPrice(Parking parking, StringBuilder message) {
         DayOfWeek day = LocalDate.now().getDayOfWeek();
         int hourNow = LocalTime.now().getHour();
 
@@ -212,6 +216,12 @@ public class ParkingService {
         } else {
             wde = WorkDayEnum.SUNDAY;
         }
+
+         boolean hasRuleForToday = parking.getParkingPrices().stream()
+            .anyMatch(r -> r.getDay() == wde || r.getDay() == WorkDayEnum.ALLDAYS);
+
+        double price = 0.0;
+        boolean found = false;
 
         for (ParkingPrice priceRule : parking.getParkingPrices()) {
 
@@ -232,10 +242,22 @@ public class ParkingService {
                     || (open > close && (hourNow >= open || hourNow <= close));
 
             if ((open == 0 && close == 0) || inRange) {
-                return priceRule.getPrice();
+                price = priceRule.getPrice();
+                found = true;
+                break;
             }
         }
 
-        return -1; 
+        if (!hasRuleForToday) {
+        message.append("No pricing information available for today. The parking may be free or closed.");
+        return 0.0;
+        }
+
+        if (!found) {
+            message.append("No active pricing rule for the current time");
+            return 0.0;
+        }
+
+        return price;
     }
 }

@@ -13,6 +13,7 @@ public class ParkingDTO {
     private String link;
     private boolean isLive;
     private Long availableSpots;
+    private String priceMessage;
     private double Price;
     private int openingHour;
     private int closingHour;
