@@ -74,7 +74,7 @@ public class StaticParkingDataService {
         log.info("[STATIC REFRESH PARKING DATA] SUCCESS");
         return result;
         } catch(Exception e){
-            log.warn("[STATIC REFRESH PARKING DATA] Failed, can't open file");
+            log.warn("[STATIC REFRESH PARKING DATA] Failed, can't open file", e);
             return new ArrayList<>();
         }
     }
