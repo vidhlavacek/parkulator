@@ -1,0 +1,506 @@
+[ {
+  "sourceKey" : "8|srednja delta|",
+  "longitude" : 14.4461315,
+  "latitude" : 45.3236375
+}, {
+  "sourceKey" : "10|kbc sušak|",
+  "longitude" : 14.4712643,
+  "latitude" : 45.325475
+}, {
+  "sourceKey" : "106|3. zona|hž žabica",
+  "longitude" : 14.4371765,
+  "latitude" : 45.3281121
+}, {
+  "sourceKey" : "106|3. zona|brajdica",
+  "longitude" : 14.4603082,
+  "latitude" : 45.3203863
+}, {
+  "sourceKey" : "105|2a. zona|rikard benčić",
+  "longitude" : 14.4188572,
+  "latitude" : 45.3370937
+}, {
+  "sourceKey" : "104|2. zona|petra kobeka",
+  "longitude" : 14.438703,
+  "latitude" : 45.3358263
+}, {
+  "sourceKey" : "104|2. zona|milutina barača",
+  "longitude" : 14.4165953,
+  "latitude" : 45.334116
+}, {
+  "sourceKey" : "104|2. zona|volčićev trg",
+  "longitude" : 14.4416745,
+  "latitude" : 45.333011
+}, {
+  "sourceKey" : "102|0b. zona|gomila",
+  "longitude" : 14.4427938,
+  "latitude" : 45.3279838
+}, {
+  "sourceKey" : "102|0b. zona|slogin kula",
+  "longitude" : 14.4427239,
+  "latitude" : 45.3284108
+}, {
+  "sourceKey" : "103|1. zona|trg kralja tomislava",
+  "longitude" : 14.4309167,
+  "latitude" : 45.3302729
+}, {
+  "sourceKey" : "103|1. zona|s. cindrića",
+  "longitude" : 14.4520055,
+  "latitude" : 45.3246558
+}, {
+  "sourceKey" : "103|1. zona|ulica strossmayerova",
+  "longitude" : 14.4559847,
+  "latitude" : 45.32401
+}, {
+  "sourceKey" : "103|1. zona|cambierieva",
+  "longitude" : 14.4307319,
+  "latitude" : 45.3325464
+}, {
+  "sourceKey" : "103|1. zona|milana butkovića",
+  "longitude" : 14.4305725,
+  "latitude" : 45.3315626
+}, {
+  "sourceKey" : "103|1. zona|pomerio",
+  "longitude" : 14.4357902,
+  "latitude" : 45.3302805
+}, {
+  "sourceKey" : "103|1. zona|trinajstićeva",
+  "longitude" : 14.4427499,
+  "latitude" : 45.3303534
+}, {
+  "sourceKey" : "103|1. zona|laginjina",
+  "longitude" : 14.4390419,
+  "latitude" : 45.3325175
+}, {
+  "sourceKey" : "103|1. zona|tizianova",
+  "longitude" : 14.4338173,
+  "latitude" : 45.3356521
+}, {
+  "sourceKey" : "103|1. zona|slaviše vajnera čiče",
+  "longitude" : 14.4368621,
+  "latitude" : 45.3308005
+}, {
+  "sourceKey" : "103|1. zona|moše albaharija",
+  "longitude" : 14.4353449,
+  "latitude" : 45.3318706
+}, {
+  "sourceKey" : "103|1. zona|senjskih uskoka",
+  "longitude" : 14.4347675,
+  "latitude" : 45.3324879
+}, {
+  "sourceKey" : "103|1. zona|omladinska",
+  "longitude" : 14.4371869,
+  "latitude" : 45.3321317
+}, {
+  "sourceKey" : "103|1. zona|m. smokvine",
+  "longitude" : 14.4494723,
+  "latitude" : 45.3266561
+}, {
+  "sourceKey" : "103|1. zona|podhumskih žrtava",
+  "longitude" : 14.449781,
+  "latitude" : 45.3257172
+}, {
+  "sourceKey" : "103|1. zona|studentska",
+  "longitude" : 14.4360954,
+  "latitude" : 45.3313477
+}, {
+  "sourceKey" : "103|1. zona|j. račića",
+  "longitude" : 14.4388274,
+  "latitude" : 45.3321892
+}, {
+  "sourceKey" : "103|1. zona|vodovodna ulica",
+  "longitude" : 14.4503342,
+  "latitude" : 45.3306642
+}, {
+  "sourceKey" : "103|1. zona|potok",
+  "longitude" : 14.4301942,
+  "latitude" : 45.3320652
+}, {
+  "sourceKey" : "103|1. zona|j. završnika",
+  "longitude" : 14.4317133,
+  "latitude" : 45.3337434
+}, {
+  "sourceKey" : "103|1. zona|nikole cara",
+  "longitude" : 14.4319309,
+  "latitude" : 45.3328018
+}, {
+  "sourceKey" : "103|1. zona|zdenka petranovića",
+  "longitude" : 14.432588,
+  "latitude" : 45.3323101
+}, {
+  "sourceKey" : "103|1. zona|tržnica zamet",
+  "longitude" : 14.3804279,
+  "latitude" : 45.3442877
+}, {
+  "sourceKey" : "103|1. zona|ulica bože vidasa",
+  "longitude" : 14.3793726,
+  "latitude" : 45.3445863
+}, {
+  "sourceKey" : "101|0a. zona|f.supila",
+  "longitude" : 14.441897,
+  "latitude" : 45.3285301
+}, {
+  "sourceKey" : "101|0a. zona|i.dežmana",
+  "longitude" : 14.441298,
+  "latitude" : 45.3290848
+}, {
+  "sourceKey" : "101|0a. zona|r.strohala",
+  "longitude" : 14.4408674,
+  "latitude" : 45.3283658
+}, {
+  "sourceKey" : "101|0a. zona|ulica dolac",
+  "longitude" : 14.4331456,
+  "latitude" : 45.3313401
+}, {
+  "sourceKey" : "101|0a. zona|školski prolaz",
+  "longitude" : 14.4404479,
+  "latitude" : 45.3278129
+}, {
+  "sourceKey" : "100|0. zona|verdijeva",
+  "longitude" : 14.443856,
+  "latitude" : 45.3244287
+}, {
+  "sourceKey" : "100|0. zona|zagrebačka",
+  "longitude" : 14.4196323,
+  "latitude" : 45.3315475
+}, {
+  "sourceKey" : "100|0. zona|matačićeva",
+  "longitude" : 14.4438904,
+  "latitude" : 45.3241145
+}, {
+  "sourceKey" : "100|0. zona|wenzelova",
+  "longitude" : 14.4451592,
+  "latitude" : 45.3242678
+}, {
+  "sourceKey" : "100|0. zona|jelačićev trg",
+  "longitude" : 14.4390774,
+  "latitude" : 45.3277383
+}, {
+  "sourceKey" : "100|0. zona|zadarska ulica",
+  "longitude" : 14.4382419,
+  "latitude" : 45.3274844
+}, {
+  "sourceKey" : "100|0. zona|žrtava fašizma",
+  "longitude" : 14.4413171,
+  "latitude" : 45.3296957
+}, {
+  "sourceKey" : "100|0. zona|e.barčića",
+  "longitude" : 14.4392968,
+  "latitude" : 45.3287304
+}, {
+  "sourceKey" : "100|0. zona|m.gupca",
+  "longitude" : 14.445232,
+  "latitude" : 45.325086
+}, {
+  "sourceKey" : "100|0. zona|veslarska",
+  "longitude" : 14.444622,
+  "latitude" : 45.3250251
+}, {
+  "sourceKey" : "100|0. zona|i. zajca",
+  "longitude" : 14.4448849,
+  "latitude" : 45.3246382
+}, {
+  "sourceKey" : "100|0. zona|splitska",
+  "longitude" : 14.4390539,
+  "latitude" : 45.3271795
+}, {
+  "sourceKey" : "100|0. zona|školjić - ulica",
+  "longitude" : 14.4488226,
+  "latitude" : 45.3282443
+}, {
+  "sourceKey" : "100|0. zona|školjić ii",
+  "longitude" : 14.4470212,
+  "latitude" : 45.3283427
+}, {
+  "sourceKey" : "8|srednja delta|",
+  "longitude" : 14.4461315,
+  "latitude" : 45.3236375
+}, {
+  "sourceKey" : "10|kbc sušak|",
+  "longitude" : 14.4712643,
+  "latitude" : 45.325475
+}, {
+  "sourceKey" : "106|3. zona|hž žabica",
+  "longitude" : 14.4371765,
+  "latitude" : 45.3281121
+}, {
+  "sourceKey" : "106|3. zona|brajdica",
+  "longitude" : 14.4603082,
+  "latitude" : 45.3203863
+}, {
+  "sourceKey" : "105|2a. zona|rikard benčić",
+  "longitude" : 14.4188572,
+  "latitude" : 45.3370937
+}, {
+  "sourceKey" : "104|2. zona|petra kobeka",
+  "longitude" : 14.438703,
+  "latitude" : 45.3358263
+}, {
+  "sourceKey" : "104|2. zona|milutina barača",
+  "longitude" : 14.4165953,
+  "latitude" : 45.334116
+}, {
+  "sourceKey" : "104|2. zona|volčićev trg",
+  "longitude" : 14.4416745,
+  "latitude" : 45.333011
+}, {
+  "sourceKey" : "102|0b. zona|gomila",
+  "longitude" : 14.4427938,
+  "latitude" : 45.3279838
+}, {
+  "sourceKey" : "102|0b. zona|slogin kula",
+  "longitude" : 14.4427239,
+  "latitude" : 45.3284108
+}, {
+  "sourceKey" : "103|1. zona|trg kralja tomislava",
+  "longitude" : 14.4309167,
+  "latitude" : 45.3302729
+}, {
+  "sourceKey" : "103|1. zona|s. cindrića",
+  "longitude" : 14.4520055,
+  "latitude" : 45.3246558
+}, {
+  "sourceKey" : "103|1. zona|ulica strossmayerova",
+  "longitude" : 14.4559847,
+  "latitude" : 45.32401
+}, {
+  "sourceKey" : "103|1. zona|cambierieva",
+  "longitude" : 14.4307319,
+  "latitude" : 45.3325464
+}, {
+  "sourceKey" : "103|1. zona|milana butkovića",
+  "longitude" : 14.4305725,
+  "latitude" : 45.3315626
+}, {
+  "sourceKey" : "103|1. zona|pomerio",
+  "longitude" : 14.4357902,
+  "latitude" : 45.3302805
+}, {
+  "sourceKey" : "103|1. zona|trinajstićeva",
+  "longitude" : 14.4427499,
+  "latitude" : 45.3303534
+}, {
+  "sourceKey" : "103|1. zona|laginjina",
+  "longitude" : 14.4390419,
+  "latitude" : 45.3325175
+}, {
+  "sourceKey" : "103|1. zona|tizianova",
+  "longitude" : 14.4338173,
+  "latitude" : 45.3356521
+}, {
+  "sourceKey" : "103|1. zona|slaviše vajnera čiče",
+  "longitude" : 14.4368621,
+  "latitude" : 45.3308005
+}, {
+  "sourceKey" : "103|1. zona|moše albaharija",
+  "longitude" : 14.4353449,
+  "latitude" : 45.3318706
+}, {
+  "sourceKey" : "103|1. zona|senjskih uskoka",
+  "longitude" : 14.4347675,
+  "latitude" : 45.3324879
+}, {
+  "sourceKey" : "103|1. zona|omladinska",
+  "longitude" : 14.4371869,
+  "latitude" : 45.3321317
+}, {
+  "sourceKey" : "103|1. zona|m. smokvine",
+  "longitude" : 14.4494723,
+  "latitude" : 45.3266561
+}, {
+  "sourceKey" : "103|1. zona|podhumskih žrtava",
+  "longitude" : 14.449781,
+  "latitude" : 45.3257172
+}, {
+  "sourceKey" : "103|1. zona|studentska",
+  "longitude" : 14.4360954,
+  "latitude" : 45.3313477
+}, {
+  "sourceKey" : "103|1. zona|j. račića",
+  "longitude" : 14.4388274,
+  "latitude" : 45.3321892
+}, {
+  "sourceKey" : "103|1. zona|vodovodna ulica",
+  "longitude" : 14.4503342,
+  "latitude" : 45.3306642
+}, {
+  "sourceKey" : "103|1. zona|potok",
+  "longitude" : 14.4301942,
+  "latitude" : 45.3320652
+}, {
+  "sourceKey" : "103|1. zona|j. završnika",
+  "longitude" : 14.4317133,
+  "latitude" : 45.3337434
+}, {
+  "sourceKey" : "103|1. zona|nikole cara",
+  "longitude" : 14.4319309,
+  "latitude" : 45.3328018
+}, {
+  "sourceKey" : "103|1. zona|zdenka petranovića",
+  "longitude" : 14.432588,
+  "latitude" : 45.3323101
+}, {
+  "sourceKey" : "103|1. zona|tržnica zamet",
+  "longitude" : 14.3804279,
+  "latitude" : 45.3442877
+}, {
+  "sourceKey" : "103|1. zona|ulica bože vidasa",
+  "longitude" : 14.3793726,
+  "latitude" : 45.3445863
+}, {
+  "sourceKey" : "101|0a. zona|f.supila",
+  "longitude" : 14.441897,
+  "latitude" : 45.3285301
+}, {
+  "sourceKey" : "101|0a. zona|i.dežmana",
+  "longitude" : 14.441298,
+  "latitude" : 45.3290848
+}, {
+  "sourceKey" : "101|0a. zona|r.strohala",
+  "longitude" : 14.4408674,
+  "latitude" : 45.3283658
+}, {
+  "sourceKey" : "101|0a. zona|ulica dolac",
+  "longitude" : 14.4331456,
+  "latitude" : 45.3313401
+}, {
+  "sourceKey" : "101|0a. zona|školski prolaz",
+  "longitude" : 14.4404479,
+  "latitude" : 45.3278129
+}, {
+  "sourceKey" : "100|0. zona|verdijeva",
+  "longitude" : 14.443856,
+  "latitude" : 45.3244287
+}, {
+  "sourceKey" : "100|0. zona|zagrebačka",
+  "longitude" : 14.4196323,
+  "latitude" : 45.3315475
+}, {
+  "sourceKey" : "100|0. zona|matačićeva",
+  "longitude" : 14.4438904,
+  "latitude" : 45.3241145
+}, {
+  "sourceKey" : "100|0. zona|wenzelova",
+  "longitude" : 14.4451592,
+  "latitude" : 45.3242678
+}, {
+  "sourceKey" : "100|0. zona|jelačićev trg",
+  "longitude" : 14.4390774,
+  "latitude" : 45.3277383
+}, {
+  "sourceKey" : "100|0. zona|zadarska ulica",
+  "longitude" : 14.4382419,
+  "latitude" : 45.3274844
+}, {
+  "sourceKey" : "100|0. zona|žrtava fašizma",
+  "longitude" : 14.4413171,
+  "latitude" : 45.3296957
+}, {
+  "sourceKey" : "100|0. zona|e.barčića",
+  "longitude" : 14.4392968,
+  "latitude" : 45.3287304
+}, {
+  "sourceKey" : "100|0. zona|m.gupca",
+  "longitude" : 14.445232,
+  "latitude" : 45.325086
+}, {
+  "sourceKey" : "100|0. zona|veslarska",
+  "longitude" : 14.444622,
+  "latitude" : 45.3250251
+}, {
+  "sourceKey" : "100|0. zona|i. zajca",
+  "longitude" : 14.4448849,
+  "latitude" : 45.3246382
+}, {
+  "sourceKey" : "100|0. zona|splitska",
+  "longitude" : 14.4390539,
+  "latitude" : 45.3271795
+}, {
+  "sourceKey" : "100|0. zona|školjić - ulica",
+  "longitude" : 14.4488226,
+  "latitude" : 45.3282443
+}, {
+  "sourceKey" : "100|0. zona|školjić ii",
+  "longitude" : 14.4470212,
+  "latitude" : 45.3283427
+}, {
+  "sourceKey" : "108|5. zona|grobnička riva",
+  "longitude" : "14.4462349",
+  "latitude" : "45.32406027"
+}, {
+  "sourceKey" : "107|parkiralište krešimirova|krešimirova ulica",
+  "longitude" : "14.424963",
+  "latitude" : "45.332094"
+}, {
+  "sourceKey" : "105|2a. zona|krešimirova nzjz",
+  "longitude" : "14.422479",
+  "latitude" : "45.333466"
+}, {
+  "sourceKey" : "103|1. zona|lj. matešića",
+  "longitude" : "14.4358848",
+  "latitude" : "45.3323109"
+}, {
+  "sourceKey" : "103|1. zona|uspon i. tomee",
+  "longitude" : "14.4268965",
+  "latitude" : "45.33543145"
+}, {
+  "sourceKey" : "103|1. zona|f. brentinia",
+  "longitude" : "14.45006492",
+  "latitude" : "45.3258411"
+}, {
+  "sourceKey" : "103|1. zona|šetalište v. nazora",
+  "longitude" : "14.4464274",
+  "latitude" : "45.33009047"
+}, {
+  "sourceKey" : "103|1. zona|ulice s. vončine",
+  "longitude" : "14.43117280",
+  "latitude" : "45.3344069"
+}, {
+  "sourceKey" : "103|1. zona|r.k. jeretova",
+  "longitude" : "14.4322287",
+  "latitude" : "45.3333434"
+}, {
+  "sourceKey" : "103|1. zona|ulica franje račkog",
+  "longitude" : "14.45269208",
+  "latitude" : "45.3306436"
+}, {
+  "sourceKey" : "100|0. zona|aldo colonello",
+  "longitude" : "14.446748436",
+  "latitude" : "45.3277840"
+}, {
+  "sourceKey" : "105|2a. zona|parkiralište čandekova",
+  "longitude" : 14.4146382,
+  "latitude" : 45.3393814
+}, {
+  "sourceKey" : "100|0. zona|ciottina ulica",
+  "longitude" : 14.4368417,
+  "latitude" : 45.3294255
+}, {
+  "sourceKey" : "103|1. zona|ul. i. filipovića",
+  "longitude" : 14.4341775,
+  "latitude" : 45.3311846
+}, {
+  "sourceKey" : "103|1. zona|ul. i. marinkovića",
+  "longitude" : 14.4398419,
+  "latitude" : 45.330569
+}, {
+  "sourceKey" : "103|1. zona|ul. i. rendića",
+  "longitude" : 14.4380311,
+  "latitude" : 45.3306104
+}, {
+  "sourceKey" : "103|1. zona|ulica podkoludricu",
+  "longitude" : 14.3733767,
+  "latitude" : 45.3405356
+}, {
+  "sourceKey" : "100|0. zona|ulica riva boduli",
+  "longitude" : 14.4416685,
+  "latitude" : 45.324854
+}, {
+  "sourceKey" : "103|1. zona|trg ricarda zanelle",
+  "longitude" : "14.442440",
+  "latitude" : "45.329145"
+},
+{
+  "sourceKey" : "103|1. zona|školjić kod bazena",
+  "longitude" : "14.446685538786676",
+  "latitude" : "45.32852042623797"
+} ]

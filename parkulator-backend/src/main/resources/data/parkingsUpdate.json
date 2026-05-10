@@ -1,47 +1,241 @@
 [
   {
-    "externalId": 0,
-    "isLive": false,
-    "availableSpots": 0,
+    "externalId": 4,
+    "name": "Garaža u Ciottinoj ulici",
+    "address": "",
+    "isLive": true,
+    "availableSpots": null,
     "parkingPrice": [
       {
         "day": "WORKDAY",
         "special": "",
         "openingHour": 7,
-        "closingHour": 22,
-        "price": 1.2
+        "closingHour": 18,
+        "price": 1
+      },
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 18,
+        "closingHour": 7,
+        "price": 0.5
       },
       {
         "day": "SATURDAY",
-        "special": "Holiday tariff",
-        "openingHour": 8,
-        "closingHour": 20,
-        "price": 1.5
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 18,
+        "price": 1
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 18,
+        "closingHour": 7,
+        "price": 0.5
+      },
+      {
+        "day": "SUNDAY",
+        "special": "",
+        "openingHour": 0,
+        "closingHour": 0,
+        "price": 0.5
       }
     ]
   },
   {
-    "externalId": 0,
-    "name": "Test 2",
-    "address": "Ulica Zagrad 5, Rijeka",
-    "link": "https://example.com/parking-zagrad",
+    "externalId": 103,
+    "name": "1. zona",
+    "address": "Ulica Podkoludricu",
     "isLive": false,
-    "spots": 180,
-    "availableSpots": 0,
+    "availableSpots": null,
     "parkingPrice": [
       {
         "day": "WORKDAY",
         "special": "",
-        "openingHour": 6,
-        "closingHour": 23,
+        "openingHour": 0,
+        "closingHour": 22,
+        "price": 0.6
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 0.6
+      }
+    ]
+  },
+  {
+    "externalId": 103,
+    "name": "1. zona",
+    "address": "Tržnica Zamet",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 0,
+        "closingHour": 22,
+        "price": 0.6
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 0.6
+      }
+    ]
+  },
+  {
+    "externalId": 100,
+    "name": "0. zona",
+    "address": "Ulica Riva Boduli",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 21,
+        "price": 1.0
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
         "price": 1.0
       },
       {
         "day": "SUNDAY",
-        "special": "Free parking",
-        "openingHour": 0,
-        "closingHour": 24,
-        "price": 0.0
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 12,
+        "price": 1.0
+      }
+    ]
+  },
+  {
+    "externalId": 100,
+    "name": "0. zona",
+    "address": "Verdijeva",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 21,
+        "price": 1.0
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 1.0
+      },
+      {
+        "day": "SUNDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 12,
+        "price": 1.0
+      }
+    ]
+  },
+  {
+    "externalId": 100,
+    "name": "0. zona",
+    "address": "Zagrebačka",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 21,
+        "price": 1.0
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 1.0
+      },
+      {
+        "day": "SUNDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 12,
+        "price": 1.0
+      }
+    ]
+  },
+  {
+    "externalId": 100,
+    "name": "0. zona",
+    "address": "Matačićeva",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 21,
+        "price": 1.0
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 1.0
+      },
+      {
+        "day": "SUNDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 12,
+        "price": 1.0
+      }
+    ]
+  },
+  {
+    "externalId": 100,
+    "name": "0. zona",
+    "address": "Wenzelova",
+    "isLive": false,
+    "availableSpots": null,
+    "parkingPrice": [
+      {
+        "day": "WORKDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 21,
+        "price": 1.0
+      },
+      {
+        "day": "SATURDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 14,
+        "price": 1.0
+      },
+      {
+        "day": "SUNDAY",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 12,
+        "price": 1.0
       }
     ]
   }

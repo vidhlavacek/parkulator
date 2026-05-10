@@ -3,8 +3,11 @@ package hr.parkulator.parkulator_backend.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Data
@@ -15,16 +18,19 @@ public class Parking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long externalId;
+    private String sourceKey;
     private String name;
     private String address;
     private String link;
     private String type;
     private boolean isLive;
-    //private Double latitude;
-    //private Double longitude;
+    private Double latitude;
+    private Double longitude;
     private Long spots;
     private Long availableSpots;
+
+    @UpdateTimestamp
+    private LocalDateTime lastUpdated;
 
     @OneToMany(mappedBy = "parking", cascade = CascadeType.ALL, orphanRemoval = true)
 
@@ -38,5 +44,8 @@ public class Parking {
     public void removePrice(ParkingPrice price) {
         parkingPrices.remove(price);
         price.setParking(null);
+    }
+    public void clearParkingPrices(){
+        parkingPrices.clear();
     }
 }
