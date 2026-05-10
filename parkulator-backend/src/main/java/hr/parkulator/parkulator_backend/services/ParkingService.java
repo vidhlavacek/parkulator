@@ -172,6 +172,8 @@ public class ParkingService {
             throw new NoParkingsFoundException("No parkings found");
         }
 
+        parkings = score(parkings, lat, lng);
+
         ParkingSearchResponseDTO response = new ParkingSearchResponseDTO();
         response.setParkings(parkings);
         response.setRadiusExpanded(expanded);
@@ -188,18 +190,68 @@ public class ParkingService {
         dto.setType(parking.getType());
         dto.setLink(parking.getLink());
         dto.setLive(parking.isLive());
+        dto.setSpots(parking.getSpots());
         dto.setAvailableSpots(parking.getAvailableSpots());
-
         dto.setLatitude(parking.getLatitude());
         dto.setLongitude(parking.getLongitude());
 
         StringBuilder message = new StringBuilder();
         double price = getCurrentPrice(parking, message);
-
         dto.setPrice(price);
         dto.setPriceMessage(message.length() == 0 ? null : message.toString());
 
         return dto;
+    }
+
+    private List<ParkingDTO> score(List<ParkingDTO> parkings, Double userLat, Double userLng){
+        for (ParkingDTO parking : parkings) {
+            double maxPrice = parkings.stream()
+                .mapToDouble(ParkingDTO::getPrice)
+                .max()
+                .orElse(1.0);
+
+            double price;
+            if (parking.getPriceMessage() == null) {
+                price = parking.getPrice();
+            } else {
+                price = maxPrice;
+            }
+
+            double availability = checkAvailability(parking);
+            double distance = calculateDistance(
+                parking.getLatitude(),
+                parking.getLongitude(),
+                userLat,
+                userLng
+            );
+
+            double maxDistance = parkings.stream()
+                .mapToDouble(p -> calculateDistance(
+                        p.getLatitude(),
+                        p.getLongitude(),
+                        userLat,
+                        userLng
+                ))
+                .max()
+                .orElse(1.0);
+
+            double maxAvailability = parkings.stream()
+                .mapToDouble(p -> p.getAvailableSpots() == null ? 0 : p.getAvailableSpots())
+                .max()
+                .orElse(1.0);
+
+            double normalizedPrice = normalizePrice(price, maxPrice);
+            double normalizedDistance = normalizeDistance(distance, maxDistance);
+            double normalizedAvailability = normalizeAvailability(availability, maxAvailability);
+
+            double score = calculateScore(normalizedPrice, normalizedDistance, normalizedAvailability);
+
+            parking.setScore(score);
+        }
+
+        return parkings.stream()
+                .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
+                .toList();
     }
 
     //price calculation
@@ -259,5 +311,67 @@ public class ParkingService {
         }
 
         return price;
+    }
+
+    private double calculateScore(double price, double distance, double availability) {
+        double weightPrice = 0.3;
+        double weightDistance = 0.5;
+        double weightAvailability = 0.2;
+        
+
+        double baseScore = (weightPrice * (1 - price)) + (weightDistance * (1 - distance)) + (weightAvailability * availability);
+
+        //to create bigger difference between scores:
+        // sigmoid-like boost
+        double boosted = baseScore / (1 - baseScore + 0.01);
+
+        // normalize back to 0–10
+        double finalScore = Math.min(10, boosted * 10);
+
+        return Math.round(finalScore * 10.0) / 10.0;
+    }
+
+    private double calculateDistance(Double userLat, Double userLng, Double parkingLat, Double parkingLng) {
+        final double earthRadius= 6371;
+
+        double Latitude = Math.toRadians(parkingLat - userLat);
+        double Longitude = Math.toRadians(parkingLng - userLng);
+
+        double a = Math.sin(Latitude / 2) 
+                        * Math.sin(Latitude / 2)
+                        + Math.cos(Math.toRadians(userLat))
+                        * Math.cos(Math.toRadians(parkingLat))
+                        * Math.sin(Longitude / 2)
+                        * Math.sin(Longitude / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return earthRadius * c;
+    }
+
+    private double normalizePrice(double price, double maxPrice) {
+        return maxPrice == 0 ? 0 : price / maxPrice;
+    }
+
+    private double normalizeDistance(double distance, double maxDistance) {
+        if (maxDistance == 0) return 0;
+        return Math.min(distance / (maxDistance + 1e-6), 1.0);
+    }
+
+    private double normalizeAvailability(Double availability, double maxAvailability) {
+        if (availability == null) return 0;
+        return maxAvailability == 0 ? 0 : availability / maxAvailability;
+    }
+
+    private double checkAvailability(ParkingDTO p) {
+        if (p.getAvailableSpots() != null) {
+            return p.getAvailableSpots();
+        }
+        return estimateOccupancy(p);
+    }
+
+     private double estimateOccupancy(ParkingDTO p) {
+        // add algorithm for estimation of occupancy
+        return 500;
     }
 }
