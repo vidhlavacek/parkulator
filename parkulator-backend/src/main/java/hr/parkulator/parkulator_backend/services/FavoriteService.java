@@ -9,8 +9,9 @@ import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.repositories.FavoriteRepository;
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
-
+import hr.parkulator.parkulator_backend.dto.FavoriteDTO;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,9 +51,12 @@ public class FavoriteService {
         //eventualno dodati provjeru da li uopce postoji
     }
 
-    public List<Favorite> getUserFavorites(Long userId) {
-        return favoriteRepository.findByUserId(userId);
-    }
+    public List<FavoriteDTO> getUserFavorites(Long userId) {
+    return favoriteRepository.findByUserId(userId)
+            .stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
+}
     private FavoriteDTO mapToDTO(Favorite favorite) {
     Parking parking = favorite.getParking();
 
