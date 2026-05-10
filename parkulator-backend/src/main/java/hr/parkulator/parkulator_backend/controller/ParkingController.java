@@ -38,13 +38,5 @@ public class ParkingController {
             @RequestParam(required = false) Double lng
     ) {
         return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
-    }
-
-    @GetMapping("/refresh")
-    public String refreshParkingLots() {
-        parkingDataService.saveRefreshData();
-        return "DONE";
-    }
-    
-    
+    }    
 }
