@@ -79,7 +79,7 @@ public class ParkingScoreService {
         double weightDistance = 0.45;
         double weightAvailability = 0.3;
 
-        double priceScore = 1 - price;
+        double priceScore = 1 + price;
         double distanceScore = 1 - distance;
         double availabilityScore = availability;
         
