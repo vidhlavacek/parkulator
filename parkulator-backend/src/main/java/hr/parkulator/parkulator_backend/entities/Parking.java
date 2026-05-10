@@ -24,8 +24,8 @@ public class Parking {
     private String link;
     private String type;
     private boolean isLive;
-    //private Double latitude;
-    //private Double longitude;
+    private Double latitude;
+    private Double longitude;
     private Long spots;
     private Long availableSpots;
 
@@ -44,5 +44,8 @@ public class Parking {
     public void removePrice(ParkingPrice price) {
         parkingPrices.remove(price);
         price.setParking(null);
+    }
+    public void clearParkingPrices(){
+        parkingPrices.clear();
     }
 }

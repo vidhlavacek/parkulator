@@ -1,53 +1,134 @@
 [
   {
-    "externalId": 0,
-    "name": "Test 1",
-    "address": "Adresa",
-    "link": "https://example.com/parking-delta",
-    "type": "testni",
+    "externalId": 999001,
+    "name": "Parkiralište Korzo",
+    "address": "Ulica Erazma Barčića 3",
+    "link": "https://www.bestinparking.com/hr/hr/garage/parkiraliste-korzo",
+    "type": "Garaže i zatvorena parkirališta",
     "isLive": false,
-    "spots": 0,
+    "spots": 95,
     "availableSpots": 0,
+    "latitude" : 45.328914327082195,
+    "longitude" : 14.438088705286571,
     "parkingPrice": [
       {
-        "day": "WORKDAY",
+        "day": "ALLDAYS",
         "special": "",
         "openingHour": 7,
-        "closingHour": 22,
-        "price": 1.2
+        "closingHour": 18,
+        "price": 3.00
       },
       {
-        "day": "SATURDAY",
-        "special": "Holiday tariff",
-        "openingHour": 8,
-        "closingHour": 20,
-        "price": 1.5
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 18,
+        "closingHour": 7,
+        "price": 1.80
       }
     ]
   },
   {
-    "externalId": 0,
-    "name": "Test 2",
-    "address": "Ulica Zagrad 5, Rijeka",
-    "link": "https://example.com/parking-zagrad",
-    "type": "testni",
+    "externalId": 999002,
+    "name": "Parkiralište Cambierieva",
+    "address": "Cambierieva 13",
+    "link": "https://www.bestinparking.com/hr/hr/garage/parkiraliste-cambierieva",
+    "type": "Garaže i zatvorena parkirališta",
     "isLive": false,
-    "spots": 180,
+    "spots": 118,
     "availableSpots": 0,
+    "latitude" : 45.332531390300026,
+    "longitude" : 14.430282045049362,
     "parkingPrice": [
       {
-        "day": "WORKDAY",
+        "day": "ALLDAYS",
         "special": "",
-        "openingHour": 6,
-        "closingHour": 23,
-        "price": 1.0
+        "openingHour": 0,
+        "closingHour": 0,
+        "price": 2.20
+      }
+    ]
+  },
+  {
+    "externalId": 999003,
+    "name": "Garaža Stari Grad",
+    "address": "Trg Ivana Klobučarića",
+    "link": "https://www.bestinparking.com/hr/hr/garage/garaza-stari-grad",
+    "type": "Garaže i zatvorena parkirališta",
+    "isLive": false,
+    "spots": 362,
+    "availableSpots": 0,
+    "latitude" : 45.3271877029233, 
+    "longitude" : 14.446348582208879,
+    "parkingPrice": [
+      {
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 18,
+        "price": 2.40
       },
       {
-        "day": "SUNDAY",
-        "special": "Free parking",
-        "openingHour": 0,
-        "closingHour": 24,
-        "price": 0.0
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 18,
+        "closingHour": 7,
+        "price": 1.20
+      }
+    ]
+  },
+  {
+    "externalId": 999004,
+    "name": "Garaža Zagrad",
+    "address": "Ivana Pavla II BB",
+    "link": "https://www.bestinparking.com/hr/hr/garage/garaza-zagrad",
+    "type": "Garaže i zatvorena parkirališta",
+    "isLive": false,
+    "spots": 756,
+    "availableSpots": 0,
+    "latitude" :  45.32957076724677, 
+    "longitude" : 14.439388881507512,
+    "parkingPrice": [
+      {
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 7,
+        "closingHour": 18,
+        "price": 2.00
+      },
+      {
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 18,
+        "closingHour": 7,
+        "price": 1.20
+      }
+    ]
+  },
+  {
+    "externalId": 999005,
+    "name": "Garaža u Zapadnom Trgovačkom Centru",
+    "address": "Zvonimirova 3",
+    "link": "https://www.boe-realestate.com/garaze/",
+    "type": "Garaže i zatvorena parkirališta",
+    "isLive": false,
+    "spots": 778,
+    "availableSpots": 0,
+    "latitude" :  45.33799090100394, 
+    "longitude" : 14.408239753373804,
+    "parkingPrice": [
+      {
+        "day": "ALLDAYS",
+        "special": "",
+        "openingHour": 8,
+        "closingHour": 22,
+        "price": 0.00
+      },
+      {
+        "day": "ALLDAYS",
+        "special": "NE RADI",
+        "openingHour": 22,
+        "closingHour": 8,
+        "price": 800.00
       }
     ]
   }
