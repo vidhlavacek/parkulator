@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import hr.parkulator.parkulator_backend.entities.Favorite;
 import hr.parkulator.parkulator_backend.services.FavoriteService;
-import hr.parkulator.parkulator_backend.dto.FavoriteDTO;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class FavoriteController {
 
     // get all favorites
     @GetMapping("/all/{userId}")
-    public List<FavoriteDTO> getFavorites(@PathVariable Long userId) {
+    public List<ParkingDTO> getFavorites(@PathVariable Long userId) {
     return favoriteService.getUserFavorites(userId);
 }
 }

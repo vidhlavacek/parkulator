@@ -12,6 +12,7 @@ import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.dto.FavoriteDTO;
 import java.util.List;
 import java.util.stream.Collectors;
+import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 
 @Service
 @AllArgsConstructor
@@ -23,45 +24,44 @@ public class FavoriteService {
 
     public Favorite addFavorite(Long userId, Long parkingId) {
 
-        // 1. provjeri postoji li već
+        
         if (favoriteRepository.findByUserIdAndParkingId(userId, parkingId).isPresent()) {
             throw new RuntimeException("Already in favorites");
         }
 
-        // 2. dohvati usera
+     
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 3. dohvati parking
+       
         Parking parking = parkingRepository.findById(parkingId)
                 .orElseThrow(() -> new RuntimeException("Parking not found"));
 
-        // 4. napravi favorite
+     
         Favorite favorite = Favorite.builder()
                 .user(user)
                 .parking(parking)
                 .build();
 
-        // 5. spremi u bazu
         return favoriteRepository.save(favorite);
     }
 
     public void removeFavorite(Long userId, Long parkingId) {
         favoriteRepository.deleteByUserIdAndParkingId(userId, parkingId);
-        //eventualno dodati provjeru da li uopce postoji
+       
     }
 
-    public List<FavoriteDTO> getUserFavorites(Long userId) {
+    public List<ParkingDTO> getUserFavorites(Long userId) {
     return favoriteRepository.findByUserId(userId)
             .stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());
 }
-    private FavoriteDTO mapToDTO(Favorite favorite) {
+    private ParkingDTO mapToDTO(Favorite favorite) {
     Parking parking = favorite.getParking();
 
-    return FavoriteDTO.builder()
-            .parkingId(parking.getId())
+    return ParkingDTO.builder()
+            .id(parking.getId())
             .name(parking.getName())
             .address(parking.getAddress())
             .type(parking.getType())
