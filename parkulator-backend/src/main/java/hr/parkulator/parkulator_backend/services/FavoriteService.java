@@ -61,10 +61,14 @@ public class FavoriteService {
     Parking parking = favorite.getParking();
 
     return ParkingDTO.builder()
-            .id(parking.getId())
-            .name(parking.getName())
-            .address(parking.getAddress())
-            .type(parking.getType())
-            .build();
+        .name(parking.getName())
+        .address(parking.getAddress())
+        .type(parking.getType())
+        .link(parking.getLink())
+        .isLive(parking.isLive())
+        .availableSpots(parking.getAvailableSpots())
+        .latitude(parking.getLatitude())
+        .longitude(parking.getLongitude())
+        .build();
 }
 }
