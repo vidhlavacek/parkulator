@@ -19,7 +19,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
-import lombok.extern.slf4j.Slf4j;
 import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDataDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingPriceDTO;

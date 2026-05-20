@@ -1,14 +1,12 @@
 package hr.parkulator.parkulator_backend.controller;
 
-import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
+import org.springframework.web.bind.annotation.*;
+
 import hr.parkulator.parkulator_backend.dto.parking.ParkingSearchResponseDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.services.ParkingService;
 
-import hr.parkulator.parkulator_backend.services.DataServices.ParkingDataService;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @RestController
@@ -16,11 +14,9 @@ import java.util.List;
 public class ParkingController {
 
     private final ParkingService parkingService;
-    private final ParkingDataService parkingDataService;
 
-    public ParkingController(ParkingService parkingService, ParkingDataService parkingDataService) {
+    public ParkingController(ParkingService parkingService) {
         this.parkingService = parkingService;
-        this.parkingDataService = parkingDataService;
     }
 
     @GetMapping("/{id}")

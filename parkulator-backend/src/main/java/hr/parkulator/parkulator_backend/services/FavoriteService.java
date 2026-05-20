@@ -9,7 +9,6 @@ import hr.parkulator.parkulator_backend.entities.Parking;
 import hr.parkulator.parkulator_backend.repositories.FavoriteRepository;
 import hr.parkulator.parkulator_backend.repositories.UserRepository;
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
-import hr.parkulator.parkulator_backend.dto.FavoriteDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
