@@ -1,28 +1,29 @@
 import api from "./api";
 
-export type Parking = {
-  id: number;
+export type ParkingDTO = {
   name: string;
-  address?: string;
-  price?: number;
-  availableSpots?: number;
-  latitude?: number;
-  longitude?: number;
-
-  sourceKey: string;
-  link: string;
+  address: string;
   type: string;
-  isLive?: boolean;
-  totalSpots?: number;
-  occupiedSpots?: number;
+  link: string;
+  isLive: boolean;
+  availableSpots: number;
+  price: number;
+  openingHour: number;
+  closingHour: number;
+  latitude: number;
+  longitude: number;
 };
 
-export async function getAllParkingsRequest(): Promise<Parking[]> {
-  const response = await api.get<Parking[]>("/parkings/all");
+export type ParkingSearchResponse = {
+  radiusExpanded: boolean;
+  finalRadius: number;
+  parkings: ParkingDTO[];
+};
+
+export async function getParkingsByLocationRequest(
+  lat: number,
+  lng: number
+): Promise<ParkingSearchResponse> {
+  const response = await api.get<ParkingSearchResponse>(`/parkings?lat=${lat}&lng=${lng}`);
   return response.data;
 }
-
-/*export async function getParkingByIdRequest(id: number) {
-  const response = await api.get(`/parkings/${id}`);
-  return response.data;
-}*/

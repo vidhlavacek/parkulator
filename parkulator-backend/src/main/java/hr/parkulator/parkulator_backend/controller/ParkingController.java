@@ -36,6 +36,6 @@ public class ParkingController {
             @RequestParam Double lng,
             @RequestParam(required = false)Double maxPrice
     ) {
-        return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
+       return parkingService.getFilteredParkings(type, maxDistance, lat, lng, maxPrice);
     }    
 }

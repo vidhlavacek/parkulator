@@ -2,55 +2,48 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getAllParkingsRequest, Parking } from "../services/parking";
-
-type ParkingWithCoords = Parking & {
-  latitude?: number;
-  longitude?: number;
-};
-
-const PARKING_COORDINATES: Record<string, { latitude: number; longitude: number }> = {
-  "Srednja Delta": { latitude: 45.3249, longitude: 14.4434 },
-  "KBC Sušak": { latitude: 45.3274, longitude: 14.4668 },
-  "KBC Rijeka i Podpinjol": { latitude: 45.3319, longitude: 14.4237 },
-  "Parkiralište Krešimirova": { latitude: 45.3332, longitude: 14.4281 },
-  "5. zona": { latitude: 45.3235, longitude: 14.4491 },
-};
+import * as Location from "expo-location";
+import { getParkingsByLocationRequest, ParkingDTO } from "../services/parking";
 
 export default function ParkingMap() {
-  const [parkings, setParkings] = useState<ParkingWithCoords[]>([]);
+  const [parkings, setParkings] = useState<ParkingDTO[]>([]);
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchParkings = async () => {
+    const init = async () => {
       try {
-        const data = await getAllParkingsRequest();
+        const { status } = await Location.requestForegroundPermissionsAsync();
 
-        const parkingsWithCoordinates = data.map((parking) => {
-          const coordinates = PARKING_COORDINATES[parking.name];
+        if (status !== "granted") {
+          setLoading(false);
+          return;
+        }
 
-          return {
-            ...parking,
-            latitude: coordinates?.latitude,
-            longitude: coordinates?.longitude,
-          };
+        const loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
         });
 
-        setParkings(parkingsWithCoordinates);
+        const { latitude, longitude } = loc.coords;
+        setUserLocation({ latitude, longitude });
+
+        const result = await getParkingsByLocationRequest(latitude, longitude);
+        setParkings(result.parkings);
       } catch (error) {
-        console.log("Parking map fetch error:", error);
+        console.log("Parking map error:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchParkings();
+    init();
   }, []);
 
   const parkingsWithMarkers = parkings.filter(
-    (parking) =>
-      typeof parking.latitude === "number" &&
-      typeof parking.longitude === "number"
+    (p) => typeof p.latitude === "number" && typeof p.longitude === "number"
   );
 
   if (loading) {
@@ -66,22 +59,33 @@ export default function ParkingMap() {
     <SafeAreaView style={styles.container}>
       <MapView
         style={styles.map}
-        initialRegion={{
-          latitude: 45.3271,
-          longitude: 14.4422,
-          latitudeDelta: 0.06,
-          longitudeDelta: 0.06,
-        }}
+        initialRegion={
+          userLocation
+            ? {
+                latitude: userLocation.latitude,
+                longitude: userLocation.longitude,
+                latitudeDelta: 0.06,
+                longitudeDelta: 0.06,
+              }
+            : {
+                latitude: 45.3271,
+                longitude: 14.4422,
+                latitudeDelta: 0.06,
+                longitudeDelta: 0.06,
+              }
+        }
+        showsUserLocation
+        showsMyLocationButton
       >
         {parkingsWithMarkers.map((parking, index) => (
           <Marker
-            key={`${parking.name}-${parking.address}-${index}`}
+            key={`${parking.name}-${index}`}
             coordinate={{
-              latitude: parking.latitude!,
-              longitude: parking.longitude!,
+              latitude: parking.latitude,
+              longitude: parking.longitude,
             }}
             title={parking.name}
-            description={parking.address || parking.type}
+            description={parking.address}
           />
         ))}
       </MapView>
