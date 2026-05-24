@@ -10,8 +10,8 @@ import hr.parkulator.parkulator_backend.shared.ParkingMovementCategory;
 
 @Data
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class LocationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
