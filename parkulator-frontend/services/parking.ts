@@ -1,29 +1,52 @@
 import api from "./api";
 
 export type ParkingDTO = {
+  id: number;
   name: string;
-  address: string;
-  type: string;
+  address?: string;
+  price?: number;
+  availableSpots?: number;
+  latitude?: number;
+  longitude?: number;
+  sourceKey: string;
   link: string;
-  isLive: boolean;
-  availableSpots: number;
-  price: number;
-  openingHour: number;
-  closingHour: number;
+  type: string;
+  isLive?: boolean;
+  totalSpots?: number;
+  occupiedSpots?: number;
+};
+
+export type ParkingMarker = {
+  id: number;
+  title: string;
   latitude: number;
   longitude: number;
 };
 
-export type ParkingSearchResponse = {
-  radiusExpanded: boolean;
-  finalRadius: number;
-  parkings: ParkingDTO[];
-};
-
 export async function getParkingsByLocationRequest(
-  lat: number,
-  lng: number
-): Promise<ParkingSearchResponse> {
-  const response = await api.get<ParkingSearchResponse>(`/parkings?lat=${lat}&lng=${lng}`);
+  latitude: number,
+  longitude: number
+): Promise<{ parkings: ParkingDTO[] }> {
+  const response = await api.get(
+    `/parkings/nearby?latitude=${latitude}&longitude=${longitude}`
+  );
+
   return response.data;
+}
+
+export function mapParkingsToMarkers(
+  parkings: ParkingDTO[]
+): ParkingMarker[] {
+  return parkings
+    .filter(
+      (parking) =>
+        parking.latitude != null &&
+        parking.longitude != null
+    )
+    .map((parking) => ({
+      id: parking.id,
+      title: parking.name,
+      latitude: parking.latitude!,
+      longitude: parking.longitude!,
+    }));
 }

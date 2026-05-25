@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const PARKULATOR_URL = "http://192.168.100.34:8080";
+const PARKULATOR_URL = "http://192.168.1.105";
 // Android emulator: 10.0.2.2
 // If testing on physical phone, use the IP of your computer, e.g., http://192.168.1.5:8080
 
