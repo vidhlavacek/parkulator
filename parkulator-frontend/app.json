@@ -41,6 +41,16 @@
           }
         }
       ],
+      [
+        "expo-location",
+        {
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "locationWhenInUsePermission": "Allow Parkulator to use your location while you use the app.",
+          "locationAlwaysPermission": "Allow Parkulator to access your location in the background to estimate parking occupancy.",
+          "locationAlwaysAndWhenInUsePermission": "Allow Parkulator to access your location even when the app is in the background to estimate parking occupancy."
+        }
+      ],
       "expo-web-browser"
     ],
     "experiments": {
