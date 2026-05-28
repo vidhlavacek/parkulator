@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, } from "react-native";
+import { ActivityIndicator, Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Location from "expo-location";
@@ -11,6 +11,14 @@ import { ParkingMarker, mapParkingsToMarkers, ParkingDTO, } from "../services/pa
 const CARD_HEIGHT = 88;
 const SHEET_HEIGHT = 350;
 const SWIPE_THRESHOLD = 170;
+
+const RIJEKA = { latitude: 45.3271, longitude: 14.4422 };
+
+type PhotonSuggestion = {
+  label: string;
+  latitude: number;
+  longitude: number;
+};
 
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const dx = lat2 - lat1;
@@ -25,10 +33,16 @@ export default function ParkingMap() {
   const [loading, setLoading] = useState(true);
   const [sheetVisible, setSheetVisible] = useState(true);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<PhotonSuggestion[]>([]);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<PhotonSuggestion | null>(null);
+
   const scrollRef = useRef<ScrollView>(null);
   const mapRef = useRef<MapView>(null);
   const translateY = useRef(new Animated.Value(0)).current;
   const router = useRouter();
+  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -62,6 +76,61 @@ export default function ParkingMap() {
       toValue: 0,
       useNativeDriver: true,
     }).start();
+  };
+
+  const fetchSuggestions = async (query: string) => {
+    if (query.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const params = new URLSearchParams({ q: query, limit: "5", lang: "en" });
+      if (userLocation) {
+        params.append("lat", String(userLocation.latitude));
+        params.append("lon", String(userLocation.longitude));
+      }
+      const res = await fetch(`https://photon.komoot.io/api/?${params.toString()}`);
+      const data = await res.json();
+
+      const mapped: PhotonSuggestion[] = (data.features ?? []).map((f: any) => {
+        const p = f.properties ?? {};
+        const labelParts = [p.name, p.street, p.city, p.country].filter(Boolean);
+        return {
+          label: labelParts.join(", ") || "Unknown",
+          longitude: f.geometry.coordinates[0],
+          latitude: f.geometry.coordinates[1],
+        };
+      });
+      setSuggestions(mapped);
+    } catch (error) {
+      console.log("Photon search error:", error);
+      setSuggestions([]);
+    }
+  };
+
+  const onSearchChange = (text: string) => {
+    setSearchQuery(text);
+    if (searchDebounce.current) clearTimeout(searchDebounce.current);
+    searchDebounce.current = setTimeout(() => {
+      fetchSuggestions(text);
+    }, 350);
+  };
+
+  const onSelectSuggestion = (s: PhotonSuggestion) => {
+    setSearchQuery(s.label);
+    setSuggestions([]);
+    setSearchFocused(false);
+    setSelectedLocation(s);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: s.latitude,
+        longitude: s.longitude,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
+      },
+      500
+    );
+    console.log("Selected coords:", s.latitude, s.longitude);
   };
 
   useEffect(() => {
@@ -128,7 +197,7 @@ export default function ParkingMap() {
         initialRegion={
           userLocation
             ? { latitude: userLocation.latitude, longitude: userLocation.longitude, latitudeDelta: 0.06, longitudeDelta: 0.06 }
-            : { latitude: 45.3271, longitude: 14.4422, latitudeDelta: 0.06, longitudeDelta: 0.06 }
+            : { latitude: RIJEKA.latitude, longitude: RIJEKA.longitude, latitudeDelta: 0.06, longitudeDelta: 0.06 }
         }
         showsUserLocation
         showsMyLocationButton
@@ -168,7 +237,62 @@ export default function ParkingMap() {
             </Marker>
           );
         })}
+
+        {selectedLocation && (
+          <Marker
+            coordinate={{
+              latitude: selectedLocation.latitude,
+              longitude: selectedLocation.longitude,
+            }}
+            pinColor="blue"
+            title={selectedLocation.label}
+          />
+        )}
       </MapView>
+
+      <View style={styles.searchWrapper}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={18} color="#8a97aa" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search location..."
+            placeholderTextColor="#8a97aa"
+            value={searchQuery}
+            onChangeText={onSearchChange}
+            onFocus={() => setSearchFocused(true)}
+          />
+          {searchQuery.length > 0 && (
+            <Pressable
+              onPress={() => {
+                setSearchQuery("");
+                setSuggestions([]);
+              }}
+            >
+              <Ionicons name="close-circle" size={18} color="#8a97aa" />
+            </Pressable>
+          )}
+        </View>
+
+        {searchFocused && suggestions.length > 0 && (
+          <View style={styles.suggestionBox}>
+            {suggestions.map((s, i) => (
+              <Pressable
+                key={`${s.latitude}-${s.longitude}-${i}`}
+                style={({ pressed }) => [
+                  styles.suggestionItem,
+                  pressed && styles.suggestionItemPressed,
+                ]}
+                onPress={() => onSelectSuggestion(s)}
+              >
+                <Ionicons name="location-outline" size={16} color="#2fa51f" />
+                <Text style={styles.suggestionText} numberOfLines={1}>
+                  {s.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+      </View>
 
       {!sheetVisible && (
         <Pressable style={styles.showButton} onPress={showSheet}>
@@ -247,6 +371,55 @@ const styles = StyleSheet.create({
   center: { flex: 1, backgroundColor: "#dfe3ea", alignItems: "center", justifyContent: "center" },
   loadingText: { marginTop: 12, color: "#465a79", fontSize: 15 },
   map: { flex: 1 },
+
+  searchWrapper: {
+    position: "absolute",
+    top: 12,
+    left: 16,
+    right: 16,
+    zIndex: 20,
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    gap: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 5,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: "#33496b",
+    padding: 0,
+  },
+  suggestionBox: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    marginTop: 8,
+    paddingVertical: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 5,
+    overflow: "hidden",
+  },
+  suggestionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  suggestionItemPressed: { backgroundColor: "#f4f7fb" },
+  suggestionText: { flex: 1, fontSize: 14, color: "#3a4e6c" },
 
   showButton: {
     position: "absolute",
