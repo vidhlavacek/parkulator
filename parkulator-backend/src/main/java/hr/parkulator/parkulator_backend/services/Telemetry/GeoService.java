@@ -1,8 +1,12 @@
 package hr.parkulator.parkulator_backend.services.Telemetry;
 
 import java.time.Instant;
+
+import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 
+@Service
 public class GeoService {
     //Rijeka Box
     private static final double RIJEKA_MIN_LAT = 45.28;

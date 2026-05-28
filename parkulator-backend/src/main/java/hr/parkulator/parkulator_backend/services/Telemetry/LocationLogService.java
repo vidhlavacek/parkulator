@@ -1,5 +1,7 @@
 package hr.parkulator.parkulator_backend.services.Telemetry;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -20,6 +22,7 @@ private Instant timestamp2;
 private Double accuracy;
 */
 
+@Service
 public class LocationLogService {
 
     private final ParkingRepository parkingRepository;
@@ -45,10 +48,12 @@ public class LocationLogService {
         if(nearbyParkingLots.isEmpty()) return;
 
         //Calculate driving speed, heading (if possible)
-        Double drivingSpeed = geoService.calculateDistanceMeters(location.getLatitude1(), 
-                                                location.getLongitude1(), 
-                                                location.getLatitude2(), 
-                                                location.getLongitude2());
+        Double drivingSpeed = geoService.calculateSpeedKmh(location.getLatitude1(),
+                                                    location.getLongitude1(),
+                                                    location.getTimestamp1(),
+                                                    location.getLatitude2(),
+                                                    location.getLongitude2(),
+                                                    location.getTimestamp2());
 
         Double heading = geoService.calculateHeading(location.getLatitude1(), 
                                           location.getLongitude1(), 
@@ -158,22 +163,22 @@ public class LocationLogService {
     private ParkingMovementCategory categorize(Double speedKmh, Double distance1ToParkingMeters, Double distance2ToParkingMeters, Double parkingLikelihood) {
         Double distanceDelta = distance2ToParkingMeters - distance1ToParkingMeters;
 
-        boolean isApproaching = distanceDelta < -3.0;
-        boolean isLeaving = distanceDelta > 3.0;
+        boolean isApproaching = distanceDelta < -2.0;
+        boolean isLeaving = distanceDelta > 2.0;
 
-        if (distance2ToParkingMeters <= 10.0 && speedKmh <= 2.0 && parkingLikelihood >= 0.75) {
+        if (distance2ToParkingMeters <= 15.0 && speedKmh <= 4.0 && parkingLikelihood >= 0.60) {
             return ParkingMovementCategory.STATIONARY_NEAR;
         }
 
-        if (distance2ToParkingMeters <= 25.0 && speedKmh <= 8.0 && parkingLikelihood >= 0.55) {
+        if (distance2ToParkingMeters <= 40.0 && speedKmh <= 15.0 && parkingLikelihood >= 0.40) {
             return ParkingMovementCategory.SLOW_MOVING_NEAR;
         }
 
-        if (isLeaving && speedKmh > 3.0) {
+        if (isLeaving && speedKmh > 5.0) {
             return ParkingMovementCategory.LEAVING_AREA;
         }
 
-        if (isApproaching && parkingLikelihood >= 0.35) {
+        if (isApproaching && speedKmh <= 25.0 && parkingLikelihood >= 0.30) {
             return ParkingMovementCategory.APPROACHING;
         }
 
