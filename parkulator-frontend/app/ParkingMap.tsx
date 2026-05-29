@@ -84,23 +84,35 @@ export default function ParkingMap() {
       return;
     }
     try {
-      const params = new URLSearchParams({ q: query, limit: "5", lang: "en" });
-      if (userLocation) {
-        params.append("lat", String(userLocation.latitude));
-        params.append("lon", String(userLocation.longitude));
-      }
+      const params = new URLSearchParams({
+        q: query,
+        limit: "15",
+        lang: "en",
+        lat: String(RIJEKA.latitude),
+        lon: String(RIJEKA.longitude),
+      });
       const res = await fetch(`https://photon.komoot.io/api/?${params.toString()}`);
       const data = await res.json();
 
-      const mapped: PhotonSuggestion[] = (data.features ?? []).map((f: any) => {
-        const p = f.properties ?? {};
-        const labelParts = [p.name, p.street, p.city, p.country].filter(Boolean);
-        return {
-          label: labelParts.join(", ") || "Unknown",
-          longitude: f.geometry.coordinates[0],
-          latitude: f.geometry.coordinates[1],
-        };
-      });
+      const mapped: PhotonSuggestion[] = (data.features ?? [])
+        .filter((f: any) => f.properties?.countrycode === "HR")
+        .filter((f: any) => {
+          const p = f.properties ?? {};
+          const city = (p.city ?? "").toLowerCase();
+          const county = (p.county ?? "").toLowerCase();
+          return city.includes("rijeka") || county.includes("rijeka") || county.includes("primorsko");
+        })
+        .map((f: any) => {
+          const p = f.properties ?? {};
+          const labelParts = [p.name, p.street, p.city].filter(Boolean);
+          return {
+            label: labelParts.join(", ") || "Unknown",
+            longitude: f.geometry.coordinates[0],
+            latitude: f.geometry.coordinates[1],
+          };
+        })
+        .slice(0, 5);
+
       setSuggestions(mapped);
     } catch (error) {
       console.log("Photon search error:", error);
@@ -255,7 +267,7 @@ export default function ParkingMap() {
           <Ionicons name="search" size={18} color="#8a97aa" />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search location..."
+            placeholder="Search location in Rijeka..."
             placeholderTextColor="#8a97aa"
             value={searchQuery}
             onChangeText={onSearchChange}
