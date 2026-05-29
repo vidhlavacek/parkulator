@@ -1,7 +1,6 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,6 +8,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
@@ -62,7 +62,7 @@ export default function HomeScreen() {
 
             <Pressable
               onPress={() => {
-                router.push("/allparkings");
+                
               }}
               style={({ pressed }) => [
                 styles.mainButtonShadow,

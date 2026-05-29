@@ -40,8 +40,8 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/parkings/**").permitAll()
-                .requestMatchers("/test-live-data").permitAll() // remove later
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/location/**").permitAll()
                 .requestMatchers("/favorites/**").authenticated()
                 .requestMatchers("/history/**").authenticated()
                 .requestMatchers("/users/**").authenticated()
