@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 import hr.parkulator.parkulator_backend.exception.BadRequestException;
+import hr.parkulator.parkulator_backend.shared.ParkingOccupancyCategory;
 
 @Service
 public class ParkingScoreService {
@@ -106,23 +107,23 @@ public class ParkingScoreService {
             return (double) parking.getAvailableSpots() / parking.getSpots();
         }
         //if offline make an estimation
-        return 1.0 - estimateOccupancy(parking);
-
-        //if working with raw availableSpots data (no normalization):
-        //if online then take existing data 
-        /* 
-        if (parking.isLive() == true) {
-            return parking.getAvailableSpots();
-        }
-        //if offline make an estimation
-        return estimateOccupancy(parking);*/
+        return estimateOccupancy(parking.getOccupancyStatus());
     }
 
-    private double estimateOccupancy(ParkingDTO parking) {
-        //add algorithm for estimation of occupancy
-        return 0.9; //normalized
-        //return 600;
-    }   
+    private double estimateOccupancy(ParkingOccupancyCategory status) {
+        if (status == null) return 0.5;
+
+        switch (status) {
+            case LIKELY_EMPTY:
+                return 1.0;
+            case MODERATELY_OCCUPIED:
+                return 0.5;
+            case LIKELY_FULL:
+                return 0.0;
+            default:
+                return 0.5;
+        }
+    }
 
     //Haversine formula
     private double calculateDistance(Double userLat, Double userLng, Double parkingLat, Double parkingLng) {

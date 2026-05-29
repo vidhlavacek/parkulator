@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.*;
 
 import hr.parkulator.parkulator_backend.dto.parking.ParkingSearchResponseDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
-import hr.parkulator.parkulator_backend.services.DataServices.ParkingDataService;
 import hr.parkulator.parkulator_backend.services.ParkingServices.ParkingService;
 
 

@@ -2,15 +2,11 @@ package hr.parkulator.parkulator_backend.services.ParkingServices;
 
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
-import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
-import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 import hr.parkulator.parkulator_backend.exception.BadRequestException;
 import hr.parkulator.parkulator_backend.exception.NoParkingsFoundException;
 import hr.parkulator.parkulator_backend.exception.ResourceNotFoundException;
@@ -46,7 +42,7 @@ public class ParkingService {
         return parkingRepository.findByType(type);
     }
 
-   public ParkingSearchResponseDTO getFilteredParkings(String type, Double maxDistance, Double lat, Double lng, Double maxPrice){
+   public ParkingSearchResponseDTO getFilteredParkings(String type, Double maxPrice, Double maxDistance, Double lat, Double lng){
         validateCoordinates(lat, lng);
         validateFilters(maxDistance, maxPrice);
     

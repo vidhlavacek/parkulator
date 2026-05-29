@@ -1,5 +1,6 @@
 package hr.parkulator.parkulator_backend.dto.parking;
 
+import hr.parkulator.parkulator_backend.shared.ParkingOccupancyCategory;
 import lombok.*;
 
 @Data
@@ -21,4 +22,4 @@ public class ParkingDTO {
     private Double latitude;
     private Double longitude;
     private Double score;
-}
+    private ParkingOccupancyCategory occupancyStatus;}

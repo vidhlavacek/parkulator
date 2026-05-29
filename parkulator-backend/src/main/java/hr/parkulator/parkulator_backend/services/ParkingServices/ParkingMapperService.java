@@ -40,6 +40,7 @@ public class ParkingMapperService {
         dto.setAvailableSpots(parking.getAvailableSpots());
         dto.setLatitude(parking.getLatitude());
         dto.setLongitude(parking.getLongitude());
+        dto.setOccupancyStatus(parking.getOccupancyStatus());
 
         StringBuilder message = new StringBuilder();
 
