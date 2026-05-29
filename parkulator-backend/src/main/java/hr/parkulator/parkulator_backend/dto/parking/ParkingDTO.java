@@ -16,7 +16,7 @@ public class ParkingDTO {
     private Long availableSpots;
     private Long spots;
     private String parkingStatus;
-    private double Price;
+    private double price;
     private int openingHour;
     private int closingHour;
     private Double latitude;
