@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.UpdateTimestamp;
+import hr.parkulator.parkulator_backend.shared.ParkingOccupancyCategory;
 
 @Entity
 @Data
@@ -28,7 +29,11 @@ public class Parking {
     private Double longitude;
     private Long spots;
     private Long availableSpots;
+    private Double estimatedScore;
 
+    @Enumerated(EnumType.STRING)
+    private ParkingOccupancyCategory occupancyStatus;
+    
     @UpdateTimestamp
     private LocalDateTime lastUpdated;
 

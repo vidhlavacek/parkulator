@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../context/AuthContext';
 import 'react-native-reanimated';
+import '../services/location/backgorundLocationTask';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 

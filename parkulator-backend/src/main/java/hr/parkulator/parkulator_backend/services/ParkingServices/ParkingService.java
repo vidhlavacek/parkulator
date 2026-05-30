@@ -1,16 +1,12 @@
-package hr.parkulator.parkulator_backend.services;
+package hr.parkulator.parkulator_backend.services.ParkingServices;
 
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
-import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
-import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 import hr.parkulator.parkulator_backend.exception.BadRequestException;
 import hr.parkulator.parkulator_backend.exception.NoParkingsFoundException;
 import hr.parkulator.parkulator_backend.exception.ResourceNotFoundException;
@@ -19,10 +15,13 @@ import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 import hr.parkulator.parkulator_backend.dto.parking.ParkingSearchResponseDTO;
 import hr.parkulator.parkulator_backend.entities.Parking;
 
+
 @Service
 @AllArgsConstructor
 public class ParkingService {
     private ParkingRepository parkingRepository;
+    private final ParkingMapperService parkingMapperService;
+    private final ParkingScoreService parkingScoreService;
 
     public Parking getParkingById(Long id) {
         return parkingRepository.findById(id)
@@ -43,24 +42,12 @@ public class ParkingService {
         return parkingRepository.findByType(type);
     }
 
-   public ParkingSearchResponseDTO getFilteredParkings(
-        String type,
-        Double maxDistance,
-        Double lat,
-        Double lng,
-        Double maxPrice
-    ) {
-        if (lat == null || lng == null) {
-            throw new BadRequestException("User location (lat/lng) is required for filtering");
-        }
-        if (maxDistance != null && maxDistance < 0) {
-            throw new BadRequestException("maxDistance cannot be negative");
-        }
-        if (maxPrice != null && maxPrice < 0) {
-            throw new BadRequestException("maxPrice cannot be negative");
-        }
+   public ParkingSearchResponseDTO getFilteredParkings(String type, Double maxPrice, Double maxDistance, Double lat, Double lng){
+        validateCoordinates(lat, lng);
+        validateFilters(maxDistance, maxPrice);
     
         List<Parking> parkingEntities;
+
         boolean expanded = false;
         Double radius = null;
 
@@ -79,23 +66,23 @@ public class ParkingService {
             while (radius <= 20) {
                 result = parkingRepository.filterAll(type, radius, lat, lng);
 
-                if (!result .isEmpty()) {
+                if (!result.isEmpty()) {
                     break;
                 }
 
-                radius += 0.5;
+                radius = Math.round((radius + 0.1) * 100.0) / 100.0;
                 expanded = true;
             }
 
             parkingEntities = result;
         }
 
-        // turning enitiy to DTO
+        //turning entity to DTO
         List<ParkingDTO> parkings = parkingEntities.stream()
-                .map(this::mapToDTO)
+                .map(parkingMapperService::mapToDTO)
                 .toList();
 
-        // price filter on DTO 
+        //price filter on DTO 
         if (maxPrice != null) {
             List<ParkingDTO> filtered = new ArrayList<>();
 
@@ -112,6 +99,8 @@ public class ParkingService {
             throw new NoParkingsFoundException("No parkings found");
         }
 
+        parkings = parkingScoreService.score(parkings, lat, lng);
+
         ParkingSearchResponseDTO response = new ParkingSearchResponseDTO();
         response.setParkings(parkings);
         response.setRadiusExpanded(expanded);
@@ -120,63 +109,36 @@ public class ParkingService {
         return response;
     }
 
-    private ParkingDTO mapToDTO(Parking parking) {
-        ParkingDTO dto = new ParkingDTO();
+    private void validateCoordinates(Double lat, Double lng){
+        if (lat == null || lng == null){
+            throw new BadRequestException("Latitude and longitude are required");
+        }
 
-        dto.setName(parking.getName());
-        dto.setAddress(parking.getAddress());
-        dto.setType(parking.getType());
-        dto.setLink(parking.getLink());
-        dto.setLive(parking.isLive());
-        dto.setAvailableSpots(parking.getAvailableSpots());
+        if (lat < -90 || lat > 90) {
+            throw new BadRequestException("Latitude must be between -90 and 90");
+        }
 
-        dto.setLatitude(parking.getLatitude());
-        dto.setLongitude(parking.getLongitude());
-
-        dto.setPrice(getCurrentPrice(parking));
-
-        return dto;
+        if (lng < -180 || lng > 180) {
+            throw new BadRequestException("Longitude must be between -180 and 180");
+        }
     }
 
-    //price calculation
-    private double getCurrentPrice(Parking parking) {
-        DayOfWeek day = LocalDate.now().getDayOfWeek();
-        int hourNow = LocalTime.now().getHour();
+    private void validateFilters(
+            Double maxDistance,
+            Double maxPrice
+    ) {
 
-        WorkDayEnum wde;
-
-        if (day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY) {
-            wde = WorkDayEnum.WORKDAY; //mon-fri
-        } else if (day == DayOfWeek.SATURDAY) {
-            wde = WorkDayEnum.SATURDAY;
-        } else {
-            wde = WorkDayEnum.SUNDAY;
+        if (maxDistance != null && maxDistance < 0) {
+            throw new BadRequestException(
+                    "maxDistance cannot be negative"
+            );
         }
 
-        for (ParkingPrice priceRule : parking.getParkingPrices()) {
-
-            if (priceRule.getDay() == WorkDayEnum.SPECIAL) {
-                continue;
-            }
-
-            if (priceRule.getDay() != wde &&
-                priceRule.getDay() != WorkDayEnum.ALLDAYS) {
-                continue;
-            }
-
-            int open = priceRule.getOpeningHour();
-            int close = priceRule.getClosingHour();
-
-            boolean inRange =
-                    (open <= close && hourNow >= open && hourNow <= close)
-                    || (open > close && (hourNow >= open || hourNow <= close));
-
-            if ((open == 0 && close == 0) || inRange) {
-                return priceRule.getPrice();
-            }
+        if (maxPrice != null && maxPrice < 0) {
+            throw new BadRequestException(
+                    "maxPrice cannot be negative"
+            );
         }
-
-        return -1; 
     }
 }
 
