@@ -55,7 +55,7 @@ public class ParkingDataService {
 
         //Getting the data
         List<ParkingDataDTO> dtos = liveParkingDataService.getInitialRijekaPlusData();
-        //dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
+        dtos.addAll(staticParkingDataService.getInitialStaticParkingData());
 
         //Creating list of Parking entities for the database
         for(ParkingDataDTO dto : dtos){

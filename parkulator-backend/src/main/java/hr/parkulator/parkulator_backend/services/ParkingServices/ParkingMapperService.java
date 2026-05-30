@@ -30,7 +30,7 @@ public class ParkingMapperService {
         }
 
         ParkingDTO dto = new ParkingDTO();
-
+        dto.setId(parking.getId());
         dto.setName(parking.getName());
         dto.setAddress(parking.getAddress());
         dto.setType(parking.getType());

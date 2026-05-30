@@ -62,7 +62,7 @@ export default function HomeScreen() {
 
             <Pressable
               onPress={() => {
-                
+                router.push("../ParkingMap");
               }}
               style={({ pressed }) => [
                 styles.mainButtonShadow,
