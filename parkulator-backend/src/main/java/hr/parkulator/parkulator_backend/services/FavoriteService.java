@@ -60,6 +60,7 @@ public class FavoriteService {
     Parking parking = favorite.getParking();
 
     return ParkingDTO.builder()
+        .id(parking.getId())
         .name(parking.getName())
         .address(parking.getAddress())
         .type(parking.getType())

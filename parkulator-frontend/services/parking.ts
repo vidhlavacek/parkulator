@@ -3,17 +3,20 @@ import api from "./api";
 export type ParkingDTO = {
   id: number;
   name: string;
-  address?: string;
-  price?: number;
-  availableSpots?: number;
+  address: string;
+  type: string;
+  link: string;
+  live: boolean;
+  availableSpots: number;
+  spots: number;
+  parkingStatus: string;
+  price: number;
+  openingHour: number;
+  closingHour: number;
   latitude?: number;
   longitude?: number;
-  sourceKey: string;
-  link: string;
-  type: string;
-  isLive?: boolean;
-  totalSpots?: number;
-  occupiedSpots?: number;
+  score?: number;
+  occupancyStatus?: string;
 };
 
 export type ParkingMarker = {
@@ -23,13 +26,18 @@ export type ParkingMarker = {
   longitude: number;
 };
 
-export async function getParkingsByLocationRequest(
-  latitude: number,
-  longitude: number
-): Promise<{ parkings: ParkingDTO[] }> {
-  const response = await api.get(
-    `/parkings/nearby?latitude=${latitude}&longitude=${longitude}`
-  );
+export async function getParkingsByLocationRequest(params: {
+  lat: number;
+  lng: number;
+  type?: string;
+  maxDistance?: number;
+}) {
+  const response = await api.get("/parkings", {
+    params: {
+      ...params,
+      maxDistance: 0.5,
+    },
+  });
 
   return response.data;
 }

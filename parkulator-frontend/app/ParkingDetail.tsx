@@ -6,18 +6,27 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 
 export default function ParkingDetail() {
+   const occupancyStatusLabels: Record<string, string> = {
+  LIKELY_EMPTY: "Empty",
+  MODERATELY_OCCUPIED: "Crowded",
+  LIKELY_FULL: "Full",
+  };
+
+  function getOccupancyLabel(status?: string | null) {
+  if (!status) return null;
+  return occupancyStatusLabels[status] ?? status;
+  }
+
   const router = useRouter();
   const params = useLocalSearchParams();
 
   const name = params.name as string;
   const address = params.address as string;
+  const type = params.type as string;
+  const live = params.live === "true" ? true : params.live === "false" ? false : undefined;
   const price = parseFloat(params.price as string);
   const availableSpots = parseInt(params.availableSpots as string);
-  const totalSpots = parseInt(params.totalSpots as string);
-
-  const availLabel =
-    availableSpots > 20 ? "Lots of spots" :
-    availableSpots > 5 ? "Few spots" : "Almost full";
+  const totalSpots = params.spots ? parseInt(params.spots as string) : undefined;
 
   const availColor =
     availableSpots > 20 ? "#2fa51f" :
@@ -37,12 +46,14 @@ export default function ParkingDetail() {
 
         <View style={styles.header}>
           <View style={styles.headerTop}>
-            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.name}>{type === "Garaže i zatvorena parkirališta" ? name : address}</Text>
             <View style={styles.priceBlock}>
               <Text style={styles.price}>${price?.toFixed(2)}<Text style={styles.priceSub}>/hr</Text></Text>
-              <View style={[styles.availBadge, { backgroundColor: availBg }]}>
-                <Text style={[styles.availText, { color: availColor }]}>{availLabel}</Text>
-              </View>
+              {!live && getOccupancyLabel(params.occupancyStatus as string | null) && (
+                <View style={[styles.availBadge, { backgroundColor: "#edfce8" }]}>
+                  <Text style={[styles.availText, { color: "#2fa51f" }]}>Estimated</Text>
+                </View>
+              )}
             </View>
           </View>
           {address ? (
@@ -53,6 +64,7 @@ export default function ParkingDetail() {
           ) : null}
         </View>
 
+        {totalSpots &&
         <View style={styles.spotsCard}>
           <View style={styles.spotsRow}>
             <Ionicons name="car" size={20} color={availColor} />
@@ -64,14 +76,27 @@ export default function ParkingDetail() {
               backgroundColor: availColor,
             }]} />
           </View>
-        </View>
+        </View>}
+
+        {!totalSpots &&
+        <View style={styles.spotsCard}>
+          <View style={styles.spotsRow}>
+            <Ionicons name="car" size={20} color={availColor} />
+            <Text style={styles.spotsText}>{getOccupancyLabel(params.occupancyStatus as string | null)}</Text>
+          </View>
+        </View>}
 
 
         <View style={styles.pricingCard}>
           <Text style={styles.sectionTitle}>Pricing</Text>
           <View style={styles.divider} />
           <Text style={styles.pricingRow}>${price?.toFixed(2)} / hour</Text>
-          <Text style={styles.pricingRow}>${(price * 24 * 0.5)?.toFixed(2)} / day <Text style={styles.pricingNote}>(max 24h)</Text></Text>
+        </View>
+
+        <View style={styles.pricingCard}>
+          <Text style={styles.sectionTitle}>Statistics</Text>
+          <View style={styles.divider} />
+          <Text style={styles.pricingRow}>Coming soon...</Text>
         </View>
 
 
@@ -83,7 +108,7 @@ export default function ParkingDetail() {
           onPress={() => {}}
         >
           <Ionicons name="navigate" size={20} color="#fff" />
-          <Text style={styles.directionsText}>Get Directions</Text>
+          <Text style={styles.directionsText}>Get Directions(Coming soon)</Text>
         </Pressable>
       </View>
     </SafeAreaView></>

@@ -28,10 +28,10 @@ public class ParkingController {
     public ParkingSearchResponseDTO getParkings(
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double maxDistance,
-            @RequestParam Double lat,
-            @RequestParam Double lng,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
             @RequestParam(required = false)Double maxPrice
     ) {
-       return parkingService.getFilteredParkings(type, maxDistance, lat, lng, maxPrice);
+       return parkingService.getFilteredParkings(type, maxPrice, maxDistance, lat, lng);
     }    
 }

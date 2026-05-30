@@ -6,7 +6,7 @@ import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
-import { ParkingMarker, mapParkingsToMarkers, ParkingDTO, } from "../services/parking";
+import { ParkingMarker, mapParkingsToMarkers, ParkingDTO, getParkingsByLocationRequest} from "../services/parking";
 
 const CARD_HEIGHT = 88;
 const SHEET_HEIGHT = 350;
@@ -78,6 +78,17 @@ export default function ParkingMap() {
     }).start();
   };
 
+  const occupancyStatusLabels: Record<string, string> = {
+  LIKELY_EMPTY: "Empty",
+  MODERATELY_OCCUPIED: "Crowded",
+  LIKELY_FULL: "Full",
+  };
+
+  function getOccupancyLabel(status?: string | null) {
+  if (!status) return null;
+  return occupancyStatusLabels[status] ?? status;
+  }
+
   const fetchSuggestions = async (query: string) => {
     if (query.trim().length < 3) {
       setSuggestions([]);
@@ -142,8 +153,26 @@ export default function ParkingMap() {
       },
       500
     );
-    console.log("Selected coords:", s.latitude, s.longitude);
+    loadParkings(s.latitude, s.longitude);
   };
+
+  const loadParkings = async (lat: number, lng: number) => {
+  try {
+    setLoading(true);
+
+    const data = await getParkingsByLocationRequest({
+      lat,
+      lng,
+    });
+
+    setParkings(data.parkings);
+    setMarkers(mapParkingsToMarkers(data.parkings));
+  } catch (error) {
+    console.log("Load parkings error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     const init = async () => {
@@ -155,10 +184,13 @@ export default function ParkingMap() {
         const { latitude, longitude } = loc.coords;
         setUserLocation({ latitude, longitude });
 
-        const data: ParkingDTO[] = [];
+        const data = await getParkingsByLocationRequest({
+        lat: latitude,
+        lng: longitude,
+      });
 
-        setParkings(data);
-        setMarkers(mapParkingsToMarkers(data));
+        setParkings(data.parkings);
+        setMarkers(mapParkingsToMarkers(data.parkings));
 
         
       } catch (error) {
@@ -176,12 +208,20 @@ export default function ParkingMap() {
       params: {
         id: parking.id,
         name: parking.name,
-        price: parking.price,
+        address: parking.address,
+        type: parking.type,
+        link: parking.link,
+        live: String(parking.live),
         availableSpots: parking.availableSpots,
-        totalSpots: parking.totalSpots,
-        address: parking.address ?? "",
+        spots: parking.spots,
+        parkingStatus: parking.parkingStatus,
+        price: parking.price,
+        openingHour: parking.openingHour,
+        closingHour: parking.closingHour,
         latitude: parking.latitude,
         longitude: parking.longitude,
+        score: parking.score,
+        occupancyStatus: parking.occupancyStatus
       },
     });
   };
@@ -223,9 +263,7 @@ export default function ParkingMap() {
           const parking = parkings[index];
           const color = index < 3 ? "#2fa51f" : index < 6 ? "#2c8cff" : "#e21b1b";
           const bgColor = index < 3 ? "#edfce8" : index < 6 ? "#e8f1fd" : "#fdeaea";
-          const availLabel =
-            (parking.availableSpots ?? 0) > 20 ? "Lots of spots" :
-            (parking.availableSpots ?? 0) > 5 ? "Few spots" : "Almost full";
+          const availLabel = getOccupancyLabel(parking.occupancyStatus);
 
           return (
             <Marker
@@ -247,8 +285,8 @@ export default function ParkingMap() {
                     </View>
                   </View>
                   <Text style={styles.calloutSpots}>
-                    {parking.availableSpots ?? "—"} / {parking.totalSpots ?? "—"} spots free
-                  </Text>
+                    {parking.live ? parking.availableSpots : "Estimated"}
+                 </Text>
                 </View>
               </Callout>
             </Marker>
@@ -337,9 +375,7 @@ export default function ParkingMap() {
             const color = index < 3 ? "#2fa51f" : index < 6 ? "#2c8cff" : "#e21b1b";
             const bgColor = index < 3 ? "#edfce8" : index < 6 ? "#e8f1fd" : "#fdeaea";
 
-            const availLabel =
-              (parking.availableSpots ?? 0) > 20 ? "Lots of spots" :
-              (parking.availableSpots ?? 0) > 5 ? "Few spots" : "Almost full";
+            const availLabel = getOccupancyLabel(parking.occupancyStatus);
 
             return (
               <Pressable
@@ -362,7 +398,7 @@ export default function ParkingMap() {
                     <Text style={styles.cardSub}>{distance !== null ? `${distance} m` : "—"}</Text>
                     <Text style={styles.cardDot}>·</Text>
                     <Ionicons name="car" size={13} color="#8a97aa" />
-                    <Text style={styles.cardSub}>{parking.availableSpots ?? "—"}/{parking.totalSpots ?? "—"}</Text>
+                    <Text style={styles.cardSub}>{parking.live ? parking.availableSpots : (parking.occupancyStatus ? "Estimated" : "Not available")}</Text>
                   </View>
                 </View>
 
@@ -370,9 +406,10 @@ export default function ParkingMap() {
                   <Text style={styles.cardPrice}>
                     ${parking.price?.toFixed(2)}<Text style={styles.cardPriceSub}>/hr</Text>
                   </Text>
+                  {!parking.live && getOccupancyLabel(parking.occupancyStatus) && 
                   <View style={[styles.availBadge, { backgroundColor: bgColor }]}>
                     <Text style={[styles.availText, { color }]}>{availLabel}</Text>
-                  </View>
+                  </View>}
                 </View>
               </Pressable>
             );
