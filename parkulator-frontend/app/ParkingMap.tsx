@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from "react-native";
+import { ActivityIndicator, Animated, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Location from "expo-location";
@@ -189,8 +189,13 @@ export default function ParkingMap() {
   if (loading) {
     return (
       <SafeAreaView style={styles.center}>
-        <ActivityIndicator size="large" color="#58cc3a" />
-        <Text style={styles.loadingText}>Loading parking map...</Text>
+        <Image
+          source={require("../assets/images/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <ActivityIndicator size="large" color="#1e40af" style={{ marginTop: 20 }} />
+        <Text style={styles.loadingText}>Učitavanje parkinga...</Text>
       </SafeAreaView>
     );
   }
@@ -382,6 +387,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#dfe3ea" },
   center: { flex: 1, backgroundColor: "#dfe3ea", alignItems: "center", justifyContent: "center" },
   loadingText: { marginTop: 12, color: "#465a79", fontSize: 15 },
+  logo: { width: 180, height: 180 },
   map: { flex: 1 },
 
   searchWrapper: {
