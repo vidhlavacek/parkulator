@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import hr.parkulator.parkulator_backend.services.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 
 import java.io.IOException;
 import jakarta.servlet.FilterChain;
@@ -21,49 +24,59 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
-        throws ServletException, IOException {
-            //Extract Authorization header from request
-            String authHeader = request.getHeader("Authorization");
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/auth")
+            || path.startsWith("/parkings");
+    }
 
-             //If no token or format is invalid then continue without authentication
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-            //Extract JWT token
-            String jwt = authHeader.substring(7);
+        String authHeader = request.getHeader("Authorization");
 
-            try{
-                //Extract user email from token
-                String userEmail = jwtService.extractEmail(jwt);
-
-                //Proceed only if user is not authenticated
-                if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-
-                    if (jwtService.isTokenValid(jwt, userDetails)) {
-                        UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    } else {
-                        log.warn("Invalid JWT token", userEmail);
-                    }
-                }
-            }catch (io.jsonwebtoken.ExpiredJwtException e) {
-                log.warn("JWT expired", e);
-            }catch (io.jsonwebtoken.JwtException e) {
-                log.warn("Invalid JWT", e);
-            }catch (Exception e) {
-                log.error("Unexpected error in JWT filter", e);
-            }
-
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
+            return;
         }
+
+        String jwt = authHeader.substring(7);
+
+        try {
+            Claims claims = jwtService.extractAllClaims(jwt);
+            String userEmail = jwtService.extractEmail(claims);
+
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+
+                if (jwtService.isTokenValid(claims, userDetails)) {
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            }
+
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT expired", e);
+        } catch (JwtException e) {
+            log.warn("Invalid JWT", e);
+        } catch (Exception e) {
+            log.error("Unexpected error in JWT filter", e);
+        }
+
+        filterChain.doFilter(request, response);
+    }
 }
