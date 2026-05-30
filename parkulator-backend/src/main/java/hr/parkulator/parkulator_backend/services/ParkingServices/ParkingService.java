@@ -70,7 +70,7 @@ public class ParkingService {
                     break;
                 }
 
-                radius = Math.round((radius + 0.1) * 100.0) / 100.0;
+                radius = Math.round((radius * 1.5) * 100.0) / 100.0;
                 expanded = true;
             }
 
@@ -84,15 +84,9 @@ public class ParkingService {
 
         //price filter on DTO 
         if (maxPrice != null) {
-            List<ParkingDTO> filtered = new ArrayList<>();
-
-            for (ParkingDTO p : parkings) {
-                if (p.getPrice() >= 0 && p.getPrice() <= maxPrice) {
-                    filtered.add(p);
-                }
-            }
-
-            parkings = filtered;
+            parkings = parkings.stream()
+                .filter(p -> p.getPrice() >= 0 && p.getPrice() <= maxPrice)
+                .toList();
         }
 
         if (parkings.isEmpty()) {

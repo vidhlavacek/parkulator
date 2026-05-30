@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import hr.parkulator.parkulator_backend.entities.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -30,43 +31,31 @@ public class JwtService {
             .compact();
     }
 
-    public String extractEmail(String token){
+    public String extractEmail(Claims claims) {
+        return claims.getSubject();
+    }
+
+    public Long extractUserId(Claims claims) {
+        Object value = claims.get("userId");
+        return value == null ? null : Long.valueOf(value.toString());
+    }
+
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
-    }
-
-    public Long extractUserId(String token) {
-        Object value = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .get("userId");
-
-        if (value == null) {
-            return null;
-        } else {
-            return Long.valueOf(value.toString());
-        }
+                .getBody();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
-        String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean isTokenExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 
-    private boolean isTokenExpired(String token){
-        Date expiration = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-
-        return expiration.before(new Date());
+    public boolean isTokenValid(Claims claims, UserDetails userDetails) {
+        String email = extractEmail(claims);
+        return email.equals(userDetails.getUsername()) && !isTokenExpired(claims);
     }
+
+
 }
