@@ -190,7 +190,7 @@ public class LiveParkingDataService {
                 for(String adr : addresses){
                     lpd_list.add(
                         ParkingDataDTO.builder()
-                        .sourceKey(createSourceKey(externalId, name, address))
+                        .sourceKey(createSourceKey(externalId, name, adr))
                         .name(name)
                         .address(address)
                         .link(link)
