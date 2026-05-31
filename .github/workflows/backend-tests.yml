@@ -22,5 +22,5 @@ jobs:
           cache: maven
 
       - name: Verify with Maven
-        run: mvn --batch-mode verify
+        run: mvn --batch-mode -q verify
         working-directory: ./parkulator-backend
