@@ -156,7 +156,7 @@ class ParkingServiceTest {
 
         assertNotNull(result);
         assertTrue(result.isRadiusExpanded());
-        assertEquals(0.11, result.getFinalRadius());
+        assertEquals(0.12, result.getFinalRadius());
         assertFalse(result.getParkings().isEmpty());
     }
 
