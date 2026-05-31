@@ -13,7 +13,7 @@ export default function ParkingDetail() {
   };
 
   function getOccupancyLabel(status?: string | null) {
-  if (!status) return null;
+  if (!status) return false;
   return occupancyStatusLabels[status] ?? status;
   }
 
@@ -26,8 +26,8 @@ export default function ParkingDetail() {
   const live = params.live === "true" ? true : params.live === "false" ? false : undefined;
   const price = parseFloat(params.price as string);
   const availableSpots = parseInt(params.availableSpots as string);
-  const totalSpots = params.spots ? parseInt(params.spots as string) : undefined;
-
+  const totalSpots = params.spots ? parseInt(params.spots as string) : 0;
+  const totalSpotsBool = totalSpots ? true : false;
   const availColor =
     availableSpots > 20 ? "#2fa51f" :
     availableSpots > 5 ? "#2c8cff" : "#e21b1b";
@@ -64,7 +64,7 @@ export default function ParkingDetail() {
           ) : null}
         </View>
 
-        {totalSpots &&
+        {totalSpotsBool && 
         <View style={styles.spotsCard}>
           <View style={styles.spotsRow}>
             <Ionicons name="car" size={20} color={availColor} />
@@ -78,7 +78,7 @@ export default function ParkingDetail() {
           </View>
         </View>}
 
-        {!totalSpots &&
+        {!totalSpotsBool &&
         <View style={styles.spotsCard}>
           <View style={styles.spotsRow}>
             <Ionicons name="car" size={20} color={availColor} />
