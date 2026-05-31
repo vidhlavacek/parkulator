@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+import hr.parkulator.parkulator_backend.dto.LocationLogDTO;
+
 @Service
 public class GeoService {
     //Rijeka Box
@@ -60,17 +62,17 @@ public class GeoService {
         return (bearingDeg + 360.0) % 360.0;
     }
 
-    public double calculateSpeedKmh(
-            double lat1, double lon1, Instant timestamp1,
-            double lat2, double lon2, Instant timestamp2
-    ) {
+    public double calculateSpeedKmh(LocationLogDTO dto) {
+        Instant timestamp1 = dto.getTimestamp1();
+        Instant timestamp2 = dto.getTimestamp2();
+
         long seconds = Duration.between(timestamp1, timestamp2).getSeconds();
 
         if (seconds <= 0) {
             throw new IllegalArgumentException("timestamp2 must be after timestamp1");
         }
 
-        double distanceMeters = calculateDistanceMeters(lat1, lon1, lat2, lon2);
+        double distanceMeters = calculateDistanceMeters(dto.getLatitude1(), dto.getLongitude1(), dto.getLatitude2(), dto.getLongitude2());
         return (distanceMeters / seconds) * 3.6;
     }
 }
