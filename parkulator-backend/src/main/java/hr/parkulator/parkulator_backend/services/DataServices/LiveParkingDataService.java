@@ -166,9 +166,19 @@ public class LiveParkingDataService {
                 Double latitude = parking.get("parking_data").get("lokacija").get("lat").asDouble();
                 Double longitude = parking.get("parking_data").get("lokacija").get("lng").asDouble();
 
-
-                ParkingDataDTO lpd = createParkingDataDTO(createSourceKey(externalId, name, address), name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrices);
-                lpd_list.add(lpd);
+                lpd_list.add(ParkingDataDTO.builder()
+                                    .sourceKey(createSourceKey(externalId, name, address))
+                                    .name(name)
+                                    .address(address)
+                                    .link(link)
+                                    .type(type)
+                                    .isLive(isLive)
+                                    .spots(spots)
+                                    .availableSpots(availableSpots)
+                                    .latitude(latitude)
+                                    .longitude(longitude)
+                                    .parkingPrice(parkingPrices)
+                                    .build());
             }
             //Offline parkings, these are zones which need to be split into seperate parking lots
             else{
@@ -178,7 +188,21 @@ public class LiveParkingDataService {
                 List<String> addresses = addressSplitter(address);
 
                 for(String adr : addresses){
-                    lpd_list.add(createParkingDataDTO(createSourceKey(externalId, name, adr), name, adr, link, type, isLive, spots, availableSpots, null, null, parkingPrices));
+                    lpd_list.add(
+                        ParkingDataDTO.builder()
+                        .sourceKey(createSourceKey(externalId, name, address))
+                        .name(name)
+                        .address(address)
+                        .link(link)
+                        .type(type)
+                        .isLive(isLive)
+                        .spots(spots)
+                        .availableSpots(availableSpots)
+                        .latitude(null)
+                        .longitude(null)
+                        .parkingPrice(parkingPrices)
+                        .build()
+                    );
                 }
             }
         }
@@ -309,11 +333,6 @@ public class LiveParkingDataService {
                 
                 ParkingPriceDTO pp = new ParkingPriceDTO(workdays, special, openingHour, closingHour, parkingPrice);
                 return pp;
-    }
-
-    public ParkingDataDTO createParkingDataDTO(String sourceKey, String name, String address, String link, String type, boolean isLive, Long spots, Long availableSpots,Double latitude, Double longitude, List<ParkingPriceDTO> parkingPrice){
-        //Creating a ParkingDataDTO instance
-        return new ParkingDataDTO(sourceKey, name, address, link, type, isLive, spots, availableSpots, latitude, longitude, parkingPrice);
     }
 
     public String createSourceKey(String externalId, String name, String address){

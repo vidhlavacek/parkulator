@@ -99,7 +99,7 @@ public class ParkingLogServiceTest {
                 .thenReturn(List.of(parking));
 
         when(geoService.calculateSpeedKmh(
-                anyDouble(), anyDouble(), any(), anyDouble(), anyDouble(), any()))
+                dto))
                 .thenReturn(speedKmh);
 
         when(geoService.calculateHeading(
@@ -239,7 +239,7 @@ public class ParkingLogServiceTest {
                 .thenReturn(List.of(parking));
 
         when(geoService.calculateSpeedKmh(
-                anyDouble(), anyDouble(), any(), anyDouble(), anyDouble(), any()))
+                dto))
                 .thenReturn(10.0);
 
         when(geoService.calculateHeading(

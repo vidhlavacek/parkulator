@@ -38,12 +38,7 @@ public class LocationLogService {
         if(nearbyParkingLots.isEmpty()) return;
 
         //Calculate driving speed, heading (if possible)
-        Double drivingSpeed = geoService.calculateSpeedKmh(location.getLatitude1(),
-                                                    location.getLongitude1(),
-                                                    location.getTimestamp1(),
-                                                    location.getLatitude2(),
-                                                    location.getLongitude2(),
-                                                    location.getTimestamp2());
+        Double drivingSpeed = geoService.calculateSpeedKmh(location);
 
         Double heading = geoService.calculateHeading(location.getLatitude1(), 
                                           location.getLongitude1(), 
