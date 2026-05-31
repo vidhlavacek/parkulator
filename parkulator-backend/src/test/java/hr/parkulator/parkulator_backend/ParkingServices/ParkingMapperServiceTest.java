@@ -6,23 +6,18 @@ import hr.parkulator.parkulator_backend.entities.ParkingPrice;
 import hr.parkulator.parkulator_backend.services.ParkingServices.ParkingMapperService;
 import hr.parkulator.parkulator_backend.shared.WorkDayEnum;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class ParkingMapperServiceTest {
 
-    @Autowired
-    private ParkingMapperService mapper;
+    private final ParkingMapperService mapper = new ParkingMapperService();
 
     @Test
-    void shouldReturnCorrectPriceWhenInRange() {
-
+    void shouldReturnCorrectPriceWhenInRange(){
         Parking parking = createParking();
 
         LocalTime fixedTime = LocalTime.of(10, 0);
@@ -39,8 +34,7 @@ class ParkingMapperServiceTest {
     }
 
     @Test
-    void shouldReturnZeroWhenOutOfRange() {
-
+    void shouldReturnZeroWhenOutOfRange(){
         Parking parking = createParking();
 
         LocalTime fixedTime = LocalTime.of(23, 0);
@@ -57,8 +51,7 @@ class ParkingMapperServiceTest {
     }
 
     @Test
-    void shouldThrowWhenCoordinatesMissing() {
-
+    void shouldThrowWhenCoordinatesMissing(){
         Parking parking = createParking();
         parking.setLatitude(null);
 
@@ -69,8 +62,7 @@ class ParkingMapperServiceTest {
         );
     }
 
-    private Parking createParking() {
-
+    private Parking createParking(){
         Parking parking = new Parking();
         parking.setId(1L);
         parking.setName("Test Parking");
