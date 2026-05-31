@@ -12,16 +12,6 @@ import hr.parkulator.parkulator_backend.repositories.ParkingRepository;
 import hr.parkulator.parkulator_backend.shared.ParkingMovementCategory;
 import hr.parkulator.parkulator_backend.entities.LocationLog;
 
-/*
-private Double latitude1;
-private Double longitude1;
-private Instant timestamp1;
-private Double latitude2;
-private Double longitude2;
-private Instant timestamp2;
-private Double accuracy;
-*/
-
 @Service
 public class LocationLogService {
 
