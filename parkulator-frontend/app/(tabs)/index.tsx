@@ -81,20 +81,6 @@ export default function HomeScreen() {
                 </LinearGradient>
               )}
             </Pressable>
-
-            <Pressable
-              onPress={() => {
-              }}
-              style={({ pressed }) => [
-                styles.mapButton,
-                styles.softShadow,
-                pressed && styles.mapButtonPressed,
-                pressed && styles.pressedScale,
-              ]}
-            >
-              <Entypo name="map" size={20} color="#72819a" />
-              <Text style={styles.mapButtonText}>Open Map</Text>
-            </Pressable>
           </View>
 
           <View style={styles.quickSection}>
