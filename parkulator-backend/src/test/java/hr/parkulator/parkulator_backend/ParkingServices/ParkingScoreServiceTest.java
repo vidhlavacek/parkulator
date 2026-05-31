@@ -4,17 +4,13 @@ import hr.parkulator.parkulator_backend.dto.parking.ParkingDTO;
 import hr.parkulator.parkulator_backend.shared.ParkingOccupancyCategory;
 import hr.parkulator.parkulator_backend.services.ParkingServices.ParkingScoreService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class ParkingScoreServiceTest {
-    @Autowired
-    private ParkingScoreService parkingScoreService;
+    private final ParkingScoreService parkingScoreService = new ParkingScoreService();
 
     // Business logic:
     @Test
@@ -35,7 +31,7 @@ class ParkingScoreServiceTest {
     @Test
     void ignorePriceWhenMessageExists(){
         ParkingDTO p = createParking(45.0, 15.0, 1000.0, 10L, 20L);
-        p.setParkingStatus("UNKNOWN");
+        p.setParkingStatus("null");
 
         List<ParkingDTO> result = parkingScoreService.score(
                 List.of(p),
