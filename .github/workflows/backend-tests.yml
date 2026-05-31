@@ -10,6 +10,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: parkulator
+          POSTGRES_USER: parkulator
+          POSTGRES_PASSWORD: parkulator
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U parkulator -d parkulator"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,6 +36,10 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Verify with Maven
-        run: mvn --batch-mode -q verify
+      - name: Run tests
         working-directory: ./parkulator-backend
+        run: mvn --batch-mode verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/parkulator
+          SPRING_DATASOURCE_USERNAME: parkulator
+          SPRING_DATASOURCE_PASSWORD: parkulator
