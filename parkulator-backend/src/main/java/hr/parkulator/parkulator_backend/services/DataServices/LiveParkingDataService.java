@@ -192,7 +192,7 @@ public class LiveParkingDataService {
                         ParkingDataDTO.builder()
                         .sourceKey(createSourceKey(externalId, name, adr))
                         .name(name)
-                        .address(address)
+                        .address(adr)
                         .link(link)
                         .type(type)
                         .isLive(isLive)
