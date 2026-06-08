@@ -84,73 +84,12 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.quickSection}>
-            <Text style={styles.sectionTitle}>Quick Access</Text>
+           
 
             <View style={styles.quickGrid}>
-              <Pressable
-                onPress={() =>
-                  requireAuth(() => {
-                  })
-                }
-                style={({ pressed }) => [
-                  styles.quickCard,
-                  styles.softShadow,
-                  !isAuthenticated && styles.quickCardDisabled,
-                  pressed && styles.quickCardPressed,
-                  pressed && styles.pressedScale,
-                ]}
-              >
-                <Ionicons name="heart" size={22} color="#e21b1b" />
-                <Text
-                  style={[
-                    styles.quickCardTitle,
-                    !isAuthenticated && styles.quickCardTextDisabled,
-                  ]}
-                >
-                  Favourites
-                </Text>
-                <Text
-                  style={[
-                    styles.quickCardSubtitle,
-                    !isAuthenticated && styles.quickCardTextDisabled,
-                  ]}
-                >
-                  Saved places
-                </Text>
-              </Pressable>
+              
 
-              <Pressable
-                onPress={() =>
-                  requireAuth(() => {
-
-                  })
-                }
-                style={({ pressed }) => [
-                  styles.quickCard,
-                  styles.softShadow,
-                  !isAuthenticated && styles.quickCardDisabled,
-                  pressed && styles.quickCardPressed,
-                  pressed && styles.pressedScale,
-                ]}
-              >
-                <Ionicons name="time" size={22} color="#b88500" />
-                <Text
-                  style={[
-                    styles.quickCardTitle,
-                    !isAuthenticated && styles.quickCardTextDisabled,
-                  ]}
-                >
-                  History
-                </Text>
-                <Text
-                  style={[
-                    styles.quickCardSubtitle,
-                    !isAuthenticated && styles.quickCardTextDisabled,
-                  ]}
-                >
-                  Recent parking
-                </Text>
-              </Pressable>
+              
             </View>
 
             {!isAuthenticated && (

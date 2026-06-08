@@ -35,12 +35,26 @@ export async function getParkingsByLocationRequest(params: {
   const response = await api.get("/parkings", {
     params: {
       ...params,
-      maxDistance: 0.5,
+     // maxDistance: 0.5,
     },
   });
 
   return response.data;
 }
+
+/*export async function getParkingsByLocationRequest(params: {
+  lat: number;
+  lng: number;
+  type?: string;
+  maxDistance?: number;
+  maxPrice?: number;
+}) {
+  const response = await api.get("/parkings", {
+    params,
+  });
+
+  return response.data;
+}*/
 
 export function mapParkingsToMarkers(
   parkings: ParkingDTO[]
