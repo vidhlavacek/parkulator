@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, backgroundColor: "#dfe3ea", alignItems: "center", justifyContent: "center" },
   loadingText: { marginTop: 12, color: "#465a79", fontSize: 15 },
   logo: { width: 180, height: 180 },
-  map: { flex: 1 },
+  map: { ...StyleSheet.absoluteFillObject, },
 
   searchWrapper: {
     position: "absolute",

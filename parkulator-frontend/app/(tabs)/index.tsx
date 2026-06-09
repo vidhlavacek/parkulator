@@ -92,11 +92,51 @@ export default function HomeScreen() {
               
             </View>
 
-            {!isAuthenticated && (
-              <Text style={styles.lockedHint}>
-                Log in to access favourites and history.
-              </Text>
-            )}
+            <View style={styles.featuresContainer}>
+  <View style={styles.featureCard}>
+    <Ionicons
+      name="radio-outline"
+      size={24}
+      color="#2fa51f"
+    />
+    <Text style={styles.featureTitle}>
+      Live Parking
+    </Text>
+    <Text style={styles.featureSubtitle}>
+      Real-time updates
+    </Text>
+  </View>
+
+  <View style={styles.featureCard}>
+    <Ionicons
+      name="navigate-outline"
+      size={24}
+      color="#2c8cff"
+    />
+    <Text style={styles.featureTitle}>
+      Smart Ranking
+    </Text>
+    <Text style={styles.featureSubtitle}>
+      Best options nearby
+    </Text>
+  </View>
+
+  <View style={styles.featureCard}>
+    <Ionicons
+      name="cash-outline"
+      size={24}
+      color="#f59e0b"
+    />
+    <Text style={styles.featureTitle}>
+      Best Prices
+    </Text>
+    <Text style={styles.featureSubtitle}>
+      Compare parking costs
+    </Text>
+  </View>
+</View>
+
+            
           </View>
 
           {!isAuthenticated ? (
@@ -125,7 +165,7 @@ export default function HomeScreen() {
             </View>
           ) : (
               <View style={styles.authCard}>
-                <Text style={styles.authTitle}>Welcome, {user?.username}</Text>
+                <Text style={styles.authTitle}>Welcome back, {user?.username}</Text>
               </View>
           )}
         </View>
@@ -160,10 +200,12 @@ const styles = StyleSheet.create({
     paddingTop: 28,
     paddingBottom: 20,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.12,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
+    borderWidth: 1, 
+    borderColor: "#ffffff",
   },
   title: {
     textAlign: 'center',
@@ -286,10 +328,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.12,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
+    borderWidth: 1, 
+    borderColor: "#ffffff",
   },
   authTitle: {
     textAlign: 'center',
@@ -352,10 +396,51 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#72819a',
     paddingHorizontal: 4,
+    textAlign: 'center',
   },
   quickCardDisabled: {
     opacity: 0.6,
   },
+  featuresContainer: {
+  marginHorizontal: 0,
+  marginTop: 0,
+  gap: 12,
+},
+
+featureCard: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 14,
+
+  backgroundColor: "#ffffff",
+  borderRadius: 18,
+  padding: 16,
+
+  borderWidth: 1,
+  borderColor: "#f3f4f6",
+
+  shadowColor: "#000",
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  shadowOffset: {
+    width: 0,
+    height: 3,
+  },
+
+  elevation: 3,
+},
+
+featureTitle: {
+  fontSize: 15,
+  fontWeight: "700",
+  color: "#33496b",
+},
+
+featureSubtitle: {
+  fontSize: 13,
+  color: "#8a97aa",
+  marginTop: 2,
+},
 });
 
 
