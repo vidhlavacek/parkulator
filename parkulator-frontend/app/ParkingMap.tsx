@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
 import { ParkingMarker, mapParkingsToMarkers, ParkingDTO, getParkingsByLocationRequest} from "../services/parking";
+import FilterSheet, { FilterValues } from "../components/ui/FilterSheet";
 
 const CARD_HEIGHT = 88;
 const SHEET_HEIGHT = 350;
@@ -43,6 +44,14 @@ export default function ParkingMap() {
   const translateY = useRef(new Animated.Value(0)).current;
   const router = useRouter();
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [filterVisible, setFilterVisible] = useState(false);
+
+  const [filters, setFilters] = useState({
+  maxDistance: 5000,
+  maxPrice: 5,
+  parkingType: "ALL",
+  //liveOnly: false,
+  });
 
   const panResponder = useRef(
     PanResponder.create({
@@ -155,6 +164,41 @@ export default function ParkingMap() {
     );
     loadParkings(s.latitude, s.longitude);
   };
+
+  const applyFilters = async (
+  newFilters: FilterValues
+) => {
+  try {
+    const location =
+      selectedLocation ?? userLocation;
+
+    if (!location) return;
+
+    const data =
+      await getParkingsByLocationRequest({
+        lat: location.latitude,
+        lng: location.longitude,
+        type:
+          newFilters.parkingType === "ALL"
+            ? null
+            : newFilters.parkingType,
+        maxDistance:
+          newFilters.maxDistance,
+        maxPrice:
+          newFilters.maxPrice,
+      });
+
+    setParkings(data.parkings);
+    setMarkers(
+      mapParkingsToMarkers(data.parkings)
+    );
+
+    setFilters(newFilters);
+    setFilterVisible(false);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const loadParkings = async (lat: number, lng: number) => {
   try {
@@ -306,48 +350,76 @@ export default function ParkingMap() {
       </MapView>
 
       <View style={styles.searchWrapper}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color="#8a97aa" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search location in Rijeka..."
-            placeholderTextColor="#8a97aa"
-            value={searchQuery}
-            onChangeText={onSearchChange}
-            onFocus={() => setSearchFocused(true)}
-          />
-          {searchQuery.length > 0 && (
-            <Pressable
-              onPress={() => {
-                setSearchQuery("");
-                setSuggestions([]);
-              }}
-            >
-              <Ionicons name="close-circle" size={18} color="#8a97aa" />
-            </Pressable>
-          )}
-        </View>
+        <View style={styles.searchWrapper}>
+  <View style={styles.searchContainer}>
+    <View style={styles.searchBar}>
+      <Ionicons name="search" size={18} color="#8a97aa" />
 
-        {searchFocused && suggestions.length > 0 && (
-          <View style={styles.suggestionBox}>
-            {suggestions.map((s, i) => (
-              <Pressable
-                key={`${s.latitude}-${s.longitude}-${i}`}
-                style={({ pressed }) => [
-                  styles.suggestionItem,
-                  pressed && styles.suggestionItemPressed,
-                ]}
-                onPress={() => onSelectSuggestion(s)}
-              >
-                <Ionicons name="location-outline" size={16} color="#2fa51f" />
-                <Text style={styles.suggestionText} numberOfLines={1}>
-                  {s.label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
-      </View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search location in Rijeka..."
+        placeholderTextColor="#8a97aa"
+        value={searchQuery}
+        onChangeText={onSearchChange}
+        onFocus={() => setSearchFocused(true)}
+      />
+
+      {searchQuery.length > 0 && (
+        <Pressable
+          onPress={() => {
+            setSearchQuery("");
+            setSuggestions([]);
+          }}
+        >
+          <Ionicons
+            name="close-circle"
+            size={18}
+            color="#8a97aa"
+          />
+        </Pressable>
+      )}
+    </View>
+
+    <Pressable
+      style={styles.filterButton}
+      onPress={() => setFilterVisible(true)}
+    >
+      <Ionicons
+        name="options-outline"
+        size={22}
+        color="#33496b"
+      />
+    </Pressable>
+  </View>
+
+  {searchFocused && suggestions.length > 0 && (
+    <View style={styles.suggestionBox}>
+      {suggestions.map((s, i) => (
+        <Pressable
+          key={`${s.latitude}-${s.longitude}-${i}`}
+          style={({ pressed }) => [
+            styles.suggestionItem,
+            pressed && styles.suggestionItemPressed,
+          ]}
+          onPress={() => onSelectSuggestion(s)}
+        >
+          <Ionicons
+            name="location-outline"
+            size={16}
+            color="#2fa51f"
+          />
+          <Text
+            style={styles.suggestionText}
+            numberOfLines={1}
+          >
+            {s.label}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  )}
+</View>
+  </View>
 
       {!sheetVisible && (
         <Pressable style={styles.showButton} onPress={showSheet}>
@@ -416,6 +488,12 @@ export default function ParkingMap() {
           })}
         </ScrollView>
       </Animated.View>
+      
+      <FilterSheet
+      visible={filterVisible}
+      onClose={() => setFilterVisible(false)}
+      onApply={applyFilters}
+/>
     </SafeAreaView></>
   );
 }
@@ -425,7 +503,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, backgroundColor: "#dfe3ea", alignItems: "center", justifyContent: "center" },
   loadingText: { marginTop: 12, color: "#465a79", fontSize: 15 },
   logo: { width: 180, height: 180 },
-  map: { flex: 1 },
+  map: { ...StyleSheet.absoluteFillObject, },
 
   searchWrapper: {
     position: "absolute",
@@ -435,6 +513,7 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   searchBar: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#ffffff",
@@ -558,4 +637,25 @@ const styles = StyleSheet.create({
   calloutBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   calloutBadgeText: { fontSize: 11, fontWeight: "600" },
   calloutSpots: { fontSize: 12, color: "#8a97aa" },
+
+  searchContainer: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+},
+
+  filterButton: {
+  marginLeft: 8,
+  width: 42,
+  height: 42,
+  borderRadius: 12,
+  backgroundColor: "#ffffff",
+  justifyContent: "center",
+  alignItems: "center",
+  shadowColor: "#000",
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 3 },
+  elevation: 5,
+},
+
 });

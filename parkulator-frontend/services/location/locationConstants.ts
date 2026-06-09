@@ -1,0 +1,1 @@
+export const LOCATION_TASK_NAME = 'parkulator-location-task';

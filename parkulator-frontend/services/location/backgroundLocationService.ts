@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LOCATION_TASK_NAME } from './backgorundLocationTask';
+import { LOCATION_TASK_NAME } from './locationConstants';
 import api from '../api';
 
 const PENDING_LOCATION_KEY = 'pending_telemetry_location';
