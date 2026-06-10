@@ -93,12 +93,13 @@ export default function ParkingDetail() {
           <Text style={styles.pricingRow}>${price?.toFixed(2)} / hour</Text>
         </View>
 
+        {/* 
         <View style={styles.pricingCard}>
-          <Text style={styles.sectionTitle}>Statistics</Text>
+          <Text style={styless.sectionTitle}>Statistics</Text>
           <View style={styles.divider} />
           <Text style={styles.pricingRow}>Coming soon...</Text>
         </View>
-
+          */}
 
       </ScrollView>
 
@@ -108,7 +109,7 @@ export default function ParkingDetail() {
           onPress={() => {}}
         >
           <Ionicons name="navigate" size={20} color="#fff" />
-          <Text style={styles.directionsText}>Get Directions(Coming soon)</Text>
+          <Text style={styles.directionsText}>Get Directions</Text>
         </Pressable>
       </View>
     </SafeAreaView></>

@@ -60,6 +60,9 @@ public class ParkingDataService {
         //Creating list of Parking entities for the database
         for(ParkingDataDTO dto : dtos){
             //Check if a parking already exists
+            log.debug("[saveInitialData] Checking sourceKey='{}' (type={}) name='{}' address='{}'",
+                    dto.getSourceKey(), dto.getSourceKey() == null ? "null" : dto.getSourceKey().getClass().getName(),
+                    dto.getName(), dto.getAddress());
             if(parkingRepository.findBySourceKey(dto.getSourceKey()).isPresent()) continue;
             Parking parking = new Parking();
             parking.setSourceKey(dto.getSourceKey());
@@ -85,6 +88,8 @@ public class ParkingDataService {
                 parking.addPrice(parkingPrice);
             }
             //Save to the database
+            log.debug("[saveInitialData] Saving parking with sourceKey='{}' name='{}' address='{}'",
+                    parking.getSourceKey(), parking.getName(), parking.getAddress());
             parkingRepository.save(parking);
         }
         saveParkingLocationData();
@@ -102,6 +107,9 @@ public class ParkingDataService {
 
             //Updateing each Parking (if it exists)
             for(ParkingRefreshDTO RefreshData : pr){
+                log.debug("[saveRefreshData] Finding parking for sourceKey='{}' (type={}) name='{}'",
+                        RefreshData.getSourceKey(), RefreshData.getSourceKey() == null ? "null" : RefreshData.getSourceKey().getClass().getName(),
+                        RefreshData.getName());
                 Parking parking = parkingRepository
                     .findBySourceKey(RefreshData.getSourceKey())
                     .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
@@ -142,6 +150,9 @@ public class ParkingDataService {
 
             //Updateing each Parking (if it exists)
             for(ParkingRefreshDTO RefreshData : pr){
+                log.debug("[saveStaticRefreshData] Finding parking for sourceKey='{}' (type={}) name='{}'",
+                        RefreshData.getSourceKey(), RefreshData.getSourceKey() == null ? "null" : RefreshData.getSourceKey().getClass().getName(),
+                        RefreshData.getName());
                 Parking parking = parkingRepository
                     .findBySourceKey(RefreshData.getSourceKey())
                     .orElseThrow(() -> new RuntimeException("Parking not found" + RefreshData.getName() + RefreshData.getSourceKey()));
